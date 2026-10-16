@@ -1,0 +1,871 @@
+"use client";
+
+import * as React from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { addDays, format, isBefore, startOfToday } from "date-fns";
+import {
+  MapPin,
+  Users,
+  BedDouble,
+  Bath,
+  UtensilsCrossed,
+  Zap,
+  ExternalLink,
+  X,
+  ArrowLeft,
+  ArrowRight,
+  Info,
+  ChevronRight,
+} from "lucide-react";
+import { RoomDetail } from "@/lib/mock-rooms";
+import { getBranchBySlug } from "@/lib/constants";
+import { RoomGallery } from "@/components/rooms/room-gallery";
+import { BookingSidebar } from "@/components/rooms/booking-sidebar";
+import {
+  AMENITIES_BENTO,
+  getAmenityIllustration,
+} from "./room-detail-data";
+
+interface RoomDetailViewProps {
+  room: RoomDetail | undefined;
+  requestedId: string;
+}
+
+function cleanInventoryDescription(value: string): string {
+  return value
+    .replace(/50\+ Mbps dedicated fiber broadband/gi, "High-speed Wi-Fi")
+    .replace(/24\/7 hot water geyser/gi, "water-softening geyser")
+    .replace(/step-free ramp and lift to your floor/gi, "passenger elevator access")
+    .replace(/100% inverter backup/gi, "inverter power backup")
+    .replace(/100% inverter for lights and fans/gi, "inverter power backup");
+}
+
+export function RoomDetailView({ room, requestedId }: RoomDetailViewProps) {
+
+  // Stay Purpose State (Allows "accommodation_only" or one of the 5 purposes)
+  const [selectedPurposeId, setSelectedPurposeId] = React.useState<
+    "medical" | "wedding" | "tourism" | "corporate" | "family" | "accommodation_only" | null
+  >(null);
+  const [selectedAddonIds, setSelectedAddonIds] = React.useState<string[]>([]);
+
+  // Modals
+  const [amenitiesModalOpen, setAmenitiesModalOpen] = React.useState(false);
+  const [policiesModalOpen, setPoliciesModalOpen] = React.useState(false);
+
+  // Controlled booking dates & guest count
+  const [checkIn, setCheckIn] = React.useState<Date | undefined>(undefined);
+  const [checkOut, setCheckOut] = React.useState<Date | undefined>(undefined);
+  const [adults, setAdults] = React.useState<number>(room?.baseAdults || 2);
+  const [childrenCount, setChildrenCount] = React.useState<number>(0);
+  const [selectedBranchSlug] = React.useState<string>(room?.branchSlug || "moghal-pura");
+  const [branchInventory, setBranchInventory] = React.useState<RoomDetail[]>([]);
+
+  React.useEffect(() => {
+    let isMounted = true;
+    fetch("/api/inventory")
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data: { success?: boolean; units?: RoomDetail[] } | null) => {
+        if (isMounted && data?.success && Array.isArray(data.units)) setBranchInventory(data.units);
+      })
+      .catch(() => {});
+    return () => { isMounted = false; };
+  }, []);
+
+  // Initialize dates, guests, purpose and addons safely from URL search params
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      if (typeof window !== "undefined") {
+        const sp = new URLSearchParams(window.location.search);
+        const urlCheckIn = sp.get("checkIn");
+        const urlCheckOut = sp.get("checkOut");
+        const urlAdults = sp.get("adults");
+        const urlKids = sp.get("kids") || sp.get("children");
+        const urlPurpose = sp.get("purpose");
+        const urlAddons = sp.get("addons");
+
+        // 1. Dates
+        let parsedIn: Date | undefined = undefined;
+        let parsedOut: Date | undefined = undefined;
+
+        if (urlCheckIn) {
+          const d = new Date(urlCheckIn);
+          if (!isNaN(d.getTime()) && !isBefore(d, startOfToday())) {
+            parsedIn = d;
+          }
+        }
+        if (urlCheckOut) {
+          const d = new Date(urlCheckOut);
+          if (!isNaN(d.getTime())) {
+            parsedOut = d;
+          }
+        }
+
+        if (parsedIn && parsedOut && isBefore(parsedIn, parsedOut)) {
+          setCheckIn(parsedIn);
+          setCheckOut(parsedOut);
+        } else if (parsedIn) {
+          setCheckIn(parsedIn);
+          setCheckOut(addDays(parsedIn, 2));
+        } else {
+          setCheckIn(addDays(new Date(), 1));
+          setCheckOut(addDays(new Date(), 3));
+        }
+
+        // 2. Guests
+        if (urlAdults) {
+          const a = parseInt(urlAdults, 10);
+          if (!isNaN(a) && a >= 1) {
+            setAdults(Math.min(a, room?.maxAdults || 8));
+          }
+        }
+
+        if (urlKids) {
+          const k = parseInt(urlKids, 10);
+          if (!isNaN(k) && k >= 0) {
+            const maxKids = room?.maxChildren ?? 10;
+            setChildrenCount(Math.min(k, maxKids));
+          }
+        }
+
+        // 3. Stay Purpose
+        if (
+          urlPurpose &&
+          ["medical", "wedding", "tourism", "corporate", "family", "accommodation_only"].includes(urlPurpose)
+        ) {
+          setSelectedPurposeId(urlPurpose as typeof selectedPurposeId);
+        } else {
+          setSelectedPurposeId(null);
+        }
+
+        // 4. Addons
+        if (urlAddons) {
+          const ids = urlAddons.split(",").filter(Boolean);
+          setSelectedAddonIds(ids);
+        }
+      } else {
+        setCheckIn(addDays(new Date(), 1));
+        setCheckOut(addDays(new Date(), 3));
+      }
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [room?.maxAdults, room?.maxChildren]);
+
+  // Lock body scroll when modals are open
+  React.useEffect(() => {
+    if (amenitiesModalOpen || policiesModalOpen) {
+      document.body.style.overflow = "hidden";
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape") {
+          setAmenitiesModalOpen(false);
+          setPoliciesModalOpen(false);
+        }
+      };
+      window.addEventListener("keydown", handleKeyDown);
+      return () => {
+        document.body.style.overflow = "";
+        window.removeEventListener("keydown", handleKeyDown);
+      };
+    } else {
+      document.body.style.overflow = "";
+    }
+  }, [amenitiesModalOpen, policiesModalOpen]);
+
+  const branch = room?.branchSlug ? getBranchBySlug(room.branchSlug) : undefined;
+
+  // Filter other suites at this branch (strictly excluding the current room)
+  const branchSuites = branchInventory.filter(
+    (r) =>
+      r.branchSlug === (selectedBranchSlug || branch?.slug || "moghal-pura") &&
+      r.id !== room?.id &&
+      r.slug !== room?.slug
+  );
+
+  const buildSuiteUrl = (suiteSlug: string) => {
+    const params = new URLSearchParams();
+    if (checkIn) params.set("checkIn", format(checkIn, "yyyy-MM-dd"));
+    if (checkOut) params.set("checkOut", format(checkOut, "yyyy-MM-dd"));
+    if (adults) params.set("adults", adults.toString());
+    if (childrenCount > 0) params.set("kids", childrenCount.toString());
+    if (selectedPurposeId) params.set("purpose", selectedPurposeId);
+    const qStr = params.toString();
+    return `/properties/${suiteSlug}${qStr ? `?${qStr}` : ""}`;
+  };
+
+  const handleToggleAddon = (addonId: string) => {
+    setSelectedAddonIds((prev) =>
+      prev.includes(addonId) ? prev.filter((id) => id !== addonId) : [...prev, addonId]
+    );
+  };
+
+  // Dynamic Amenities with 3D miniature illustrations & verified specifications
+  const essentialAmenities = React.useMemo(() => {
+    if (!room) return [];
+    if (room.amenities && room.amenities.length > 0) {
+      return room.amenities.map((a) => {
+        const lower = a.name.toLowerCase();
+        const desc = lower.includes("wi-fi") || lower.includes("wifi")
+          ? "High-speed Wi-Fi"
+          : lower.includes("kitchen")
+            ? "Private kitchen with cooking facilities"
+            : lower.includes("geyser")
+              ? "Water-softening geyser"
+              : lower.includes("tv")
+                ? "Smart TV"
+                : lower.includes("refrigerator") || lower.includes("fridge")
+                  ? "Refrigerator"
+                  : lower.includes("lift") || lower.includes("elevator")
+                    ? "Passenger elevator access"
+                    : lower.includes("water supply")
+                      ? "Water supply"
+                      : lower.includes("water")
+                        ? "RO water purifier"
+                        : lower.includes("power") || lower.includes("inverter") || lower.includes("backup")
+                          ? "Inverter power backup"
+                          : lower.includes("ac") || lower.includes("conditioning")
+                            ? "Air conditioning"
+                            : a.description && a.description !== "Verified flat inclusion"
+                              ? a.description
+                              : "Included with this residence";
+        return {
+          title: a.name,
+          desc,
+          image: getAmenityIllustration(a.name),
+        };
+      });
+    }
+    return [
+      {
+        title: "Air Conditioning",
+        desc: "Air conditioning",
+        image: "/images/amenities/icon-air-conditioning.png",
+      },
+      {
+        title: "High-Speed Wi-Fi",
+        desc: "High-speed Wi-Fi",
+        image: "/images/amenities/icon-high-speed-wifi.png",
+      },
+      {
+        title: "Private Modular Kitchen",
+        desc: "Gas stove, refrigerator, RO water and cookware",
+        image: "/images/amenities/icon-kitchen-dining.png",
+      },
+      {
+        title: "Laundry Washing Machine",
+        desc: "In-unit / on-demand laundry support",
+        image: "/images/amenities/icon-laundry-washing.png",
+      },
+      {
+        title: "Alternate-Day Housekeeping",
+        desc: "Scheduled sanitization & fresh linens",
+        image: "/images/amenities/icon-housekeeping.png",
+      },
+      {
+        title: "Inverter Power Backup",
+        desc: "Inverter power backup",
+        image: "/images/amenities/icon-power-backup.png",
+      },
+      {
+        title: "Passenger Elevator Lift",
+        desc: "Passenger elevator access",
+        image: "/images/amenities/icon-elevator.png",
+      },
+    ];
+  }, [room]);
+
+  // Dynamic Landmarks
+  const landmarks = React.useMemo(() => {
+    return room?.landmarks ?? [];
+  }, [room?.landmarks]);
+
+  if (!room) {
+    return (
+      <div className="mx-auto w-full max-w-4xl px-4 py-24 text-center select-none">
+        <h1 className="font-heading text-3xl font-normal text-[#FAF4EB]">Residence Not Found</h1>
+        <p className="text-sm text-[#B8A692] mt-2">
+          The requested apartment ID &ldquo;{requestedId}&rdquo; was not found.
+        </p>
+        <Link
+          href="/#flats"
+          className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] font-bold text-xs shadow-md hover:opacity-95 transition-opacity"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>Explore All Residences</span>
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative w-full pb-36 sm:pb-36 lg:pb-24 text-foreground bg-background select-none min-h-screen">
+      {/* ======================================================== */}
+      {/* 1. TOP BREADCRUMB NAVIGATION                             */}
+      {/* ======================================================== */}
+      <nav
+        aria-label="Breadcrumb"
+        className="w-full border-b border-[rgba(212,163,89,0.18)] bg-[#16100B]/60"
+      >
+        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10 py-2.5 sm:py-3 flex items-center justify-between text-xs text-[#B8A692]">
+          <div className="flex items-center gap-2 min-w-0">
+            <Link href="/" className="hover:text-[#FAF4EB] transition-colors shrink-0">
+              Home
+            </Link>
+            <ChevronRight className="h-3 w-3 text-[#E5C178]/60 shrink-0" />
+            <Link href="/#flats" className="hover:text-[#FAF4EB] transition-colors shrink-0">
+              Residences
+            </Link>
+            <ChevronRight className="h-3 w-3 text-[#E5C178]/60 shrink-0" />
+            {branch && (
+              <>
+                <Link href={`/branches/${branch.slug}`} className="hover:text-[#FAF4EB] transition-colors shrink-0">
+                  {branch.name}
+                </Link>
+                <ChevronRight className="h-3 w-3 text-[#E5C178]/60 shrink-0" />
+              </>
+            )}
+            <span className="text-[#FAF4EB] font-medium truncate">
+              {room.title}
+            </span>
+          </div>
+        </div>
+      </nav>
+
+      {/* ======================================================== */}
+      {/* 2. MAIN CONTENT AREA                                     */}
+      {/* ======================================================== */}
+      <main className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10 pt-5 sm:pt-6 space-y-8">
+        {/* PROPERTY PHOTO GALLERY */}
+        <RoomGallery images={room.gallery} roomTitle={room.title} />
+
+        {/* 2-COLUMN LUXURY ARCHITECTURE */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+          {/* ====================================================== */}
+          {/* LEFT COLUMN: Property Details, Amenities, Personalize  */}
+          {/* ====================================================== */}
+          <div className="lg:col-span-7 xl:col-span-8 space-y-10">
+            {/* ── 1. PROPERTY HEADER & SPECS ── */}
+            <section className="space-y-4">
+              <div>
+                <span className="text-xs font-sans font-medium tracking-[0.16em] uppercase text-[#E5C178]">
+                  FLATEL SERVICED RESIDENCE · {branch?.name?.toUpperCase() || "HYDERABAD"}
+                </span>
+                <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#FAF4EB] tracking-[-0.015em] leading-[1.06] mt-1">
+                  {room.title}
+                </h1>
+              </div>
+
+              {/* Location and directions */}
+              <div className="flex items-center gap-3 text-xs sm:text-sm text-[#B8A692] flex-wrap">
+                <div className="flex items-center gap-1 text-[#FAF4EB]/90">
+                  <MapPin className="w-3.5 h-3.5 text-[#E5C178]" />
+                  <span>{branch?.address || "Hyderabad"}</span>
+                </div>
+                {branch?.googleMapsUrl && (
+                  <>
+                    <span>•</span>
+                    <a
+                      href={branch.googleMapsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#E5C178] hover:underline font-semibold inline-flex items-center gap-1"
+                    >
+                      <span>Google Maps</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </>
+                )}
+              </div>
+
+              {/* Minimalist Specs Row */}
+              <div className="flex flex-wrap items-center gap-y-2 gap-x-5 pt-1 text-xs sm:text-sm text-[#FAF4EB]">
+                <div className="flex items-center gap-1.5">
+                  <Users className="w-4 h-4 text-[#E5C178]" />
+                  <span>Up to {room.maxAdults} Guests</span>
+                </div>
+                <span>•</span>
+                <div className="flex items-center gap-1.5">
+                  <BedDouble className="w-4 h-4 text-[#E5C178]" />
+                  <span>{room.specs.bedrooms}</span>
+                </div>
+                <span>•</span>
+                <div className="flex items-center gap-1.5">
+                  <Bath className="w-4 h-4 text-[#E5C178]" />
+                  <span>{room.specs.bathroom}</span>
+                </div>
+                <span>•</span>
+                <div className="flex items-center gap-1.5">
+                  <UtensilsCrossed className="w-4 h-4 text-[#E5C178]" />
+                  <span>Modular Kitchen</span>
+                </div>
+                <span>•</span>
+                <div className="flex items-center gap-1.5">
+                  <Zap className="w-4 h-4 text-[#E5C178]" />
+                  <span>Inverter Backup</span>
+                </div>
+              </div>
+
+              {/* Nightly Price Banner for immediate understanding */}
+              <div className="flex items-baseline gap-2 pt-2">
+                <span className="font-heading text-2xl sm:text-3xl font-normal text-[#FAF4EB] tabular-nums">
+                  ₹{room.basePricePerNight.toLocaleString("en-IN")}
+                </span>
+                <span className="text-sm text-[#B8A692]">/ night</span>
+                <span className="text-xs text-[#E5C178] font-medium ml-2">
+                  Pay 20% now to confirm
+                </span>
+              </div>
+
+              {/* Short Readable Property Description */}
+              <p className="text-sm sm:text-base text-[#B8A692] leading-relaxed pt-1 font-normal">
+                {cleanInventoryDescription(room.shortDescription)}
+              </p>
+
+              {room.fullDescription && room.fullDescription !== room.shortDescription && (
+                <p className="text-xs sm:text-sm text-[#B8A692]/90 leading-relaxed pt-1 font-normal">
+                  {cleanInventoryDescription(room.fullDescription)}
+                </p>
+              )}
+            </section>
+
+            <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-[rgba(212,163,89,0.22)] to-transparent" aria-hidden="true" />
+
+            {/* ── 2. INCLUDED WITH YOUR FLAT ── */}
+            <section className="space-y-4" aria-labelledby="amenities-heading">
+              <div className="flex items-baseline justify-between gap-4 flex-wrap">
+                <div>
+                  <h2 id="amenities-heading" className="font-heading text-xl sm:text-2xl font-normal text-[#FAF4EB]">
+                    Included with your flat
+                  </h2>
+                  <p className="text-xs text-[#B8A692] mt-0.5">
+                    Included in your accommodation at no extra charge.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setAmenitiesModalOpen(true)}
+                  className="text-xs font-semibold text-[#E5C178] hover:text-[#FAF4EB] cursor-pointer flex items-center gap-1 transition-colors"
+                >
+                  <span>View all amenities</span>
+                  <span>→</span>
+                </button>
+              </div>
+
+              {/* 8 Key Included Amenities: 2-Col Compact on Mobile, 4-Col on Desktop */}
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5">
+                {essentialAmenities.map((item) => {
+                  return (
+                    <div
+                      key={item.title}
+                      className="group flex flex-col sm:flex-row items-start gap-2 sm:gap-3 p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl bg-[rgba(34,24,16,0.65)] border border-[rgba(212,163,89,0.25)] hover:border-[#E5C178]/50 hover:bg-[rgba(42,30,20,0.7)] backdrop-blur-sm transition-all"
+                    >
+                      <div className="relative w-8 h-8 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-[#1a130d] border border-[rgba(212,163,89,0.35)] group-hover:border-[#E5C178]/60 flex items-center justify-center shrink-0 overflow-hidden p-1 transition-colors shadow-xs">
+                        <Image
+                          src={item.image}
+                          alt={item.title}
+                          fill
+                          sizes="44px"
+                          className="object-contain p-0.5 group-hover:scale-110 drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)] transition-transform duration-200"
+                        />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <h3 className="text-[11px] sm:text-sm font-semibold text-[#FAF4EB] tracking-tight leading-snug line-clamp-2">
+                          {item.title}
+                        </h3>
+                        <p className="text-[10px] sm:text-xs text-[#B8A692] mt-0.5 leading-snug line-clamp-2">
+                          {item.desc}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+
+            <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-[rgba(212,163,89,0.22)] to-transparent" aria-hidden="true" />
+
+            {/* ── 3. LOCATION & NEARBY PLACES ── */}
+            <section className="space-y-4" aria-labelledby="location-heading">
+              <div className="flex items-baseline justify-between gap-4 flex-wrap">
+                <div>
+                  <h2 id="location-heading" className="font-heading text-xl sm:text-2xl font-normal text-[#FAF4EB]">
+                    Location &amp; Nearby Places
+                  </h2>
+                  <p className="text-xs text-[#B8A692] mt-0.5">
+                    Located in Moghal Pura, near Charminar. Use the map for directions.
+                  </p>
+                </div>
+                {branch?.googleMapsUrl && (
+                  <a
+                    href={branch.googleMapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs font-semibold text-[#E5C178] hover:text-[#FAF4EB] transition-colors"
+                  >
+                    Open Google Maps Navigation →
+                  </a>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                {landmarks.map((lm) => (
+                  <div
+                    key={lm.name}
+                    className="p-3.5 rounded-xl bg-[rgba(34,24,16,0.65)] border border-[rgba(212,163,89,0.25)] flex items-center justify-between"
+                  >
+                    <span className="text-[#FAF4EB] font-medium truncate pr-2 text-xs">{lm.name}</span>
+                    <span className="font-sans text-xs text-[#E5C178] shrink-0 font-semibold tabular-nums">
+                      {lm.name}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-[rgba(212,163,89,0.22)] to-transparent" aria-hidden="true" />
+
+            {/* ── 5. POLICIES & HOUSE RULES ── */}
+            <section className="space-y-4" aria-labelledby="policies-heading">
+              <div className="flex items-baseline justify-between gap-4 flex-wrap">
+                <div>
+                  <h2 id="policies-heading" className="font-heading text-xl sm:text-2xl font-normal text-[#FAF4EB]">
+                    Stay Policies &amp; House Rules
+                  </h2>
+                  <p className="text-xs text-[#B8A692] mt-0.5">
+                    Simple check-in, payment, and cancellation terms.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setPoliciesModalOpen(true)}
+                  className="text-xs font-semibold text-[#E5C178] hover:text-[#FAF4EB] cursor-pointer transition-colors"
+                >
+                  View full cancellation policy →
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-[#B8A692]">
+                <div className="space-y-1">
+                  <h3 className="text-[#FAF4EB] font-medium text-xs">Check-In &amp; Check-Out</h3>
+                  <p className="text-xs leading-relaxed text-[#B8A692]">
+                    Check-in: <span className="font-medium text-[#FAF4EB]">11:00 AM – 1:00 PM</span>
+                    <br />
+                    Check-out: By <span className="font-medium text-[#FAF4EB]">11:00 AM</span>
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <h3 className="text-[#FAF4EB] font-medium text-xs">Payment Terms</h3>
+                  <p className="text-xs leading-relaxed text-[#B8A692]">
+                    <span className="font-medium text-[#FAF4EB]">20%</span> advance payable online to reserve
+                    <br />
+                    <span className="font-medium text-[#FAF4EB]">80%</span> remaining balance at check-in (Cash / UPI)
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <h3 className="text-[#FAF4EB] font-medium text-xs">Cancellation Policy</h3>
+                  <p className="text-xs leading-relaxed text-[#B8A692]">
+                    <span className="font-medium text-[#FAF4EB]">100%</span> refund up to <span className="font-medium text-[#FAF4EB]">48 hrs</span> before check-in. Non-refundable within <span className="font-medium text-[#FAF4EB]">48 hrs</span>.
+                  </p>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          {/* ====================================================== */}
+          {/* RIGHT COLUMN: Sticky Booking Panel                     */}
+          {/* ====================================================== */}
+          <div className="lg:col-span-5 xl:col-span-4 lg:sticky lg:top-28 space-y-4">
+            <div id="reservation-panel" className="w-full max-w-xl mx-auto lg:max-w-none">
+              <React.Suspense
+                fallback={
+                  <div className="h-[400px] w-full animate-pulse rounded-3xl border border-[rgba(212,163,89,0.2)] bg-[#16100B]" />
+                }
+              >
+                <BookingSidebar
+                  room={room}
+                  selectedPurposeId={selectedPurposeId}
+                  selectedAddonIds={selectedAddonIds}
+                  onSelectPurpose={(p) => setSelectedPurposeId(p)}
+                  onToggleAddon={handleToggleAddon}
+                  checkIn={checkIn}
+                  checkOut={checkOut}
+                  adults={adults}
+                  childrenCount={childrenCount}
+                  onCheckInChange={setCheckIn}
+                  onCheckOutChange={setCheckOut}
+                  onAdultsChange={setAdults}
+                  onChildrenChange={setChildrenCount}
+                />
+              </React.Suspense>
+            </div>
+          </div>
+        </div>
+
+        {/* ======================================================== */}
+        {/* 3. OTHER RESIDENCES AT THIS BRANCH (Full Width Below)    */}
+        {/* ======================================================== */}
+        {branchSuites.length > 0 && (
+          <section className="space-y-4 pt-6 border-t border-[rgba(212,163,89,0.18)]" aria-labelledby="other-flats-heading">
+            <div className="flex items-baseline justify-between gap-4 flex-wrap">
+              <div>
+                <h2 id="other-flats-heading" className="font-heading text-xl sm:text-2xl font-normal text-[#FAF4EB]">
+                  Other Residences at {branch?.name || "This Location"}
+                </h2>
+                <p className="text-xs text-[#B8A692] mt-0.5">
+                  Compare other available BHK configurations at this branch.
+                </p>
+              </div>
+              <span className="text-xs text-[#E5C178] font-medium hidden sm:inline">
+                Explore more configurations
+              </span>
+            </div>
+
+            {/* Mobile: Horizontal Swipeable Snap Slider; Tablet/Desktop: Grid */}
+            <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-3 sm:pb-0 no-scrollbar sm:grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
+              {branchSuites.map((s) => {
+                const suiteImage = s.gallery?.[0]?.url || "/images/flats/flat-1bhk-luxury.jpg";
+                return (
+                  <div
+                    key={s.id}
+                    className="w-[280px] sm:w-auto shrink-0 snap-start group relative flex flex-col justify-between rounded-2xl bg-[rgba(34,24,16,0.65)] p-3.5 border border-[rgba(212,163,89,0.25)] hover:border-[#E5C178]/60 hover:shadow-md transition-all backdrop-blur-sm"
+                  >
+                    {/* Property Image & Badge */}
+                    <div className="relative aspect-[16/10] w-full overflow-hidden rounded-lg bg-[#16100B]">
+                      <Image
+                        src={suiteImage}
+                        alt={s.title}
+                        fill
+                        sizes="(max-width: 640px) 280px, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+
+                      {/* Top-left: BHK Type Label */}
+                      <div className="absolute top-2.5 left-2.5 z-10">
+                        <span className="px-2 py-0.5 rounded-md bg-[#16100B]/90 backdrop-blur-md border border-[rgba(212,163,89,0.3)] text-xs font-sans uppercase tracking-wider text-[#E5C178] font-semibold">
+                          {s.type}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Content Info */}
+                    <div className="pt-3 flex-1 flex flex-col justify-between">
+                      <div>
+                        <h3 className="font-sans text-sm sm:text-base font-semibold text-[#FAF4EB] truncate group-hover:text-[#E5C178] transition-colors">
+                          {s.title}
+                        </h3>
+
+                        <p className="text-xs text-[#B8A692] flex items-center gap-1.5 mt-1 truncate">
+                          <Users className="w-3.5 h-3.5 text-[#E5C178] shrink-0" />
+                          <span>Up to {s.maxAdults} Guests • {s.specs.bedrooms}</span>
+                        </p>
+                      </div>
+
+                      {/* Price & Action */}
+                      <div className="mt-3">
+                        <div className="pt-2 border-t border-[rgba(212,163,89,0.2)] flex items-baseline justify-between">
+                          <div className="flex items-baseline gap-1">
+                            <span className="font-heading text-base font-normal text-[#FAF4EB] tabular-nums">
+                              ₹{s.basePricePerNight.toLocaleString("en-IN")}
+                            </span>
+                            <span className="text-xs text-[#B8A692]">/ night</span>
+                          </div>
+                          <span className="text-xs text-[#E5C178] font-medium">
+                            20% Advance
+                          </span>
+                        </div>
+
+                        <Link
+                          href={buildSuiteUrl(s.slug)}
+                          className="w-full mt-2.5 h-9 rounded-xl bg-[#16100B] hover:bg-gradient-to-r hover:from-[#E5C178] hover:to-[#C69344] border border-[rgba(212,163,89,0.3)] hover:border-transparent text-[#FAF4EB] hover:text-[#140E08] text-xs font-semibold flex items-center justify-center gap-1.5 transition-all active:scale-[0.98] group/btn cursor-pointer"
+                        >
+                          <span>View Residence</span>
+                          <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
+      </main>
+
+
+      {/* ======================================================== */}
+      {/* MODAL 1: COMPLETE INCLUDED AMENITIES MODAL              */}
+      {/* ======================================================== */}
+      {amenitiesModalOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[#0E0A07]/85 backdrop-blur-sm animate-in fade-in duration-200"
+          onClick={() => setAmenitiesModalOpen(false)}
+        >
+          <div
+            className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-3xl bg-[#16100B] border border-[rgba(212,163,89,0.3)] shadow-2xl text-[#FAF4EB] p-6 space-y-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-[rgba(212,163,89,0.2)] pb-4">
+              <div>
+                <h3 className="font-heading text-xl font-normal text-[#FAF4EB]">
+                  Residence amenities
+                </h3>
+                <p className="text-xs text-[#B8A692] mt-0.5">
+                  Amenities listed for {room.title} ({branch?.name || "Hyderabad"}).
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setAmenitiesModalOpen(false)}
+                className="h-8 w-8 rounded-full bg-[#221810] hover:bg-[#2a1e14] text-[#FAF4EB] flex items-center justify-center border border-[rgba(212,163,89,0.25)] cursor-pointer transition-colors"
+                aria-label="Close"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Informational Notice */}
+            <div className="p-3.5 rounded-2xl bg-[#221810]/70 border border-[rgba(212,163,89,0.2)] text-xs text-[#B8A692] flex items-start gap-2.5">
+              <Info className="w-4 h-4 text-[#E5C178] shrink-0 mt-0.5" />
+              <p>
+                Property amenities are compulsory inclusions in the accommodation price for the flats where they are provided. They are purely informational and not separately selectable or chargeable.
+              </p>
+            </div>
+
+            {/* 6 Real Categories from AMENITIES_BENTO */}
+            <div className="space-y-6">
+              {AMENITIES_BENTO.map((cat) => {
+                const catIllustration = getAmenityIllustration(cat.category);
+                return (
+                  <div key={cat.category} className="space-y-2.5">
+                    <div className="flex items-center gap-2.5">
+                      <div className="relative w-7 h-7 rounded-lg bg-[#E5C178]/10 border border-[#E5C178]/30 flex items-center justify-center shrink-0 overflow-hidden p-0.5">
+                        <Image
+                          src={catIllustration}
+                          alt={cat.category}
+                          fill
+                          sizes="28px"
+                          className="object-contain"
+                        />
+                      </div>
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-[#FAF4EB]">
+                        {cat.category}
+                      </h4>
+                    </div>
+                    <p className="text-[11px] text-[#B8A692] italic">
+                      {cat.description}
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {cat.items.map((it) => {
+                        const itemIllustration = getAmenityIllustration(it.name);
+                        return (
+                          <div
+                            key={it.name}
+                            className="flex items-center gap-2.5 p-2 rounded-xl bg-[#221810] border border-[rgba(212,163,89,0.2)] text-xs text-[#FAF4EB]"
+                          >
+                            <div className="relative w-6 h-6 rounded-md bg-[#16100B] border border-[rgba(212,163,89,0.25)] flex items-center justify-center shrink-0 overflow-hidden p-0.5">
+                              <Image
+                                src={itemIllustration}
+                                alt={it.name}
+                                fill
+                                sizes="24px"
+                                className="object-contain"
+                              />
+                            </div>
+                            <span className="truncate">{it.name}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="border-t border-[rgba(212,163,89,0.2)] pt-4 flex items-center justify-between text-xs">
+              <span className="text-[#B8A692] font-mono">
+                Included in base nightly rent &bull; ₹0 extra fee
+              </span>
+              <button
+                type="button"
+                onClick={() => setAmenitiesModalOpen(false)}
+                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] font-bold text-xs cursor-pointer shadow-md hover:opacity-95"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ======================================================== */}
+      {/* MODAL 2: FULL POLICIES MODAL                            */}
+      {/* ======================================================== */}
+      {policiesModalOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[#0E0A07]/85 backdrop-blur-sm animate-in fade-in duration-200"
+          onClick={() => setPoliciesModalOpen(false)}
+        >
+          <div
+            className="relative w-full max-w-xl max-h-[85vh] overflow-y-auto rounded-3xl bg-[#16100B] border border-[rgba(212,163,89,0.3)] shadow-2xl text-[#FAF4EB] p-6 space-y-5 text-xs"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-[rgba(212,163,89,0.2)] pb-3">
+              <h3 className="font-heading text-lg font-normal text-[#FAF4EB]">
+                FLATEL Stay &amp; Cancellation Policies
+              </h3>
+              <button
+                type="button"
+                onClick={() => setPoliciesModalOpen(false)}
+                className="h-7 w-7 rounded-full bg-[#221810] hover:bg-[#2a1e14] text-[#FAF4EB] flex items-center justify-center border border-[rgba(212,163,89,0.25)] cursor-pointer transition-colors"
+                aria-label="Close"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-4 text-[#B8A692] leading-relaxed">
+              <div>
+                <strong className="text-[#FAF4EB] block font-semibold mb-1">Advance Payment &amp; Balance</strong>
+                <p>
+                  Reservations are secured with a <span className="font-serif tabular-nums text-[#FAF4EB]">20%</span> online advance deposit. The remaining <span className="font-serif tabular-nums text-[#FAF4EB]">80%</span> balance
+                  is strictly payable at check-in by Cash or UPI.
+                </p>
+              </div>
+
+              <div>
+                <strong className="text-[#FAF4EB] block font-semibold mb-1">Cancellation &amp; Refunds</strong>
+                <p>
+                  • Free Cancellation (<span className="font-serif tabular-nums text-[#FAF4EB]">100%</span> Refund of 20% advance deposit): If cancelled <span className="font-serif tabular-nums text-[#FAF4EB]">48 hours</span> or more prior to check-in (<span className="font-serif tabular-nums text-[#FAF4EB]">11:00 AM</span>).
+                  <br />
+                  • Non-Refundable: Cancellations made within <span className="font-serif tabular-nums text-[#FAF4EB]">48 hours</span> of check-in forfeit the <span className="font-serif tabular-nums text-[#FAF4EB]">20%</span> advance deposit (date reservation hold fee).
+                </p>
+              </div>
+
+              <div>
+                <strong className="text-[#FAF4EB] block font-semibold mb-1">Mandatory Photo Identification</strong>
+                <p>
+                  Original government-issued photo ID (Aadhaar / Driving License / Voter ID) is required
+                  for all domestic adults. International guests must present an original passport.
+                </p>
+              </div>
+            </div>
+
+            <div className="border-t border-[rgba(212,163,89,0.2)] pt-3 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setPoliciesModalOpen(false)}
+                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] font-bold text-xs cursor-pointer shadow-md hover:opacity-95"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

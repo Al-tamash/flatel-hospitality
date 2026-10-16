@@ -1,0 +1,431 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "leaflet/dist/leaflet.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* FLATEL HOSPITALITY Official Color Tokens */
+  --color-black-deep: var(--black-deep);
+  --color-black-soft: var(--black-soft);
+  --color-charcoal-dark: var(--charcoal-dark);
+  --color-gold-primary: var(--gold-primary);
+  --color-gold-soft: var(--gold-soft);
+  --color-gold-border: var(--gold-border);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+
+  /* Semantic aliases */
+  --color-deep-black: var(--black-deep);
+  --color-soft-black: var(--black-soft);
+  --color-charcoal: var(--charcoal-dark);
+  --color-warm-ivory: var(--text-primary);
+  --color-muted-ivory: var(--text-secondary);
+  --color-champagne-gold: var(--gold-primary);
+  --color-soft-gold: var(--gold-soft);
+  --color-dark-gold-border: var(--gold-border);
+
+  /* Fonts (Cormorant Garamond for Serifs & Headings, DM Sans for Sans) */
+  --font-sans: var(--font-sans);
+  --font-heading: var(--font-serif);
+  --font-serif: var(--font-serif);
+
+  /* Radii */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-full: 9999px;
+}
+
+:root,
+.dark {
+  /* FLATEL HOSPITALITY Foundations (Warm Obsidian & Champagne Gold Luxury) */
+  --background: #0E0A07;
+  /* Deep warm obsidian canvas */
+  --foreground: #FAF4EB;
+  /* Warm Cream */
+  --card: rgba(34, 24, 16, 0.65);
+  /* Translucent warm espresso glass */
+  --card-foreground: #FAF4EB;
+  --popover: #16100B;
+  --popover-foreground: #FAF4EB;
+  --primary: #E5C178;
+  /* Champagne Gold */
+  --primary-foreground: #140E08;
+  /* Dark espresso text on gold */
+  --secondary: #16100B;
+  /* Warm espresso surface panel */
+  --secondary-foreground: #FAF4EB;
+  --muted: #16100B;
+  --muted-foreground: #D4C4B3;
+  /* Readable warm cream-sand secondary text */
+  --accent: rgba(34, 24, 16, 0.65);
+  --accent-foreground: #E5C178;
+  --destructive: #8B2626;
+  --destructive-foreground: #FAF4EB;
+  --border: rgba(212, 163, 89, 0.28);
+  /* Subtle glowing gold border */
+  --input: rgba(212, 163, 89, 0.28);
+  --ring: #E5C178;
+  --radius: 1.25rem;
+
+  /* Explicit Core Tokens with Golden Warmth */
+  --black-deep: #0E0A07;
+  --black-soft: #16100B;
+  --charcoal-dark: #0E0A07;
+  --gold-primary: #E5C178;
+  --gold-soft: #C69344;
+  --gold-border: rgba(212, 163, 89, 0.28);
+  --text-primary: #FAF4EB;
+  --text-secondary: #D4C4B3;
+
+  /* Compatibility aliases */
+  --deep-black: #0E0A07;
+  --soft-black: #16100B;
+  --charcoal: #16100B;
+  --warm-ivory: #FAF4EB;
+  --muted-ivory: #D4C4B3;
+  --champagne-gold: #E5C178;
+  --soft-gold: #C69344;
+  --dark-gold-border: rgba(212, 163, 89, 0.28);
+
+  --brand-bg-deep: #0E0A07;
+  --brand-surface: #16100B;
+  --brand-surface-raised: #221810;
+  --brand-gold: #E5C178;
+  --brand-gold-hover: #F0D394;
+  --brand-gold-muted: rgba(229, 193, 120, 0.15);
+  --brand-ivory: #FAF4EB;
+  --brand-muted: #D4C4B3;
+  --brand-border: rgba(212, 163, 89, 0.28);
+  --brand-border-gold: rgba(212, 163, 89, 0.28);
+
+  --deep-olive: #FAF4EB;
+  --deep-olive-hover: #E5C178;
+  --muted-olive: #E5C178;
+  --warm-gray: #D4C4B3;
+  --warm-brown: #C69344;
+  --champagne: #E5C178;
+  --champagne-muted: rgba(229, 193, 120, 0.15);
+  --border-warm: rgba(212, 163, 89, 0.28);
+  --border-olive: rgba(212, 163, 89, 0.28);
+  --soft-cream: #16100B;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    box-sizing: border-box;
+  }
+
+  html {
+    color-scheme: dark;
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+    font-weight: 400;
+    font-size: 1rem; /* 16px base */
+    line-height: 1.65;
+    letter-spacing: 0;
+    overflow-x: hidden;
+    min-width: 320px;
+    width: 100%;
+  }
+
+  p {
+    line-height: 1.65;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-serif), serif;
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: 0;
+  }
+}
+
+/* Classic Luxury Oldstyle Numerals for Timings, Stats & Prices */
+.oldstyle-nums,
+.font-oldstyle {
+  font-family: var(--font-serif), serif;
+  font-variant-numeric: oldstyle-nums;
+}
+
+/* Uppercase Golden Badges & Eyebrow Labels (DM Sans) */
+.badge-eyebrow {
+  font-family: var(--font-sans), sans-serif;
+  text-transform: uppercase;
+  font-size: 0.75rem; /* 12px */
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+
+/* Container & Architectural Spacing Foundation */
+.container-luxury {
+  width: 100%;
+  max-width: 80rem;
+  /* 1280px */
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container-luxury {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-luxury {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Subtle Hairline Border & Accent Utilities */
+.border-gold-subtle {
+  border-color: rgba(212, 163, 89, 0.28);
+}
+
+.text-gold-accent {
+  color: #E5C178;
+}
+
+.bg-gold-accent {
+  background: linear-gradient(135deg, #E5C178 0%, #C69344 100%);
+  color: #140E08;
+}
+
+/* ==========================================================================
+   WARM OBSIDIAN & CHAMPAGNE GOLD LUXURY UTILITIES
+   ========================================================================== */
+
+/* Ambient Golden Lighting */
+.bg-ambient-gold-glow {
+  background: radial-gradient(circle at 50% 50%, rgba(212, 163, 89, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Golden Glassmorphism Card Utility */
+.card-gold-glass {
+  background: rgba(34, 24, 16, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 1.25rem; /* 20px / rounded-2xl */
+  border: 1px solid rgba(212, 163, 89, 0.28);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45), 0 0 20px rgba(212, 163, 89, 0.04);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-gold-glass:hover {
+  border-color: rgba(229, 193, 120, 0.65);
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.55), 0 0 28px rgba(229, 193, 120, 0.15);
+}
+
+/* Champagne Gold Primary Action Button */
+.btn-champagne-gold {
+  background: linear-gradient(135deg, #E5C178 0%, #C69344 100%);
+  color: #140E08 !important;
+  font-weight: 700;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 244, 194, 0.35);
+  box-shadow: 0 4px 20px rgba(229, 193, 120, 0.25);
+  transition: all 0.25s ease;
+}
+
+.btn-champagne-gold:hover {
+  background: linear-gradient(135deg, #EED18D 0%, #D4A352 100%);
+  box-shadow: 0 6px 24px rgba(229, 193, 120, 0.35);
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   Sticky Header & Scroll-Offset Utilities (Branch Page Navigation Offsets)
+   ========================================================================== */
+:root {
+  --header-height: 74px;
+  --branch-nav-height: 56px;
+}
+
+/* Scroll margin offset accounting for sticky main header */
+.scroll-mt-header {
+  scroll-margin-top: calc(var(--header-height) + 1rem);
+}
+
+/* Scroll margin offset accounting for sticky main header + branch sub-nav */
+.scroll-mt-branch-nav {
+  scroll-margin-top: calc(var(--header-height) + var(--branch-nav-height) + 1.5rem);
+}
+
+/* Consistent, accessible keyboard focus ring for luxury dark UI */
+.focus-ring-gold {
+  outline: none;
+}
+.focus-ring-gold:focus-visible {
+  outline: 2px solid #E5C178;
+  outline-offset: 2px;
+}
+
+/* Accessible Reduced-Motion Support: Pause marquees and avoid disorienting motion while preserving essential state feedback */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+  .animate-marquee-left,
+  .animate-marquee-right {
+    animation-play-state: paused !important;
+  }
+}
+
+/* ==========================================================================
+   Leaflet Dark Luxury Map & Gold Marker Styling (Warm Obsidian Tuning)
+   ========================================================================== */
+.leaflet-container {
+  background-color: #0E0A07 !important;
+  font-family: inherit;
+  outline: none;
+}
+/* OpenStreetMap Dark Luxury Map Styling for FLATEL */
+.flatel-dark-tiles {
+  filter: brightness(0.68) invert(1) contrast(2.4) hue-rotate(180deg) saturate(0.2) brightness(0.85) !important;
+}
+.leaflet-control-zoom {
+  border: 1px solid rgba(212, 163, 89, 0.28) !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+}
+.leaflet-control-zoom a {
+  background-color: #16100B !important;
+  color: #E5C178 !important;
+  border-bottom: 1px solid rgba(212, 163, 89, 0.28) !important;
+  width: 32px !important;
+  height: 32px !important;
+  line-height: 32px !important;
+  font-size: 16px !important;
+  transition: all 0.2s ease;
+}
+.leaflet-control-zoom a:hover {
+  background-color: #221810 !important;
+  color: #FFF4C2 !important;
+}
+.leaflet-control-attribution {
+  background-color: rgba(14, 10, 7, 0.88) !important;
+  backdrop-filter: blur(4px);
+  color: #B8A692 !important;
+  font-size: 10px !important;
+  padding: 2px 8px !important;
+  border-top-left-radius: 6px;
+  border-top: 1px solid rgba(212, 163, 89, 0.28);
+  border-left: 1px solid rgba(212, 163, 89, 0.28);
+}
+.leaflet-control-attribution a {
+  color: #E5C178 !important;
+  text-decoration: none !important;
+}
+.leaflet-control-attribution a:hover {
+  text-decoration: underline !important;
+}
+.flatel-marker-pin {
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+.flatel-marker-pin:hover {
+  transform: translateY(-4px) scale(1.08);
+}
+.flatel-marker-active {
+  z-index: 1000 !important;
+}
+.flatel-marker-active .flatel-marker-pin {
+  transform: translateY(-4px) scale(1.15);
+}
+
+/* ==========================================================================
+   Two-Line Marquee Animations for Amenities Showcase (Left & Right)
+   ========================================================================== */
+@keyframes marquee-scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-scroll-right {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.animate-marquee-left {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll-left 42s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee-right {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll-right 42s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee-left:hover,
+.animate-marquee-right:hover {
+  animation-play-state: paused;
+}
+
+/* Leaflet Attribution Bar Contrast Alignment */
+.leaflet-control-attribution {
+  background-color: #16100B !important;
+  color: #D6C7B7 !important;
+  border: 1px solid rgba(212, 163, 89, 0.25) !important;
+  border-radius: 6px !important;
+  padding: 2px 8px !important;
+  font-size: 10px !important;
+}
+
+.leaflet-control-attribution a {
+  color: #E5C178 !important;
+}
