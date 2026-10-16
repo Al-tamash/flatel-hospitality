@@ -1,10 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   cacheComponents: true,
-  partialPrefetching: true,
-  outputFileTracingRoot: process.cwd(),
   images: {
     qualities: [75, 85, 95, 100],
     remotePatterns: [
@@ -17,15 +14,6 @@ const nextConfig: NextConfig = {
         hostname: "**.r2.dev",
       },
     ],
-  },
-  turbopack: {
-    root: process.cwd(),
-    rules: {
-      "*.css": {
-        loaders: ["@tailwindcss/turbopack"],
-        as: "*.css",
-      },
-    },
   },
   async redirects() {
     return [
