@@ -17,7 +17,6 @@ import {
   ShieldCheck,
   LogIn,
   UserPlus,
-  Search,
 } from "lucide-react";
 import {
   HEADER_NAVIGATION,
@@ -142,19 +141,6 @@ function SiteHeaderContent() {
   };
 
   const isBranchesActive = pathname.startsWith("/branches");
-
-  const handleSearchClick = () => {
-    if (pathname === "/") {
-      const el = document.getElementById("booking-search-bar") || document.getElementById("flats");
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth" });
-        const input = el.querySelector("input");
-        if (input) input.focus();
-      }
-    } else {
-      router.push("/#booking-search-bar");
-    }
-  };
 
   return (
     <>
@@ -375,18 +361,7 @@ function SiteHeaderContent() {
 
             {/* Desktop Actions */}
             <div className="flex items-center gap-2 xl:gap-3 shrink-0">
-              {/* Search Trigger */}
-              <button
-                type="button"
-                onClick={handleSearchClick}
-                className="inline-flex items-center gap-1.5 px-2.5 xl:px-3 py-2 min-h-[40px] text-sm xl:text-[15px] font-semibold text-[#D4C4B3] hover:text-[#E5C178] transition-colors group cursor-pointer rounded-md focus:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178]"
-                aria-label="Search flats and availability"
-              >
-                <Search className="h-4 w-4 text-[#E5C178] group-hover:scale-105 transition-transform shrink-0" />
-                <span>Search</span>
-              </button>
-
-              {/* 9. Sign In Pill Button */}
+              {/* Sign In Pill Button */}
               {!user ? (
                 <button
                   type="button"
@@ -569,23 +544,8 @@ function SiteHeaderContent() {
           {/* Mobile Navigation List */}
           <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-5 flex flex-col justify-between">
             <div className="space-y-4">
-              {/* Quick Search Action */}
-              <div className="space-y-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    handleSearchClick();
-                  }}
-                  className="flex items-center justify-center gap-2 w-full py-2.5 px-3 rounded-xl bg-[rgba(34,24,16,0.7)] border border-[rgba(212,163,89,0.28)] text-[#FAF4EB] hover:text-[#E5C178] text-xs font-semibold shadow-xs cursor-pointer"
-                >
-                  <Search className="h-3.5 w-3.5 text-[#E5C178]" />
-                  <span>Search Flats &amp; Availability</span>
-                </button>
-              </div>
-
               {/* Main Links matching desktop navbar exact order */}
-              <div className="space-y-1 pt-1">
+              <div className="space-y-1">
                 {/* 1. Properties */}
                 <Link
                   href="/properties"
