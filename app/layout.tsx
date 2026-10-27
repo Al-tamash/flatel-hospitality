@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, DM_Sans } from "next/font/google";
+import { Cormorant_Garamond, DM_Sans, Cairo } from "next/font/google";
 import "./globals.css";
 
 const cormorantGaramond = Cormorant_Garamond({
@@ -13,6 +13,13 @@ const cormorantGaramond = Cormorant_Garamond({
 const dmSans = DM_Sans({
   variable: "--font-sans",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+const cairo = Cairo({
+  variable: "--font-arabic",
+  subsets: ["arabic", "latin"],
   weight: ["400", "500", "600", "700"],
   display: "swap",
 });
@@ -41,7 +48,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${dmSans.variable} ${cormorantGaramond.variable} overflow-x-clip dark`}
+      className={`${dmSans.variable} ${cormorantGaramond.variable} ${cairo.variable} overflow-x-clip dark`}
       suppressHydrationWarning
     >
       <body className="min-h-screen overflow-x-clip bg-background font-sans text-foreground antialiased selection:bg-primary/20 selection:text-primary">

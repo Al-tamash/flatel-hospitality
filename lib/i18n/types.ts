@@ -1,0 +1,175 @@
+export type Locale = "en" | "ar";
+
+export interface Dictionary {
+  common: {
+    brandName: string;
+    brandTagline: string;
+    switchLanguage: string;
+    english: string;
+    arabic: string;
+    signIn: string;
+    signOut: string;
+    bookNow: string;
+    viewDetails: string;
+    back: string;
+    loading: string;
+    perNight: string;
+    from: string;
+    taxesIncluded: string;
+    allRightsReserved: string;
+    contactUs: string;
+    whatsapp: string;
+    callNow: string;
+    directions: string;
+  };
+  nav: {
+    properties: string;
+    hospitals: string;
+    about: string;
+    branches: string;
+    policies: string;
+    listProperty: string;
+    myBookings: string;
+    adminPortal: string;
+    allLocations: string;
+    officialBranches: string;
+  };
+  home: {
+    heroBadge: string;
+    heroTitleLine1: string;
+    heroTitleHighlight: string;
+    heroSubtitle: string;
+    exploreResidences: string;
+    quickSearchTitle: string;
+    checkIn: string;
+    checkOut: string;
+    guests: string;
+    flatType: string;
+    branch: string;
+    searchButton: string;
+    trustTitle: string;
+    trustSubtitle: string;
+    featuredTitle: string;
+    featuredSubtitle: string;
+    amenitiesTitle: string;
+    amenitiesSubtitle: string;
+    faqTitle: string;
+    faqSubtitle: string;
+  };
+  properties: {
+    pageTitle: string;
+    pageSubtitle: string;
+    filterAll: string;
+    filter1BHK: string;
+    filter2BHK: string;
+    filter3BHK: string;
+    filter4BHK: string;
+    selectDatesToBook: string;
+    availableUnits: string;
+    maxGuests: string;
+    bedrooms: string;
+    bathrooms: string;
+    kitchens: string;
+    startingFrom: string;
+  };
+  rooms: {
+    overview: string;
+    specifications: string;
+    amenities: string;
+    location: string;
+    houseRules: string;
+    instantReservation: string;
+    reserveUnit: string;
+    securePaymentNote: string;
+    stayPurpose: string;
+    medicalStay: string;
+    familyVacation: string;
+    businessWork: string;
+    transitStop: string;
+    guestCount: string;
+  };
+  hospitals: {
+    pageTitle: string;
+    pageSubtitle: string;
+    medicalServicesBadge: string;
+    distanceBadge: string;
+    getDirections: string;
+    conciergeTitle: string;
+    conciergeDesc: string;
+  };
+  about: {
+    pageTitle: string;
+    pageSubtitle: string;
+    ourStoryTitle: string;
+    hospitalityStandardTitle: string;
+    branchesTitle: string;
+  };
+  policies: {
+    pageTitle: string;
+    pageSubtitle: string;
+    advancePaymentTitle: string;
+    advancePaymentDesc: string;
+    checkInWindow: string;
+    checkOutTime: string;
+    cancellationTitle: string;
+    cancellationDesc: string;
+    housekeepingSchedule: string;
+  };
+  myBookings: {
+    pageTitle: string;
+    pageSubtitle: string;
+    searchReservationPlaceholder: string;
+    lookupButton: string;
+    noBookingsFound: string;
+    bookingId: string;
+    status: string;
+    paid: string;
+    pending: string;
+    downloadVoucher: string;
+  };
+  listProperty: {
+    pageTitle: string;
+    pageSubtitle: string;
+    formFullName: string;
+    formPhone: string;
+    formEmail: string;
+    formPropertyAddress: string;
+    formPropertyType: string;
+    submitInquiry: string;
+    inquirySuccess: string;
+  };
+  checkout: {
+    pageTitle: string;
+    pageSubtitle: string;
+    step1Title: string;
+    step2Title: string;
+    fullName: string;
+    phone: string;
+    email: string;
+    purposeOfStay: string;
+    priceSummary: string;
+    advancePaymentLabel: string;
+    balanceAtCheckInLabel: string;
+    totalPayable: string;
+    proceedToPayment: string;
+  };
+  confirmation: {
+    pageTitle: string;
+    pageSubtitle: string;
+    reservationId: string;
+    congratulations: string;
+    voucherReadyText: string;
+    downloadVoucher: string;
+    propertyLocation: string;
+    checkInInstructions: string;
+  };
+  auth: {
+    signInTitle: string;
+    signInSubtitle: string;
+    signUpTitle: string;
+    phoneNumberOrEmail: string;
+    sendOtp: string;
+    enterOtp: string;
+    verifyAndLogin: string;
+  };
+}

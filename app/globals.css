@@ -46,10 +46,11 @@
   --color-soft-gold: var(--gold-soft);
   --color-dark-gold-border: var(--gold-border);
 
-  /* Fonts (Cormorant Garamond for Serifs & Headings, DM Sans for Sans) */
+  /* Fonts (Cormorant Garamond for Serifs & Headings, DM Sans for Sans, Cairo for Arabic) */
   --font-sans: var(--font-sans);
   --font-heading: var(--font-serif);
   --font-serif: var(--font-serif);
+  --font-arabic: var(--font-arabic);
 
   /* Radii */
   --radius-xs: 2px;
@@ -157,6 +158,17 @@
     overflow-x: hidden;
     min-width: 320px;
     width: 100%;
+  }
+
+  [dir="rtl"] {
+    font-family: var(--font-arabic), var(--font-sans), system-ui, sans-serif;
+    letter-spacing: normal;
+  }
+
+  [dir="rtl"] .font-heading,
+  [dir="rtl"] .font-serif {
+    font-family: var(--font-arabic), var(--font-serif), serif;
+    letter-spacing: normal;
   }
 
   p {
