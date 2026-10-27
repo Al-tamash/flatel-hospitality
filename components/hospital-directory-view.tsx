@@ -3,6 +3,7 @@
 import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   MapPin,
   Navigation,
@@ -12,6 +13,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getLocaleFromPath } from "@/lib/i18n";
 
 export interface HospitalItem {
   id: string;
@@ -126,14 +128,19 @@ export const HOSPITALS_DATA: HospitalItem[] = [
 export const HOSPITAL_RECORDS = HOSPITALS_DATA;
 
 const SPECIALTY_TABS = [
-  { id: "all", label: "All Hospitals" },
-  { id: "multi-speciality", label: "Multi-Speciality" },
-  { id: "oncology", label: "Oncology" },
-  { id: "gastroenterology", label: "Gastroenterology" },
-  { id: "government", label: "Government" },
+  { id: "all", labelEn: "All Hospitals", labelAr: "كافة المستشفيات" },
+  { id: "multi-speciality", labelEn: "Multi-Speciality", labelAr: "متعدد التخصصات" },
+  { id: "oncology", labelEn: "Oncology", labelAr: "علاج الأورام" },
+  { id: "gastroenterology", labelEn: "Gastroenterology", labelAr: "أمراض الجهاز الهضمي" },
+  { id: "government", labelEn: "Government", labelAr: "مستشفيات حكومية" },
 ] as const;
 
 export function HospitalDirectoryView() {
+  const pathname = usePathname();
+  const currentLocale = getLocaleFromPath(pathname);
+  const isAr = currentLocale === "ar";
+  const basePath = isAr ? "/ar" : "";
+
   const [selectedSpecialty, setSelectedSpecialty] = React.useState<string>("all");
   const [searchQuery, setSearchQuery] = React.useState<string>("");
 
@@ -158,36 +165,38 @@ export function HospitalDirectoryView() {
         {/* Page Heading */}
         <div className="max-w-3xl mb-10 sm:mb-12">
           <Link
-            href="/"
+            href={basePath || "/"}
             className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-[#E5C178] hover:underline mb-3"
           >
-            ← Back to Homepage
+            {isAr ? "← العودة إلى الصفحة الرئيسية" : "← Back to Homepage"}
           </Link>
           <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-medium text-[#FAF4EB] tracking-normal leading-[1.1]">
-            Hyderabad Hospital &amp; Medical Travel Guide
+            {isAr ? "دليل مستشفيات حيدر أباد والسياحة العلاجية" : "Hyderabad Hospital & Medical Travel Guide"}
           </h1>
           <p className="mt-3 text-sm sm:text-base md:text-lg text-[#D4C4B3] leading-relaxed">
-            Planning a medical stay in Hyderabad? Browse local hospital information and explore furnished Flatel residences with private kitchens.
+            {isAr
+              ? "هل تخطط لإقامة علاجية في حيدر أباد؟ تصفح معلومات المستشفيات المحلية واستكشف شقق فلاتيل الفندقية المجهزة بمطابخ خاصة."
+              : "Planning a medical stay in Hyderabad? Browse local hospital information and explore furnished Flatel residences with private kitchens."}
           </p>
         </div>
 
         {/* Filter and Search Bar */}
         <div className="p-3.5 sm:p-4 rounded-2xl bg-[rgba(34,24,16,0.65)] backdrop-blur-md border border-[rgba(212,163,89,0.28)] mb-8 flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
           <div className="relative flex-1 min-w-0 md:max-w-md">
-            <Search className="w-4 h-4 text-[#D4C4B3] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <Search className="w-4 h-4 text-[#D4C4B3] absolute left-3 rtl:left-auto rtl:right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
-              aria-label="Search hospitals by name, area, or specialty"
+              aria-label={isAr ? "البحث عن المستشفيات بالاسم أو المنطقة أو التخصص" : "Search hospitals by name, area, or specialty"}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search hospital by name, area, or specialty..."
-              className="w-full bg-[rgba(22,16,11,0.7)] border border-[rgba(212,163,89,0.25)] focus:border-[#E5C178] rounded-xl pl-9 pr-8 py-2.5 text-sm sm:text-base text-[#FAF4EB] placeholder-[#FAF4EB]/50 focus:outline-hidden transition-colors"
+              placeholder={isAr ? "ابحث عن المستشفى بالاسم، المنطقة، أو التخصص..." : "Search hospital by name, area, or specialty..."}
+              className="w-full bg-[rgba(22,16,11,0.7)] border border-[rgba(212,163,89,0.25)] focus:border-[#E5C178] rounded-xl pl-9 rtl:pl-4 rtl:pr-9 pr-8 py-2.5 text-sm sm:text-base text-[#FAF4EB] placeholder-[#FAF4EB]/50 focus:outline-hidden transition-colors"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery("")}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#D4C4B3] hover:text-[#FAF4EB] p-0.5"
+                className="absolute right-2.5 rtl:right-auto rtl:left-2.5 top-1/2 -translate-y-1/2 text-[#D4C4B3] hover:text-[#FAF4EB] p-0.5"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -209,7 +218,7 @@ export function HospitalDirectoryView() {
                       : "bg-[rgba(22,16,11,0.6)] text-[#D4C4B3] hover:text-[#FAF4EB] border border-[rgba(212,163,89,0.2)]"
                   )}
                 >
-                  {tab.label}
+                  {isAr ? tab.labelAr : tab.labelEn}
                 </button>
               );
             })}
@@ -262,21 +271,21 @@ export function HospitalDirectoryView() {
                   {/* Actions */}
                   <div className="pt-3.5 border-t border-[rgba(212,163,89,0.18)] flex items-center gap-2">
                     <Link
-                      href="/#flats"
+                      href={`${basePath}/#flats`}
                       className="flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] hover:brightness-105 text-[#140E08] font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all text-center min-h-[44px]"
                     >
-                      <span>Nearby Flats</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
+                      <span>{isAr ? "شقق قريبة" : "Nearby Flats"}</span>
+                      <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
                     </Link>
                     <a
                       href={hospital.googleMapsUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="py-2.5 px-3 rounded-xl bg-[rgba(22,16,11,0.85)] hover:bg-[rgba(45,32,22,0.9)] text-[#FAF4EB] border border-[rgba(212,163,89,0.25)] hover:border-[#E5C178] text-xs sm:text-sm font-semibold flex items-center justify-center gap-1 transition-colors min-h-[44px]"
-                      aria-label={`Get directions to ${hospital.name}`}
+                      aria-label={isAr ? `الاتجاهات إلى ${hospital.name}` : `Get directions to ${hospital.name}`}
                     >
                       <Navigation className="w-3.5 h-3.5 text-[#E5C178]" />
-                      <span>Map</span>
+                      <span>{isAr ? "الخريطة" : "Map"}</span>
                     </a>
                   </div>
                 </div>
@@ -285,16 +294,18 @@ export function HospitalDirectoryView() {
           </div>
         ) : (
           <div className="p-8 text-center rounded-2xl bg-[#16100B] border border-[rgba(212,163,89,0.28)]">
-            <p className="text-base font-semibold text-[#FAF4EB]">No hospitals match your search</p>
+            <p className="text-base font-semibold text-[#FAF4EB]">
+              {isAr ? "لا توجد مستشفيات مطابقة لبحثك" : "No hospitals match your search"}
+            </p>
             <button
               type="button"
               onClick={() => {
                 setSearchQuery("");
                 setSelectedSpecialty("all");
               }}
-              className="mt-3.5 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] font-bold text-sm min-h-[44px]"
+              className="mt-3.5 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] font-bold text-sm min-h-[44px] cursor-pointer"
             >
-              Reset Filters
+              {isAr ? "إعادة ضبط التصفية" : "Reset Filters"}
             </button>
           </div>
         )}
@@ -303,8 +314,12 @@ export function HospitalDirectoryView() {
         <div className="mt-12 p-4 sm:p-5 rounded-2xl bg-[rgba(34,24,16,0.65)] backdrop-blur-md border border-[rgba(212,163,89,0.25)] flex items-start gap-3 text-xs sm:text-sm text-[#D4C4B3]">
           <AlertCircle className="w-5 h-5 text-[#E5C178] shrink-0 mt-0.5" />
           <p className="leading-relaxed">
-            <strong className="text-[#FAF4EB] font-semibold">Non-Clinical Healthcare Notice:</strong>{" "}
-            Flatel Hospitality provides serviced accommodations and non-clinical guest assistance. We do not provide clinical treatment, diagnoses, or emergency dispatch services. All medical care is delivered exclusively by licensed healthcare facilities.
+            <strong className="text-[#FAF4EB] font-semibold">
+              {isAr ? "إشعار الرعاية الصحية غير السريرية:" : "Non-Clinical Healthcare Notice:"}
+            </strong>{" "}
+            {isAr
+              ? "تقدم فلاتيل للضيافة إقامات فندقية ومساعدة لوجستية غير سريرية. نحن لا نقدم استشارات طبية أو علاجية أو خدمات طوارئ سريرية. يتم تقديم الرعاية الطبية حصراً بواسطة المراكز والمستشفيات المرخصة."
+              : "Flatel Hospitality provides serviced accommodations and non-clinical guest assistance. We do not provide clinical treatment, diagnoses, or emergency dispatch services. All medical care is delivered exclusively by licensed healthcare facilities."}
           </p>
         </div>
       </div>

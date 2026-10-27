@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { usePathname } from "next/navigation";
 import { format, differenceInCalendarDays, parseISO } from "date-fns";
 import {
   MapPin,
@@ -26,6 +27,10 @@ export interface BookingSearchProps {
 }
 
 export function BookingSearch({ initialBranch = null, className }: BookingSearchProps = {}) {
+  const pathname = usePathname();
+  const isAr = pathname?.startsWith("/ar");
+  const basePath = isAr ? "/ar" : "";
+
   // 1. Branch Selector State
   const [selectedBranch, setSelectedBranch] = React.useState<BranchFilter | null>(initialBranch);
 
@@ -251,7 +256,7 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
     }
 
     const queryStr = params.toString();
-    const newUrl = queryStr ? `/?${queryStr}#flats` : "/#flats";
+    const newUrl = queryStr ? `${basePath}/?${queryStr}#flats` : `${basePath}/#flats`;
 
     if (typeof window !== "undefined") {
       window.history.pushState(null, "", newUrl);
@@ -330,9 +335,9 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
                   <div className="w-7 h-7 rounded-lg bg-[#E5C178]/10 border border-[#E5C178]/25 flex items-center justify-center shrink-0 lg:bg-transparent lg:border-0 lg:w-auto lg:h-auto">
                     <MapPin className="w-4 h-4 text-[#E5C178] shrink-0" />
                   </div>
-                  <div className="flex flex-col min-w-0 flex-1">
+                  <div className="flex flex-col min-w-0 flex-1 text-start">
                     <span className="text-xs lg:text-[13px] font-sans font-semibold text-[#D4C4B3] uppercase lg:normal-case leading-none">
-                      Branch / Location
+                      {isAr ? "الفرع / الموقع" : "Branch / Location"}
                     </span>
                     <span className="font-sans text-sm sm:text-base font-semibold text-[#FAF4EB] tracking-normal leading-tight mt-1 truncate">
                       {branchDisplay}
@@ -372,9 +377,9 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
                   </div>
 
                   {/* Desktop Unified Date Range */}
-                  <div className="hidden lg:flex flex-col min-w-0 flex-1">
+                  <div className="hidden lg:flex flex-col min-w-0 flex-1 text-start">
                     <span className="text-xs lg:text-[13px] font-sans font-semibold text-[#D4C4B3] leading-none">
-                      Check-in - Check-out
+                      {isAr ? "تسجيل الوصول - تسجيل المغادرة" : "Check-in - Check-out"}
                     </span>
                     <span className="font-sans text-sm sm:text-base font-semibold text-[#FAF4EB] tracking-normal leading-tight mt-1 truncate">
                       {dateRangeDisplay}
@@ -383,30 +388,30 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
 
                   {/* Mobile Dual Date Columns with Night Duration Indicator */}
                   <div className="lg:hidden flex items-center justify-between min-w-0 flex-1 gap-2.5">
-                    <div className="flex flex-col min-w-0 flex-1">
+                    <div className="flex flex-col min-w-0 flex-1 text-start">
                       <span className="text-xs font-sans font-semibold text-[#D4C4B3] uppercase leading-none">
-                        Check-In
+                        {isAr ? "تسجيل الوصول" : "Check-In"}
                       </span>
                       <span className="font-sans text-sm font-semibold text-[#FAF4EB] tracking-normal leading-tight mt-1 truncate">
-                        {checkIn ? format(checkIn, "d MMM, EEE") : "Select date"}
+                        {checkIn ? format(checkIn, "d MMM, EEE") : (isAr ? "حدد التاريخ" : "Select date")}
                       </span>
                     </div>
 
                     <div className="h-6 w-px bg-[rgba(212,163,89,0.18)] shrink-0" aria-hidden="true" />
 
-                    <div className="flex flex-col min-w-0 flex-1">
+                    <div className="flex flex-col min-w-0 flex-1 text-start">
                       <div className="flex items-center justify-between gap-1">
                         <span className="text-xs font-sans font-semibold text-[#D4C4B3] uppercase leading-none">
-                          Check-Out
+                          {isAr ? "المغادرة" : "Check-Out"}
                         </span>
                         {nightsCount > 0 && (
                           <span className="text-xs font-mono text-[#E5C178] font-bold">
-                            {nightsCount}N
+                            {nightsCount}{isAr ? " ليالٍ" : "N"}
                           </span>
                         )}
                       </div>
                       <span className="font-sans text-sm font-semibold text-[#FAF4EB] tracking-normal leading-tight mt-1 truncate">
-                        {checkOut ? format(checkOut, "d MMM, EEE") : "Select date"}
+                        {checkOut ? format(checkOut, "d MMM, EEE") : (isAr ? "حدد التاريخ" : "Select date")}
                       </span>
                     </div>
                   </div>
@@ -440,9 +445,9 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
                   <div className="w-7 h-7 rounded-lg bg-[#E5C178]/10 border border-[#E5C178]/25 flex items-center justify-center shrink-0 lg:bg-transparent lg:border-0 lg:w-auto lg:h-auto">
                     <Home className="w-4 h-4 text-[#E5C178] shrink-0" />
                   </div>
-                  <div className="flex flex-col min-w-0 flex-1">
+                  <div className="flex flex-col min-w-0 flex-1 text-start">
                     <span className="text-xs lg:text-[13px] font-sans font-semibold text-[#D4C4B3] uppercase lg:normal-case leading-none">
-                      Flat & Occupancy
+                      {isAr ? "الشقة وعدد الضيوف" : "Flat & Occupancy"}
                     </span>
                     <span className="font-sans text-sm sm:text-base font-semibold text-[#FAF4EB] tracking-normal leading-tight mt-1 truncate">
                       {flatOccupancySummary}
@@ -473,7 +478,9 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
                 )}
               >
                 <Search className="w-4 h-4 shrink-0 stroke-[2.5]" />
-                <span className="whitespace-nowrap">Search Available Flats</span>
+                <span className="whitespace-nowrap">
+                  {isAr ? "البحث عن الشقق المتاحة" : "Search Available Flats"}
+                </span>
               </button>
             </div>
           </div>

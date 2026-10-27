@@ -3,7 +3,7 @@
 import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import {
   format,
   addDays,
@@ -45,6 +45,9 @@ interface BranchDetailViewProps {
 
 export function BranchDetailView({ branch, properties }: BranchDetailViewProps) {
   const router = useRouter();
+  const pathname = usePathname();
+  const isAr = pathname?.startsWith("/ar");
+  const basePath = isAr ? "/ar" : "";
   const profile = React.useMemo(() => getBranchProfile(branch.slug), [branch.slug]);
 
   // Selected flat state (defaults to first available property)
@@ -184,7 +187,7 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
       children: childrenCount.toString(),
     });
 
-    router.push(`/checkout?${queryParams.toString()}`);
+    router.push(`${basePath}/checkout?${queryParams.toString()}`);
   };
 
   return (
@@ -198,15 +201,15 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10 flex items-center justify-between">
           <div className="flex items-center gap-1.5 overflow-x-auto whitespace-nowrap">
-            <Link href="/" className="hover:text-[#FAF4EB] transition-colors">
-              Home
+            <Link href={basePath || "/"} className="hover:text-[#FAF4EB] transition-colors">
+              {isAr ? "الرئيسية" : "Home"}
             </Link>
             <ChevronRight className="h-3 w-3 text-[#D4C4B3]/50 shrink-0" />
-            <Link href="/branches" className="hover:text-[#FAF4EB] transition-colors">
-              Branches
+            <Link href={`${basePath}/branches`} className="hover:text-[#FAF4EB] transition-colors">
+              {isAr ? "الفروع" : "Branches"}
             </Link>
             <ChevronRight className="h-3 w-3 text-[#D4C4B3]/50 shrink-0" />
-            <span className="text-[#D4C4B3]/70">Hyderabad</span>
+            <span className="text-[#D4C4B3]/70">{isAr ? "حيدر أباد" : "Hyderabad"}</span>
             <ChevronRight className="h-3 w-3 text-[#D4C4B3]/50 shrink-0" />
             <span className="text-[#FAF4EB] font-medium truncate">
               {branch.name} Serviced Residences
@@ -720,11 +723,11 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
             </div>
 
             <Link
-              href="/properties"
+              href={`${basePath}/properties`}
               className="inline-flex items-center gap-1 text-xs sm:text-sm font-semibold text-[#E5C178] hover:text-[#FAF4EB] transition-colors"
             >
-              <span>View all residences</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <span>{isAr ? "عرض كافة الإقامات" : "View all residences"}</span>
+              <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
             </Link>
           </div>
 
@@ -785,16 +788,16 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
                         <span className="font-heading text-lg font-bold text-[#E5C178]">
                           ₹<span className="tabular-nums">{property.basePricePerNight.toLocaleString("en-IN")}</span>
                         </span>
-                        <span className="text-xs text-[#D4C4B3]">/ night</span>
+                        <span className="text-xs text-[#D4C4B3]">{isAr ? "/ ليلة" : "/ night"}</span>
                       </div>
                     </div>
 
                     <Link
-                      href={`/properties/${property.slug}`}
+                      href={`${basePath}/properties/${property.slug}`}
                       className="inline-flex items-center gap-1 px-3.5 py-2 rounded-xl border border-[rgba(212,163,89,0.28)] bg-[#16100B] hover:bg-[#221810] text-[#FAF4EB] text-xs font-semibold transition-colors"
                     >
-                      <span>View Details</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
+                      <span>{isAr ? "عرض التفاصيل" : "View Details"}</span>
+                      <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
                     </Link>
                   </div>
                 </div>

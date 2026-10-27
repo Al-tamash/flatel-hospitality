@@ -214,8 +214,8 @@ export function CheckoutView({ locale = "en" }: CheckoutViewProps) {
     if (kidsParam > 0) params.set("kids", String(kidsParam));
     if (purposeParam !== "accommodation_only") params.set("purpose", purposeParam);
     if (activeAddonIds.length) params.set("addons", activeAddonIds.join(","));
-    return `/properties/${room?.slug || propertySlug}?${params.toString()}`;
-  }, [checkInParam, checkOutParam, adultsParam, kidsParam, purposeParam, activeAddonIds, room?.slug, propertySlug]);
+    return `${basePath}/properties/${room?.slug || propertySlug}?${params.toString()}`;
+  }, [basePath, checkInParam, checkOutParam, adultsParam, kidsParam, purposeParam, activeAddonIds, room?.slug, propertySlug]);
 
   const selectedAddonList = React.useMemo(
     () =>

@@ -22,4 +22,21 @@ assert.equal(getAlternatePath("/ar/checkout", "en"), "/checkout", "'/ar/checkout
 assert.equal(getAlternatePath("/properties", "en"), "/properties", "No-op when already English");
 assert.equal(getAlternatePath("/ar/properties", "ar"), "/ar/properties", "No-op when already Arabic");
 
+// Search query preservation test
+const switchWithSearch = (path: string, search: string, targetLocale: "en" | "ar") => {
+  const alt = getAlternatePath(path, targetLocale);
+  return `${alt}${search}`;
+};
+
+assert.equal(
+  switchWithSearch("/checkout", "?property=1bhk&checkIn=2026-11-01", "ar"),
+  "/ar/checkout?property=1bhk&checkIn=2026-11-01",
+  "Search params must be preserved when switching to Arabic"
+);
+assert.equal(
+  switchWithSearch("/ar/checkout", "?property=1bhk&checkIn=2026-11-01", "en"),
+  "/checkout?property=1bhk&checkIn=2026-11-01",
+  "Search params must be preserved when switching to English"
+);
+
 console.log("✓ All Language Switcher URL mapping tests passed successfully!");

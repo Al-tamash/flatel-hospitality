@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { format, addDays, isBefore, startOfToday, differenceInCalendarDays } from "date-fns";
 import {
   Calendar as CalendarIcon,
@@ -31,6 +31,7 @@ import type { StayPurposeType } from "@/types/booking";
 
 interface BookingSidebarProps {
   room: RoomDetail;
+  locale?: "en" | "ar";
   selectedPurposeId:
     | "medical"
     | "wedding"
@@ -64,6 +65,7 @@ interface BookingSidebarProps {
 
 export function BookingSidebar({
   room,
+  locale,
   selectedPurposeId,
   selectedAddonIds,
   onSelectPurpose,
@@ -79,6 +81,9 @@ export function BookingSidebar({
   onChildrenChange,
 }: BookingSidebarProps) {
   const router = useRouter();
+  const pathname = usePathname();
+  const currentLocale = locale || (pathname?.startsWith("/ar") ? "ar" : "en");
+  const basePath = currentLocale === "ar" ? "/ar" : "";
   const [internalCheckIn, setInternalCheckIn] = React.useState<Date | undefined>(undefined);
   const [internalCheckOut, setInternalCheckOut] = React.useState<Date | undefined>(undefined);
   const [internalAdults, setInternalAdults] = React.useState<number>(room.baseAdults || 2);
@@ -201,7 +206,11 @@ export function BookingSidebar({
     if (isOverCapacity) return;
 
     if (!checkIn || !checkOut) {
-      setDateError("Please select check-in and check-out dates to proceed to secure booking.");
+      setDateError(
+        currentLocale === "ar"
+          ? "يرجى تحديد تواريخ تسجيل الوصول والمغادرة للمتابعة."
+          : "Please select check-in and check-out dates to proceed to secure booking."
+      );
       setCheckInOpen(true);
       return;
     }
@@ -225,7 +234,7 @@ export function BookingSidebar({
       query.set("addons", selectedAddonIds.join(","));
     }
 
-    const targetUrl = `/checkout?${query.toString()}`;
+    const targetUrl = `${basePath}/checkout?${query.toString()}`;
     router.push(targetUrl);
   };
 
@@ -748,13 +757,21 @@ export function BookingSidebar({
           className="w-full h-12 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] hover:opacity-95 text-[#140E08] font-bold text-sm tracking-wide transition-all shadow-lg shadow-[rgba(229,193,120,0.2)] active:scale-[0.99] mt-3 flex items-center justify-center gap-2 cursor-pointer"
         >
           <ShieldCheck className="w-4 h-4 text-[#140E08]" />
-          <span>Reserve Now — Pay ₹{fareResult.advancePayable.toLocaleString("en-IN")} Advance</span>
+          <span>
+            {currentLocale === "ar"
+              ? `احجز الآن — ادفع ₹${fareResult.advancePayable.toLocaleString("en-IN")} كعربون`
+              : `Reserve Now — Pay ₹${fareResult.advancePayable.toLocaleString("en-IN")} Advance`}
+          </span>
         </Button>
 
         {/* Transparent Policy Reassurance */}
         <div className="pt-2 text-center text-xs text-[#B8A692] flex items-center justify-center gap-1.5 leading-relaxed">
           <ShieldCheck className="w-3.5 h-3.5 text-[#E5C178] shrink-0" />
-          <span>Pay 20% now · Remaining 80% at check-in · Free cancellation up to 48 hrs</span>
+          <span>
+            {currentLocale === "ar"
+              ? "ادفع ٢٠٪ الآن · والباقي ٨٠٪ عند تسجيل الوصول · إلغاء مجاني حتى ٤٨ ساعة"
+              : "Pay 20% now · Remaining 80% at check-in · Free cancellation up to 48 hrs"}
+          </span>
         </div>
 
         {/* Direct WhatsApp Concierge Help Action */}
@@ -766,7 +783,11 @@ export function BookingSidebar({
           aria-label="Ask questions on WhatsApp"
         >
           <MessageSquare className="w-3.5 h-3.5 text-[#25D366] group-hover:scale-110 transition-transform" />
-          <span>Questions? Chat with Front Desk on WhatsApp</span>
+          <span>
+            {currentLocale === "ar"
+              ? "لديك استفسار؟ تحدث مع موظف الاستقبال عبر واتساب"
+              : "Questions? Chat with Front Desk on WhatsApp"}
+          </span>
         </a>
       </form>
 
@@ -1014,7 +1035,7 @@ export function BookingSidebar({
                 <span className="font-heading text-base font-normal text-[#E5C178] tabular-nums">₹{fareResult.grossTotal.toLocaleString("en-IN")}</span>
               </div>
               <div className="flex justify-between text-[11px] text-[#E5C178] pt-1">
-                <span>20% Online Advance Due:</span>
+                <span>{currentLocale === "ar" ? "٢٠٪ عربون الحجز المستحق أونلاين:" : "20% Online Advance Due:"}</span>
                 <span className="font-serif font-bold tabular-nums">₹{fareResult.advancePayable.toLocaleString("en-IN")}</span>
               </div>
             </div>
@@ -1034,7 +1055,11 @@ export function BookingSidebar({
               className="w-full h-12 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] font-bold text-sm cursor-pointer shadow-lg active:scale-[0.99]"
             >
               <ShieldCheck className="w-4 h-4 mr-2" />
-              <span>Proceed to Secure Booking (₹{fareResult.advancePayable.toLocaleString("en-IN")})</span>
+              <span>
+                {currentLocale === "ar"
+                  ? `متابعة الحجز الآمن (₹${fareResult.advancePayable.toLocaleString("en-IN")})`
+                  : `Proceed to Secure Booking (₹${fareResult.advancePayable.toLocaleString("en-IN")})`}
+              </span>
             </Button>
           </div>
         </div>

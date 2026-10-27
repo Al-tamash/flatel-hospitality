@@ -50,8 +50,9 @@ export function LanguageSwitcher({ className, variant = "header" }: LanguageSwit
       return;
     }
     const newPath = getAlternatePath(pathname, targetLocale);
+    const search = typeof window !== "undefined" ? window.location.search : "";
     setIsOpen(false);
-    router.push(newPath);
+    router.push(`${newPath}${search}`);
   };
 
   const isRtl = currentLocale === "ar";
@@ -147,7 +148,7 @@ export function LanguageSwitcher({ className, variant = "header" }: LanguageSwit
               role="menuitem"
               onClick={() => handleSelectLanguage("en")}
               className={cn(
-                "flex items-center justify-between w-full px-3 py-2 rounded-xl text-xs font-medium transition-colors text-left group cursor-pointer",
+                "flex items-center justify-between w-full px-3 py-2 rounded-xl text-xs font-medium transition-colors text-start group cursor-pointer",
                 currentLocale === "en"
                   ? "bg-[rgba(34,24,16,0.9)] text-[#E5C178] border border-[rgba(212,163,89,0.35)]"
                   : "text-[#FAF4EB] hover:bg-[rgba(45,32,22,0.7)] hover:text-[#E5C178]"
@@ -166,7 +167,7 @@ export function LanguageSwitcher({ className, variant = "header" }: LanguageSwit
               role="menuitem"
               onClick={() => handleSelectLanguage("ar")}
               className={cn(
-                "flex items-center justify-between w-full px-3 py-2 rounded-xl text-xs font-medium transition-colors text-left group cursor-pointer",
+                "flex items-center justify-between w-full px-3 py-2 rounded-xl text-xs font-medium transition-colors text-start group cursor-pointer",
                 currentLocale === "ar"
                   ? "bg-[rgba(34,24,16,0.9)] text-[#E5C178] border border-[rgba(212,163,89,0.35)]"
                   : "text-[#FAF4EB] hover:bg-[rgba(45,32,22,0.7)] hover:text-[#E5C178]"

@@ -223,16 +223,26 @@ export function FeaturedFlats({ className }: FeaturedFlatsProps) {
         {/* ========================================================== */}
         <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-10">
           <span className="text-xs sm:text-sm font-sans font-semibold tracking-[0.14em] text-[#E5C178] uppercase">
-            HANDPICKED RESIDENCES
+            {isAr ? "إقامات فندقية مختارة بعناية" : "HANDPICKED RESIDENCES"}
           </span>
           <h2
             id="featured-flats-heading"
             className="mt-2.5 font-heading text-3xl sm:text-4xl md:text-5xl font-medium tracking-normal text-[#FAF4EB] leading-[1.12]"
           >
-            Serviced Flats in <span className="text-[#E5C178]">Hyderabad</span>
+            {isAr ? (
+              <>
+                شقق فندقية مفروشة في <span className="text-[#E5C178]">حيدر أباد</span>
+              </>
+            ) : (
+              <>
+                Serviced Flats in <span className="text-[#E5C178]">Hyderabad</span>
+              </>
+            )}
           </h2>
           <p className="mt-3.5 text-sm sm:text-base text-[#D4C4B3] max-w-xl mx-auto leading-relaxed">
-            Private modular kitchen, split AC, high-speed Wi-Fi &amp; alternate-day housekeeping included. Lock dates with 20% advance.
+            {isAr
+              ? "مطابخ مجهزة بالكامل، تكييف سبليت، إنترنت فائق السرعة، وخدمة تنظيف دورية. ثبّت حجزك بعربون ٢٠٪ فقط."
+              : "Private modular kitchen, split AC, high-speed Wi-Fi & alternate-day housekeeping included. Lock dates with 20% advance."}
           </p>
 
           {/* Active Purpose Package Highlight Banner */}
@@ -324,11 +334,11 @@ export function FeaturedFlats({ className }: FeaturedFlatsProps) {
             {/* Flat Size Segmented Control */}
             <div className="inline-flex items-center p-1.5 rounded-full bg-[rgba(34,24,16,0.7)] border border-[rgba(212,163,89,0.22)] shadow-xs max-w-full overflow-x-auto no-scrollbar backdrop-blur-md">
               {[
-                { id: "all", label: "All (4)" },
-                { id: "1bhk", label: "1 BHK" },
-                { id: "2bhk", label: "2 BHK" },
-                { id: "3bhk", label: "3 BHK" },
-                { id: "4bhk", label: "4 BHK" },
+                { id: "all", label: isAr ? "الكل (٤)" : "All (4)" },
+                { id: "1bhk", label: isAr ? "١ غ + صالة" : "1 BHK" },
+                { id: "2bhk", label: isAr ? "٢ غ + صالة" : "2 BHK" },
+                { id: "3bhk", label: isAr ? "٣ غ + صالة" : "3 BHK" },
+                { id: "4bhk", label: isAr ? "٤ غ + صالة" : "4 BHK" },
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -349,9 +359,9 @@ export function FeaturedFlats({ className }: FeaturedFlatsProps) {
             {/* Branch Location Segmented Control */}
             <div className="inline-flex items-center p-1.5 rounded-full bg-[rgba(34,24,16,0.7)] border border-[rgba(212,163,89,0.22)] shadow-xs max-w-full overflow-x-auto no-scrollbar backdrop-blur-md">
               {[
-                { id: "all", label: "All Branches" },
-                { id: "moghal-pura", label: "Moghal Pura" },
-                { id: "barkas-salala", label: "Barkas Salala" },
+                { id: "all", label: isAr ? "كافة الفروع" : "All Branches" },
+                { id: "moghal-pura", label: isAr ? "مغل بورا" : "Moghal Pura" },
+                { id: "barkas-salala", label: isAr ? "باركاس صلالة" : "Barkas Salala" },
               ].map((b) => (
                 <button
                   key={b.id}
@@ -465,14 +475,18 @@ export function FeaturedFlats({ className }: FeaturedFlatsProps) {
                             <span className="font-heading text-3xl sm:text-[32px] font-medium text-[#E5C178] tabular-nums">
                               {formatPrice(room.basePricePerNight)}
                             </span>
-                            <span className="text-xs sm:text-sm text-[#D4C4B3] font-sans font-medium">/ night</span>
+                            <span className="text-xs sm:text-sm text-[#D4C4B3] font-sans font-medium">
+                              {isAr ? "/ ليلة" : "/ night"}
+                            </span>
                           </div>
                           {searchDates.nights ? (
                             <span className="text-xs sm:text-[13px] text-[#FAF4EB]/90 font-medium block mt-0.5">
-                              Est: {formatPrice(estTotal)} ({searchDates.nights}N) · {formatPrice(estAdvance)} adv.
+                              {isAr ? `المجموع التقديري: ${formatPrice(estTotal)} (${searchDates.nights} ليالٍ) · ${formatPrice(estAdvance)} عربون` : `Est: ${formatPrice(estTotal)} (${searchDates.nights}N) · ${formatPrice(estAdvance)} adv.`}
                             </span>
                           ) : (
-                            <span className="text-xs sm:text-[13px] text-[#D4C4B3] font-medium block mt-0.5">Lock with 20% advance</span>
+                            <span className="text-xs sm:text-[13px] text-[#D4C4B3] font-medium block mt-0.5">
+                              {isAr ? "ثبّت حجزك بعربون ٢٠٪ فقط" : "Lock with 20% advance"}
+                            </span>
                           )}
                         </div>
                       </div>
@@ -506,16 +520,20 @@ export function FeaturedFlats({ className }: FeaturedFlatsProps) {
               <Building2 className="w-6 h-6" />
             </div>
             <h3 className="font-heading text-xl sm:text-2xl font-medium text-[#FAF4EB] tracking-normal">
-              {inventoryLoadFailed ? "Residences Could Not Be Loaded" : filteredRooms.length === 0 && rooms.length === 0 ? "No Residences Are Listed" : "No Flats Match This Selection"}
+              {inventoryLoadFailed
+                ? (isAr ? "تعذر تحميل الوحدات" : "Residences Could Not Be Loaded")
+                : filteredRooms.length === 0 && rooms.length === 0
+                  ? (isAr ? "لا توجد شقق مدرجة حالياً" : "No Residences Are Listed")
+                  : (isAr ? "لا توجد شقق مطابقة لهذا الاختيار" : "No Flats Match This Selection")}
             </h3>
             <p className="text-sm sm:text-base text-[#D4C4B3] mt-2 leading-relaxed">
               {inventoryLoadFailed
-                ? "Current residence and rate information is temporarily unavailable. Please try again shortly."
+                ? (isAr ? "بيانات الشقق والأسعار غير متاحة مؤقتاً. يرجى المحاولة بعد قليل." : "Current residence and rate information is temporarily unavailable. Please try again shortly.")
                 : rooms.length === 0
-                  ? "Please check back later for current residence availability."
+                  ? (isAr ? "يرجى التحقق لاحقاً من توفر الشقق الفندقية." : "Please check back later for current residence availability.")
                   : filterBranch === "barkas-salala"
-                ? "Barkas Salala features spacious 3 BHK residences. For 1, 2, and 4 BHK suites, browse our Moghal Pura branch near Charminar."
-                : "Try adjusting your flat size or branch selection to view available serviced apartments."}
+                ? (isAr ? "يتميز فرع باركاس صلالة بشقق ٣ غرف وصالة واسعة. لشقق ١، ٢، و٤ غرف وصالة، تصفح فرع مغل بورا بالقرب من تشارمينار." : "Barkas Salala features spacious 3 BHK residences. For 1, 2, and 4 BHK suites, browse our Moghal Pura branch near Charminar.")
+                : (isAr ? "يرجى تعديل حجم الشقة أو الفرع المختار لعرض الشقق الفندقية المتاحة." : "Try adjusting your flat size or branch selection to view available serviced apartments.")}
             </p>
             {rooms.length > 0 && (
             <div className="mt-5 flex items-center justify-center gap-3">
@@ -527,7 +545,7 @@ export function FeaturedFlats({ className }: FeaturedFlatsProps) {
                 }}
                 className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] font-bold text-sm shadow-md cursor-pointer hover:brightness-105 transition-all min-h-[44px]"
               >
-                Show All Residences
+                {isAr ? "عرض كافة الشقق" : "Show All Residences"}
               </button>
             </div>
             )}
