@@ -3,6 +3,7 @@ import { enDictionary } from "./dictionaries/en";
 import { arDictionary } from "./dictionaries/ar";
 
 export * from "./types";
+export * from "./room-localizer";
 export { enDictionary, arDictionary };
 
 export const LOCALES: Locale[] = ["en", "ar"];
