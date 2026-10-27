@@ -146,12 +146,14 @@ export function FlatOccupancyModal({
     return createDefaultState();
   });
 
-  // Re-sync with initialSelection if updated externally
-  React.useEffect(() => {
+  // Adjust state during render when initialSelection prop changes (standard React pattern)
+  const [prevSelection, setPrevSelection] = React.useState(initialSelection);
+  if (initialSelection !== prevSelection) {
+    setPrevSelection(initialSelection);
     if (initialSelection && Object.keys(initialSelection).length > 0) {
       setFlatsState(initialSelection);
     }
-  }, [initialSelection]);
+  }
 
   // Handle ESC key to dismiss modal
   React.useEffect(() => {

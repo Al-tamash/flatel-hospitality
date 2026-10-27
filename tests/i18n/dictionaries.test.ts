@@ -26,9 +26,10 @@ assert.equal(isValidLocale("ar"), true);
 assert.equal(isValidLocale("fr"), false);
 
 // 3. Deep key comparison between English and Arabic dictionaries
-function getKeys(obj: Record<string, any>, prefix = ""): string[] {
-  return Object.keys(obj).flatMap((key) => {
-    const val = obj[key];
+function getKeys(obj: object, prefix = ""): string[] {
+  const record = obj as Record<string, unknown>;
+  return Object.keys(record).flatMap((key) => {
+    const val = record[key];
     const fullKey = prefix ? `${prefix}.${key}` : key;
     if (val && typeof val === "object" && !Array.isArray(val)) {
       return getKeys(val, fullKey);

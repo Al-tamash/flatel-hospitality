@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   Menu,
   X,
@@ -47,7 +47,6 @@ const BRANCH_ITEMS = [
 
 function SiteHeaderContent() {
   const pathname = usePathname();
-  const router = useRouter();
   const currentLocale = getLocaleFromPath(pathname);
   const dict = getDictionary(currentLocale);
   const isAr = currentLocale === "ar";

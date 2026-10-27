@@ -2,11 +2,8 @@
 
 import * as React from "react";
 import {
-  Building2,
   TrendingUp,
   ShieldCheck,
-  Sparkles,
-  ArrowLeft,
   Send,
   Key,
   BadgeCheck,

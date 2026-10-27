@@ -6,17 +6,10 @@ import {
   CreditCard,
   Clock,
   Sparkles,
-  Users,
-  FileCheck2,
-  Volume2,
-  Ban,
-  Phone,
-  ArrowLeft,
   CheckCircle2,
 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import { CONTACT_PHONE, WHATSAPP_CONFIG } from "@/lib/constants";
 
 interface PolicyCard {
   id: string;

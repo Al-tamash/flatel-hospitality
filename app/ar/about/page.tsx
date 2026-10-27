@@ -2,12 +2,7 @@ import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import {
-  MapPin,
-  CheckCircle2,
-  ArrowLeft,
-  Building2,
-} from "lucide-react";
+import { ArrowLeft, MessageSquare } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { WHATSAPP_CONFIG } from "@/lib/constants";
@@ -198,6 +193,15 @@ export default function ArabicAboutPage() {
                 <span>استكشف الشقق المتاحة</span>
                 <ArrowLeft className="w-4 h-4" />
               </Link>
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-6 py-3 rounded-xl border border-[rgba(212,163,89,0.3)] bg-[#16100B] text-[#FAF4EB] font-bold text-sm shadow-md inline-flex items-center gap-2 hover:border-[#E5C178]"
+              >
+                <MessageSquare className="w-4 h-4 text-[#E5C178]" />
+                <span>تواصل عبر واتساب</span>
+              </a>
             </div>
           </div>
         </section>

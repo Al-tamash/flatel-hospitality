@@ -6,8 +6,6 @@ import {
   MapPin,
   Calendar as CalendarIcon,
   Home,
-  Users,
-  LayoutGrid,
   Search,
   AlertCircle,
   X,
