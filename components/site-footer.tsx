@@ -2,6 +2,8 @@
 
 import * as React from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
 import {
   Phone,
   Mail,
@@ -15,6 +17,8 @@ import {
   CONTACT_EMAIL,
   WHATSAPP_CONFIG,
 } from "@/lib/constants";
+import { getLocaleFromPath, getDictionary } from "@/lib/i18n";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
 
 /**
  * Official WhatsApp Vector Geometry
@@ -33,6 +37,11 @@ function WhatsAppIcon({ className = "w-4 h-4" }: { className?: string }) {
 }
 
 export function SiteFooter() {
+  const pathname = usePathname();
+  const currentLocale = getLocaleFromPath(pathname);
+  const dict = getDictionary(currentLocale);
+  const isAr = currentLocale === "ar";
+  const localePrefix = isAr ? "/ar" : "";
   const [currentYear, setCurrentYear] = React.useState(2026);
 
   React.useEffect(() => {
@@ -45,48 +54,86 @@ export function SiteFooter() {
 
   return (
     <footer
-      className="w-full bg-[#0E0A07] border-t border-[rgba(212,163,89,0.22)] text-[#FAF4EB] select-none"
+      id="site-footer"
+      className="relative w-full bg-[#0E0A07] text-[#FAF4EB] select-none"
       aria-label="Site Footer"
     >
-
+      {/* ── Luxury Moroccan Inward Arch Border (Mamounia Marrakech Inspired) ── */}
+      {/* Deep inward curve in the center ("jada center inward") */}
+      <div className="relative w-full overflow-hidden leading-none select-none -mb-px">
+        <svg
+          viewBox="0 0 1933.1 45"
+          preserveAspectRatio="none"
+          className="w-full h-8 sm:h-11 md:h-14 block"
+          aria-hidden="true"
+        >
+          {/* Subtle ambient drop glow behind the contour line */}
+          <path
+            d="M 0,16.8 H 758 C 758,16.8 950.5,16.8 966.55,44.7 C 982.55,16.8 1210.5,16 1210.5,16 H 1933.1"
+            fill="none"
+            stroke="rgba(229, 193, 120, 0.22)"
+            strokeWidth="3.5"
+            strokeLinecap="round"
+          />
+          {/* Main Footer Obsidian Fill below the inward curve */}
+          <path
+            d="M 0,16.8 H 758 C 758,16.8 950.5,16.8 966.55,44.7 C 982.55,16.8 1210.5,16 1210.5,16 H 1933.1 V 45 H 0 Z"
+            fill="#0E0A07"
+          />
+          {/* Crisp Champagne Gold Contour Line */}
+          <path
+            d="M 0,16.8 H 758 C 758,16.8 950.5,16.8 966.55,44.7 C 982.55,16.8 1210.5,16 1210.5,16 H 1933.1"
+            fill="none"
+            stroke="rgba(212, 163, 89, 0.55)"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
+        </svg>
+      </div>
 
       {/* ── Main Footer Area ── */}
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10 py-12 lg:py-16">
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10 py-12 lg:py-16 relative">
+        {/* Subtle Moroccan Gold Lattice Watermark Backdrop */}
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.10] [mask-image:radial-gradient(ellipse_at_bottom_left,black_40%,transparent_85%)]"
+          style={{
+            backgroundImage: `url('/images/patterns/flatel-gold-lattice.svg')`,
+            backgroundRepeat: "repeat",
+            backgroundPosition: "center",
+            backgroundSize: "600px auto",
+          }}
+          aria-hidden="true"
+        />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12">
           
           {/* ── A. Brand Introduction (5 Columns) ── */}
           <div className="lg:col-span-5 space-y-4">
             <Link
-              href="/"
-              className="inline-flex items-center gap-3 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs group"
+              href={localePrefix || "/"}
+              className="inline-flex items-center gap-3.5 sm:gap-4.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs group"
               aria-label="FLATEL Hospitality Homepage"
             >
-              <div className="w-8 h-8 rounded-lg border border-[rgba(212,163,89,0.5)] bg-[#16100B] text-[#E5C178] flex items-center justify-center shrink-0 group-hover:border-[#E5C178] transition-colors">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.75"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-4 h-4 text-[#E5C178]"
-                >
-                  <path d="M3 10.5L12 3l9 7.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 19.5v-9z" />
-                  <path d="M9 21V12h6v9" />
-                </svg>
-              </div>
-              <div className="flex flex-col items-start">
-                <span className="font-heading text-xl font-bold tracking-[0.06em] text-[#FAF4EB] group-hover:text-[#E5C178] transition-colors">
-                  FLATEL
-                </span>
-                <span className="font-sans text-[8.5px] font-bold tracking-[0.2em] text-[#E5C178] uppercase">
-                  HOSPITALITY
-                </span>
-              </div>
+              {/* Official Gold Monogram Emblem (NO border, NO background box) */}
+              <Image
+                src="/images/flatel-monogram-clean.png"
+                alt="FLATEL Monogram"
+                width={64}
+                height={64}
+                className="w-12 h-12 sm:w-14 sm:h-14 object-contain shrink-0 transition-transform duration-200 group-hover:scale-105"
+              />
+
+              {/* Official FLATEL HOSPITALITY Logo beside the monogram */}
+              <Image
+                src="/images/flatel-logo-clean.png"
+                alt="FLATEL Hospitality"
+                width={210}
+                height={65}
+                className="h-9 sm:h-11 w-auto object-contain shrink-0 transition-opacity duration-200 group-hover:opacity-100"
+              />
             </Link>
 
             <p className="font-heading italic text-sm text-[#E5C178] leading-snug">
-              &ldquo;{BRAND_TAGLINE}&rdquo;
+              &ldquo;{isAr ? dict.common.brandTagline : BRAND_TAGLINE}&rdquo;
             </p>
 
             <p className="text-sm text-[#D4C4B3] leading-relaxed max-w-md font-sans">
@@ -113,15 +160,15 @@ export function SiteFooter() {
               <ul className="space-y-2.5 text-sm text-[#D4C4B3] font-sans">
                 <li>
                   <Link
-                    href="/#flats"
+                    href={`${localePrefix}/properties`}
                     className="hover:text-[#FAF4EB] transition-colors block py-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs"
                   >
-                    Properties
+                    {dict.nav.properties}
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="/#amenities"
+                    href={`${localePrefix}/#amenities`}
                     className="hover:text-[#FAF4EB] transition-colors block py-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs"
                   >
                     Amenities
@@ -129,15 +176,15 @@ export function SiteFooter() {
                 </li>
                 <li>
                   <Link
-                    href="/#locations"
+                    href={`${localePrefix}/#locations`}
                     className="hover:text-[#FAF4EB] transition-colors block py-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs"
                   >
-                    Branches
+                    {dict.nav.branches}
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="/branches/barkas-salala"
+                    href={`${localePrefix}/branches/barkas-salala`}
                     className="hover:text-[#FAF4EB] transition-colors block py-1 text-xs sm:text-sm text-[#D4C4B3] hover:text-[#E5C178] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs"
                   >
                     Barkas Salala
@@ -145,7 +192,7 @@ export function SiteFooter() {
                 </li>
                 <li>
                   <Link
-                    href="/branches/moghal-pura"
+                    href={`${localePrefix}/branches/moghal-pura`}
                     className="hover:text-[#FAF4EB] transition-colors block py-1 text-xs sm:text-sm text-[#D4C4B3] hover:text-[#E5C178] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs"
                   >
                     Moghal Pura
@@ -162,15 +209,15 @@ export function SiteFooter() {
               <ul className="space-y-2.5 text-sm text-[#D4C4B3] font-sans">
                 <li>
                   <Link
-                    href="/#flats"
+                    href={`${localePrefix}/properties`}
                     className="hover:text-[#FAF4EB] transition-colors block py-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs"
                   >
-                    Stay Experiences
+                    {dict.home.exploreResidences}
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="/#how-it-works"
+                    href={`${localePrefix}/#how-it-works`}
                     className="hover:text-[#FAF4EB] transition-colors block py-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs"
                   >
                     Booking Process
@@ -178,7 +225,7 @@ export function SiteFooter() {
                 </li>
                 <li>
                   <Link
-                    href="/policies#checkin-checkout"
+                    href={`${localePrefix}/policies#checkin-checkout`}
                     className="hover:text-[#FAF4EB] transition-colors block py-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs"
                   >
                     House Rules
@@ -186,18 +233,18 @@ export function SiteFooter() {
                 </li>
                 <li>
                   <Link
-                    href="/policies#free-cancellation"
+                    href={`${localePrefix}/policies#free-cancellation`}
                     className="hover:text-[#FAF4EB] transition-colors block py-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs"
                   >
-                    Cancellation Policy
+                    {dict.policies.cancellationTitle}
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="/list-property"
+                    href={`${localePrefix}/list-property`}
                     className="hover:text-[#FAF4EB] transition-colors block py-1 text-xs sm:text-sm text-[#E5C178] hover:text-[#FAF4EB] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs font-semibold"
                   >
-                    List Your Property
+                    {dict.nav.listProperty}
                   </Link>
                 </li>
               </ul>
@@ -252,21 +299,25 @@ export function SiteFooter() {
         {/* ── D. Bottom Legal Bar ── */}
         <div className="mt-12 pt-6 border-t border-[rgba(212,163,89,0.18)] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm text-[#D4C4B3]">
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-4 gap-y-1">
-            <span>© {currentYear} {COMPANY_NAME}. All rights reserved.</span>
+            <span>© {currentYear} {COMPANY_NAME}. {dict.common.allRightsReserved}</span>
             <span className="hidden sm:inline">·</span>
             <Link
-              href="/policies"
+              href={`${localePrefix}/policies`}
               className="hover:text-[#FAF4EB] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs"
             >
               Guest Policies &amp; Stay Rules
             </Link>
             <span className="hidden sm:inline">·</span>
             <Link
-              href="/policies#free-cancellation"
+              href={`${localePrefix}/policies#free-cancellation`}
               className="hover:text-[#FAF4EB] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs"
             >
-              Cancellation Policy
+              {dict.policies.cancellationTitle}
             </Link>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <LanguageSwitcher variant="header" />
           </div>
         </div>
       </div>

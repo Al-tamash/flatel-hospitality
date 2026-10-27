@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import {
   Menu,
@@ -23,6 +24,8 @@ import {
 } from "@/lib/constants";
 import { useAuth } from "@/context/auth-context";
 import { cn } from "@/lib/utils";
+import { getLocaleFromPath, getDictionary } from "@/lib/i18n";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
 
 // Branch navigation metadata with descriptions and specs
 const BRANCH_ITEMS = [
@@ -45,6 +48,10 @@ const BRANCH_ITEMS = [
 function SiteHeaderContent() {
   const pathname = usePathname();
   const router = useRouter();
+  const currentLocale = getLocaleFromPath(pathname);
+  const dict = getDictionary(currentLocale);
+  const isAr = currentLocale === "ar";
+  const localePrefix = isAr ? "/ar" : "";
   const { user, isAdmin, openAuthModal, signOut } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const [isMobileBranchesOpen, setIsMobileBranchesOpen] = React.useState(true);
@@ -161,26 +168,29 @@ function SiteHeaderContent() {
           {/* ========================================================= */}
           <div className="flex items-center shrink-0">
             <Link
-              href={HEADER_NAVIGATION.brand.href}
-              className="group flex items-center gap-2.5 sm:gap-3 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs py-1"
+              href={localePrefix || "/"}
+              className="group flex items-center gap-2.5 sm:gap-3.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs py-1"
               aria-label="FLATEL Hospitality — The comfort of a flat. The service of a hotel."
             >
-              {/* Gold House Emblem */}
-              <div className="w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-lg border border-[rgba(212,163,89,0.6)] flex items-center justify-center text-[#E5C178] bg-[rgba(34,24,16,0.7)] backdrop-blur-md shadow-xs shrink-0 group-hover:border-[#E5C178] transition-colors">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 text-[#E5C178]">
-                  <path d="M3 10.5L12 3l9 7.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 19.5v-9z" />
-                  <path d="M9 21V12h6v9" />
-                </svg>
-              </div>
-              <div className="flex flex-col items-start min-w-0">
-                <span className="font-heading text-[16px] sm:text-[20px] lg:text-[21px] font-bold tracking-[0.06em] text-[#FAF4EB] group-hover:text-[#E5C178] transition-colors duration-200 leading-none">
-                  FLATEL HOSPITALITY
-                </span>
-                <span className="font-sans text-[10px] sm:text-[11px] font-medium text-[#B8A692] uppercase leading-none mt-1 sm:mt-1.5 transition-colors duration-200">
-                  <span className="hidden sm:inline tracking-[0.14em]">SERVICED RESIDENCES · HYDERABAD</span>
-                  <span className="sm:hidden tracking-[0.14em]">SERVICED APARTMENTS</span>
-                </span>
-              </div>
+              {/* Official Gold Monogram Emblem (NO border, NO background box) */}
+              <Image
+                src="/images/flatel-monogram-clean.png"
+                alt="FLATEL Monogram"
+                width={48}
+                height={48}
+                priority
+                className="w-9 h-9 sm:w-11 sm:h-11 object-contain shrink-0 transition-transform duration-200 group-hover:scale-105"
+              />
+
+              {/* Official FLATEL HOSPITALITY Logo Lockup */}
+              <Image
+                src="/images/flatel-logo-clean.png"
+                alt="FLATEL Hospitality"
+                width={170}
+                height={52}
+                priority
+                className="h-7 sm:h-8.5 w-auto object-contain shrink-0"
+              />
             </Link>
           </div>
 
@@ -198,41 +208,41 @@ function SiteHeaderContent() {
             >
               {/* 1. Properties */}
               <Link
-                href="/properties"
+                href={`${localePrefix}/properties`}
                 className={cn(
                   "relative px-3 py-2 min-h-[40px] inline-flex items-center text-sm xl:text-[15px] font-sans font-semibold tracking-normal transition-colors duration-150 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-md",
-                  pathname.startsWith("/properties")
+                  pathname.startsWith(`${localePrefix}/properties`)
                     ? "text-[#E5C178]"
                     : "text-[#D4C4B3] hover:text-[#E5C178]"
                 )}
               >
-                <span>Properties</span>
+                <span>{dict.nav.properties}</span>
               </Link>
 
               {/* 2. Hospitals */}
               <Link
-                href="/hospitals"
+                href={`${localePrefix}/hospitals`}
                 className={cn(
                   "relative px-3 py-2 min-h-[40px] inline-flex items-center text-sm xl:text-[15px] font-sans font-semibold tracking-normal transition-colors duration-150 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-md",
-                  pathname === "/hospitals"
+                  pathname === `${localePrefix}/hospitals`
                     ? "text-[#E5C178]"
                     : "text-[#D4C4B3] hover:text-[#E5C178]"
                 )}
               >
-                <span>Hospitals</span>
+                <span>{dict.nav.hospitals}</span>
               </Link>
 
               {/* 3. About */}
               <Link
-                href="/about"
+                href={`${localePrefix}/about`}
                 className={cn(
                   "relative px-3 py-2 min-h-[40px] inline-flex items-center text-sm xl:text-[15px] font-sans font-semibold tracking-normal transition-colors duration-150 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-md",
-                  pathname === "/about"
+                  pathname === `${localePrefix}/about`
                     ? "text-[#E5C178]"
                     : "text-[#D4C4B3] hover:text-[#E5C178]"
                 )}
               >
-                <span>About</span>
+                <span>{dict.nav.about}</span>
               </Link>
 
               {/* 4. Branches (Dropdown) */}
@@ -256,7 +266,7 @@ function SiteHeaderContent() {
                       : "text-[#D4C4B3] hover:text-[#E5C178]"
                   )}
                 >
-                  <span>Branches</span>
+                  <span>{dict.nav.branches}</span>
                   <ChevronDown
                     className={cn(
                       "h-3.5 w-3.5 transition-transform duration-200",
@@ -278,16 +288,17 @@ function SiteHeaderContent() {
                     className="absolute top-full left-0 mt-2 w-72 rounded-2xl bg-[#16100B]/98 backdrop-blur-xl border border-[rgba(212,163,89,0.28)] shadow-[0_20px_50px_rgba(0,0,0,0.85)] p-2 z-50 animate-in fade-in slide-in-from-top-1 duration-150"
                   >
                     <div className="px-3 py-1.5 text-xs uppercase font-sans font-semibold tracking-[0.14em] text-[#E5C178]">
-                      Official Branches
+                      {dict.nav.officialBranches}
                     </div>
 
                     <div className="space-y-1">
                       {BRANCH_ITEMS.map((branch) => {
-                        const isCurrent = pathname === branch.href;
+                        const targetHref = `${localePrefix}${branch.href}`;
+                        const isCurrent = pathname === targetHref;
                         return (
                           <Link
                             key={branch.slug}
-                            href={branch.href}
+                            href={targetHref}
                             role="menuitem"
                             onClick={() => setIsBranchesDropdownOpen(false)}
                             className={cn(
@@ -317,14 +328,14 @@ function SiteHeaderContent() {
                     <div className="my-1.5 border-t border-[rgba(212,163,89,0.18)]" />
 
                     <Link
-                      href="/#locations"
+                      href={`${localePrefix}/#locations`}
                       role="menuitem"
                       onClick={() => setIsBranchesDropdownOpen(false)}
                       className="flex items-center justify-between px-3 py-2 rounded-xl text-xs sm:text-sm font-sans font-medium text-[#D4C4B3] hover:text-[#FAF4EB] hover:bg-[rgba(34,24,16,0.6)] transition-colors"
                     >
                       <span className="flex items-center gap-1.5">
                         <MapPin className="h-3.5 w-3.5 text-[#E5C178]" />
-                        <span>All Locations Overview</span>
+                        <span>{dict.nav.allLocations}</span>
                       </span>
                       <ExternalLink className="h-3.5 w-3.5 text-[#D4C4B3]/70" />
                     </Link>
@@ -334,33 +345,36 @@ function SiteHeaderContent() {
 
               {/* 5. Policies */}
               <Link
-                href="/policies"
+                href={`${localePrefix}/policies`}
                 className={cn(
                   "relative px-3 py-2 min-h-[40px] inline-flex items-center text-sm xl:text-[15px] font-sans font-semibold tracking-normal transition-colors duration-150 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-md",
-                  pathname === "/policies"
+                  pathname === `${localePrefix}/policies`
                     ? "text-[#E5C178]"
                     : "text-[#D4C4B3] hover:text-[#E5C178]"
                 )}
               >
-                <span>Policies</span>
+                <span>{dict.nav.policies}</span>
               </Link>
 
               {/* 6. List Property */}
               <Link
-                href="/list-property"
+                href={`${localePrefix}/list-property`}
                 className={cn(
                   "relative px-3 py-2 min-h-[40px] inline-flex items-center text-sm xl:text-[15px] font-sans font-semibold tracking-normal transition-colors duration-150 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-md",
-                  pathname === "/list-property"
+                  pathname === `${localePrefix}/list-property`
                     ? "text-[#E5C178]"
                     : "text-[#D4C4B3] hover:text-[#E5C178]"
                 )}
               >
-                <span>List Property</span>
+                <span>{dict.nav.listProperty}</span>
               </Link>
             </nav>
 
             {/* Desktop Actions */}
             <div className="flex items-center gap-2 xl:gap-3 shrink-0">
+              {/* Emaar-Style Language Switcher */}
+              <LanguageSwitcher />
+
               {/* Sign In Pill Button */}
               {!user ? (
                 <button
@@ -370,7 +384,7 @@ function SiteHeaderContent() {
                   aria-label="Account: Sign In"
                 >
                   <User className="h-4 w-4 text-[#E5C178]" />
-                  <span>Sign In</span>
+                  <span>{dict.common.signIn}</span>
                 </button>
               ) : (
                 <div className="relative" ref={userDropdownRef}>
@@ -413,12 +427,12 @@ function SiteHeaderContent() {
 
                       <div className="space-y-1">
                         <Link
-                          href="/my-bookings"
+                          href={`${localePrefix}/my-bookings`}
                           onClick={() => setIsUserDropdownOpen(false)}
                           className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#FAF4EB] hover:bg-[rgba(34,24,16,0.7)] hover:text-[#E5C178] transition-colors"
                         >
                           <CalendarCheck className="w-3.5 h-3.5 text-[#E5C178]" />
-                          <span>My Reservations</span>
+                          <span>{dict.nav.myBookings}</span>
                         </Link>
 
                         {isAdmin && (
@@ -428,7 +442,7 @@ function SiteHeaderContent() {
                             className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#E5C178] hover:bg-[rgba(34,24,16,0.7)] transition-colors font-semibold"
                           >
                             <ShieldCheck className="w-3.5 h-3.5 text-[#E5C178]" />
-                            <span>Owner Admin Portal</span>
+                            <span>{dict.nav.adminPortal}</span>
                           </Link>
                         )}
                       </div>
@@ -444,7 +458,7 @@ function SiteHeaderContent() {
                         className="flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors text-left cursor-pointer"
                       >
                         <LogOut className="w-3.5 h-3.5" />
-                        <span>Sign Out</span>
+                        <span>{dict.common.signOut}</span>
                       </button>
                     </div>
                   )}
@@ -458,6 +472,9 @@ function SiteHeaderContent() {
           {/* Touch target >= 44px                                      */}
           {/* ========================================================= */}
           <div className="flex lg:hidden items-center gap-2 sm:gap-2.5">
+            {/* Quick Language Switcher Trigger */}
+            <LanguageSwitcher variant="header" />
+
             {/* Quick User Account Action Button (Icon-Only) */}
             {!user ? (
               <button
@@ -515,20 +532,23 @@ function SiteHeaderContent() {
               className="flex items-center gap-2.5 focus:outline-none"
               aria-label="FLATEL Hospitality — The comfort of a flat. The service of a hotel."
             >
-              <div className="w-7 h-7 rounded-lg border border-[rgba(212,163,89,0.5)] flex items-center justify-center text-[#E5C178] bg-[rgba(34,24,16,0.7)] shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5 text-[#E5C178]">
-                  <path d="M3 10.5L12 3l9 7.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 19.5v-9z" />
-                  <path d="M9 21V12h6v9" />
-                </svg>
-              </div>
-              <div className="flex flex-col items-start">
-                <span className="font-heading text-[17px] font-bold tracking-[0.06em] text-[#FAF4EB] leading-none">
-                  FLATEL HOSPITALITY
-                </span>
-                <span className="font-sans text-[8px] font-medium tracking-[0.1em] text-[#B8A692] uppercase leading-none mt-1">
-                  The comfort of a flat. The service of a hotel.
-                </span>
-              </div>
+              {/* Official Gold Monogram Emblem (NO border, NO background box) */}
+              <Image
+                src="/images/flatel-monogram-clean.png"
+                alt="FLATEL Monogram"
+                width={36}
+                height={36}
+                className="w-8 h-8 object-contain shrink-0"
+              />
+
+              {/* Official FLATEL HOSPITALITY Logo Lockup */}
+              <Image
+                src="/images/flatel-logo-clean.png"
+                alt="FLATEL Hospitality"
+                width={140}
+                height={42}
+                className="h-6.5 w-auto object-contain shrink-0"
+              />
             </Link>
 
             <button
@@ -544,42 +564,45 @@ function SiteHeaderContent() {
           {/* Mobile Navigation List */}
           <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-5 flex flex-col justify-between">
             <div className="space-y-4">
+              {/* Emaar-Style Mobile Language Switcher */}
+              <LanguageSwitcher variant="mobile" />
+
               {/* Main Links matching desktop navbar exact order */}
               <div className="space-y-1">
                 {/* 1. Properties */}
                 <Link
-                  href="/properties"
+                  href={`${localePrefix}/properties`}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="flex items-center justify-between min-h-[46px] px-3.5 py-2.5 rounded-xl text-[#FAF4EB] hover:text-[#E5C178] hover:bg-[rgba(34,24,16,0.6)] active:bg-[#16100B] transition-colors group"
                 >
                   <span className="font-sans text-[15px] font-medium tracking-wide">
-                    Properties
+                    {dict.nav.properties}
                   </span>
-                  <ChevronRight className="h-4 w-4 text-[#B8A692]/50 group-hover:text-[#E5C178] group-hover:translate-x-0.5 transition-all" />
+                  <ChevronRight className={cn("h-4 w-4 text-[#B8A692]/50 group-hover:text-[#E5C178] group-hover:translate-x-0.5 transition-all", isAr && "rotate-180 group-hover:-translate-x-0.5")} />
                 </Link>
 
                 {/* 2. Hospitals */}
                 <Link
-                  href="/hospitals"
+                  href={`${localePrefix}/hospitals`}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="flex items-center justify-between min-h-[46px] px-3.5 py-2.5 rounded-xl text-[#FAF4EB] hover:text-[#E5C178] hover:bg-[rgba(34,24,16,0.6)] active:bg-[#16100B] transition-colors group"
                 >
                   <span className="font-sans text-[15px] font-medium tracking-wide">
-                    Hospitals
+                    {dict.nav.hospitals}
                   </span>
-                  <ChevronRight className="h-4 w-4 text-[#B8A692]/50 group-hover:text-[#E5C178] group-hover:translate-x-0.5 transition-all" />
+                  <ChevronRight className={cn("h-4 w-4 text-[#B8A692]/50 group-hover:text-[#E5C178] group-hover:translate-x-0.5 transition-all", isAr && "rotate-180 group-hover:-translate-x-0.5")} />
                 </Link>
 
                 {/* 3. About */}
                 <Link
-                  href="/about"
+                  href={`${localePrefix}/about`}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="flex items-center justify-between min-h-[46px] px-3.5 py-2.5 rounded-xl text-[#FAF4EB] hover:text-[#E5C178] hover:bg-[rgba(34,24,16,0.6)] active:bg-[#16100B] transition-colors group"
                 >
                   <span className="font-sans text-[15px] font-medium tracking-wide">
-                    About Flatel
+                    {dict.nav.about}
                   </span>
-                  <ChevronRight className="h-4 w-4 text-[#B8A692]/50 group-hover:text-[#E5C178] group-hover:translate-x-0.5 transition-all" />
+                  <ChevronRight className={cn("h-4 w-4 text-[#B8A692]/50 group-hover:text-[#E5C178] group-hover:translate-x-0.5 transition-all", isAr && "rotate-180 group-hover:-translate-x-0.5")} />
                 </Link>
 
                 {/* 4. Branches Accordion Group */}
@@ -593,7 +616,7 @@ function SiteHeaderContent() {
                     <div className="flex items-center gap-2.5">
                       <Building2 className="h-4 w-4 text-[#E5C178]" />
                       <span className="font-heading text-[15px] font-semibold text-[#FAF4EB]">
-                        Branches
+                        {dict.nav.branches}
                       </span>
                     </div>
                     <ChevronDown
@@ -609,7 +632,7 @@ function SiteHeaderContent() {
                       {BRANCH_ITEMS.map((branch) => (
                         <Link
                           key={branch.slug}
-                          href={branch.href}
+                          href={`${localePrefix}${branch.href}`}
                           onClick={() => setIsMobileMenuOpen(false)}
                           className="flex flex-col p-2.5 rounded-xl bg-[#16100B] border border-[rgba(212,163,89,0.22)] hover:border-[#E5C178]/50 transition-colors"
                         >
@@ -617,24 +640,24 @@ function SiteHeaderContent() {
                             <span className="font-heading text-sm font-semibold text-[#FAF4EB]">
                               {branch.name}
                             </span>
-                            <ChevronRight className="h-3.5 w-3.5 text-[#E5C178]" />
+                            <ChevronRight className={cn("h-3.5 w-3.5 text-[#E5C178]", isAr && "rotate-180")} />
                           </div>
                           <span className="text-[11px] font-sans text-[#E5C178] mt-0.5">
                             {branch.location}
                           </span>
-                          <span className="text-[11px] font-sans text-[#B8A692]">
+                          <span className="text-[11px] font-sans text-[#D4C4B3]">
                             {branch.description}
                           </span>
                         </Link>
                       ))}
 
                       <Link
-                        href="/#locations"
+                        href={`${localePrefix}/#locations`}
                         onClick={() => setIsMobileMenuOpen(false)}
-                        className="flex items-center justify-between p-2 rounded-lg text-xs font-sans text-[#B8A692] hover:text-[#FAF4EB]"
+                        className="flex items-center justify-between p-2 rounded-lg text-xs font-sans text-[#D4C4B3] hover:text-[#FAF4EB]"
                       >
-                        <span>View All Locations Overview</span>
-                        <ChevronRight className="h-3.5 w-3.5 text-[#E5C178]" />
+                        <span>{dict.nav.allLocations}</span>
+                        <ChevronRight className={cn("h-3.5 w-3.5 text-[#E5C178]", isAr && "rotate-180")} />
                       </Link>
                     </div>
                   )}
@@ -642,26 +665,26 @@ function SiteHeaderContent() {
 
                 {/* 5. Policies */}
                 <Link
-                  href="/policies"
+                  href={`${localePrefix}/policies`}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="flex items-center justify-between min-h-[46px] px-3.5 py-2.5 rounded-xl text-[#FAF4EB] hover:text-[#E5C178] hover:bg-[rgba(34,24,16,0.6)] active:bg-[#16100B] transition-colors group"
                 >
                   <span className="font-sans text-[15px] font-medium tracking-wide">
-                    Policies
+                    {dict.nav.policies}
                   </span>
-                  <ChevronRight className="h-4 w-4 text-[#B8A692]/50 group-hover:text-[#E5C178] group-hover:translate-x-0.5 transition-all" />
+                  <ChevronRight className={cn("h-4 w-4 text-[#B8A692]/50 group-hover:text-[#E5C178] group-hover:translate-x-0.5 transition-all", isAr && "rotate-180 group-hover:-translate-x-0.5")} />
                 </Link>
 
                 {/* 6. List Property */}
                 <Link
-                  href="/list-property"
+                  href={`${localePrefix}/list-property`}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="flex items-center justify-between min-h-[46px] px-3.5 py-2.5 rounded-xl text-[#FAF4EB] hover:text-[#E5C178] hover:bg-[rgba(34,24,16,0.6)] active:bg-[#16100B] transition-colors group"
                 >
                   <span className="font-sans text-[15px] font-medium tracking-wide">
-                    List Property
+                    {dict.nav.listProperty}
                   </span>
-                  <ChevronRight className="h-4 w-4 text-[#B8A692]/50 group-hover:text-[#E5C178] group-hover:translate-x-0.5 transition-all" />
+                  <ChevronRight className={cn("h-4 w-4 text-[#B8A692]/50 group-hover:text-[#E5C178] group-hover:translate-x-0.5 transition-all", isAr && "rotate-180 group-hover:-translate-x-0.5")} />
                 </Link>
               </div>
 
@@ -716,12 +739,12 @@ function SiteHeaderContent() {
 
                   <div className="pt-2 border-t border-[rgba(212,163,89,0.18)] flex flex-col gap-1 text-xs">
                     <Link
-                      href="/my-bookings"
+                      href={`${localePrefix}/my-bookings`}
                       onClick={() => setIsMobileMenuOpen(false)}
                       className="flex items-center gap-2 py-1.5 text-[#FAF4EB] hover:text-[#E5C178]"
                     >
                       <CalendarCheck className="w-3.5 h-3.5 text-[#E5C178]" />
-                      <span>My Reservations</span>
+                      <span>{dict.nav.myBookings}</span>
                     </Link>
 
                     {isAdmin && (
@@ -731,7 +754,7 @@ function SiteHeaderContent() {
                         className="flex items-center gap-2 py-1.5 text-[#E5C178] font-semibold"
                       >
                         <ShieldCheck className="w-3.5 h-3.5 text-[#E5C178]" />
-                        <span>Owner Admin Portal</span>
+                        <span>{dict.nav.adminPortal}</span>
                       </Link>
                     )}
 
@@ -744,7 +767,7 @@ function SiteHeaderContent() {
                       className="flex items-center gap-2 py-1.5 text-red-400 hover:text-red-300 text-left mt-1 cursor-pointer"
                     >
                       <LogOut className="w-3.5 h-3.5" />
-                      <span>Sign Out</span>
+                      <span>{dict.common.signOut}</span>
                     </button>
                   </div>
                 </div>
@@ -754,11 +777,11 @@ function SiteHeaderContent() {
             {/* Bottom Actions */}
             <div className="pt-4 pb-6 sm:pb-8 border-t border-[rgba(212,163,89,0.22)] space-y-3">
               <Link
-                href="/#flats"
+                href={`${localePrefix}/properties`}
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="flex items-center justify-center gap-2 w-full min-h-[46px] px-4 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] font-bold text-sm tracking-wide transition-all shadow-md active:scale-[0.98]"
               >
-                <span>Explore All Residences</span>
+                <span>{dict.home.exploreResidences}</span>
               </Link>
 
               <p className="text-center font-sans text-[10px] tracking-[0.14em] uppercase text-[#B8A692]/70 pt-1">
