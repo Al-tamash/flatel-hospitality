@@ -14,6 +14,9 @@ import {
 import { cn } from "@/lib/utils";
 import { formatPrice, getBranchBySlug } from "@/lib/constants";
 import { PURPOSE_PACKAGES, type RoomDetail } from "@/lib/mock-rooms";
+import { usePathname } from "next/navigation";
+import { getLocaleFromPath, getDictionary } from "@/lib/i18n";
+import { getLocalizedRoom } from "@/lib/i18n/room-localizer";
 
 interface FeaturedFlatsProps {
   className?: string;
@@ -28,6 +31,12 @@ const FLAT_IMAGES: Record<string, string> = {
 };
 
 export function FeaturedFlats({ className }: FeaturedFlatsProps) {
+  const pathname = usePathname();
+  const currentLocale = getLocaleFromPath(pathname);
+  const dict = getDictionary(currentLocale);
+  const isAr = currentLocale === "ar";
+  const localePrefix = isAr ? "/ar" : "";
+
   const [rooms, setRooms] = React.useState<RoomDetail[]>([]);
   const [roomsLoading, setRoomsLoading] = React.useState(true);
   const [inventoryLoadFailed, setInventoryLoadFailed] = React.useState(false);
@@ -180,7 +189,13 @@ export function FeaturedFlats({ className }: FeaturedFlatsProps) {
   const filteredRooms = React.useMemo(() => {
     return rooms.filter((room) => {
       if (filterBranch !== "all" && room.branchSlug !== filterBranch) return false;
-      if (filterType !== "all" && room.slug !== filterType) return false;
+      if (filterType !== "all") {
+        const types = filterType.split(",").map((t) => t.trim().toLowerCase());
+        const roomSlug = (room.slug || "").toLowerCase();
+        const roomCategory = (room.category || "").toLowerCase();
+        const matches = types.some((t) => roomSlug.includes(t) || roomCategory.includes(t) || t.includes(roomSlug));
+        if (!matches) return false;
+      }
       return true;
     });
   }, [rooms, filterBranch, filterType]);
@@ -366,7 +381,8 @@ export function FeaturedFlats({ className }: FeaturedFlatsProps) {
           </p>
         ) : filteredRooms.length > 0 ? (
           <div className="flex sm:grid sm:grid-cols-2 lg:grid-cols-4 overflow-x-auto sm:overflow-visible snap-x snap-mandatory sm:snap-none gap-5 sm:gap-6 pb-4 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0 no-scrollbar">
-            {filteredRooms.map((room) => {
+            {filteredRooms.map((rawRoom) => {
+              const room = getLocalizedRoom(rawRoom, currentLocale);
               const branch = room.branchSlug ? getBranchBySlug(room.branchSlug) : undefined;
               const imageUrl = FLAT_IMAGES[room.slug] || "/images/flats/flat-1bhk-luxury.jpg";
               const title = room.title;
@@ -381,8 +397,8 @@ export function FeaturedFlats({ className }: FeaturedFlatsProps) {
               if (activePurpose) queryParams.set("purpose", activePurpose);
 
               const qStr = queryParams.toString();
-              const detailUrl = `/properties/${room.slug}${qStr ? `?${qStr}` : ""}`;
-              const instantBookUrl = `/checkout?property=${room.slug}${qStr ? `&${qStr}` : ""}`;
+              const detailUrl = `${localePrefix}/properties/${room.slug}${qStr ? `?${qStr}` : ""}`;
+              const instantBookUrl = `${localePrefix}/checkout?property=${room.slug}${qStr ? `&${qStr}` : ""}`;
 
               const estNights = searchDates.nights || 1;
               const estTotal = room.basePricePerNight * estNights;
@@ -467,15 +483,15 @@ export function FeaturedFlats({ className }: FeaturedFlatsProps) {
                           href={detailUrl}
                           className="py-2.5 px-3 min-h-[44px] rounded-xl border border-[rgba(212,163,89,0.35)] bg-[#18110B] hover:bg-[#241A11] hover:border-[#E5C178] text-[#FAF4EB] text-sm font-semibold text-center transition-all cursor-pointer flex items-center justify-center shadow-xs"
                         >
-                          Details
+                          {isAr ? dict.common.viewDetails : "Details"}
                         </Link>
 
                         <Link
                           href={instantBookUrl}
                           className="py-2.5 px-3 min-h-[44px] rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] hover:brightness-105 active:scale-[0.98] text-[#140E08] text-sm font-bold text-center transition-all shadow-md shadow-[#E5C178]/15 cursor-pointer flex items-center justify-center gap-1.5"
                         >
-                          <span>Book</span>
-                          <ArrowRight className="w-4 h-4 shrink-0" />
+                          <span>{isAr ? dict.common.bookNow : "Book"}</span>
+                          <ArrowRight className={cn("w-4 h-4 shrink-0", isAr && "rotate-180")} />
                         </Link>
                       </div>
                     </div>
@@ -524,11 +540,11 @@ export function FeaturedFlats({ className }: FeaturedFlatsProps) {
             Looking for detailed room specifications, floor plans, or group family configurations?
           </p>
           <Link
-            href="/properties"
+            href={`${localePrefix}/properties`}
             className="px-6 py-3 min-h-[46px] rounded-xl bg-[rgba(34,24,16,0.85)] border border-[rgba(212,163,89,0.35)] hover:border-[#E5C178] text-[#E5C178] font-bold text-xs sm:text-sm uppercase tracking-wider inline-flex items-center gap-2 transition-all cursor-pointer shadow-xs shrink-0"
           >
-            <span>Explore Full Residences Catalog</span>
-            <ArrowRight className="w-4 h-4" />
+            <span>{isAr ? dict.home.exploreResidences : "Explore Full Residences Catalog"}</span>
+            <ArrowRight className={cn("w-4 h-4", isAr && "rotate-180")} />
           </Link>
         </div>
       </div>

@@ -39,6 +39,7 @@ export const metadata: Metadata = {
 
 import { AuthProvider } from "@/context/auth-context";
 import { AuthModal } from "@/components/auth/auth-modal";
+import { RtlSync } from "@/components/ui/rtl-sync";
 
 export default function RootLayout({
   children,
@@ -53,6 +54,7 @@ export default function RootLayout({
     >
       <body className="min-h-screen overflow-x-clip bg-background font-sans text-foreground antialiased selection:bg-primary/20 selection:text-primary">
         <AuthProvider>
+          <RtlSync />
           {children}
           <AuthModal />
         </AuthProvider>

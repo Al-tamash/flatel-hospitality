@@ -117,8 +117,19 @@ export default function AboutPage() {
         {/* ======================================================== */}
         {/* 2. THE FOUNDING STORY & VISION (Split Editorial)         */}
         {/* ======================================================== */}
-        <section className="w-full py-16 sm:py-20 lg:py-24">
-          <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10">
+        <section className="w-full py-16 sm:py-20 lg:py-24 relative overflow-hidden">
+          {/* Moroccan Gold Lattice Watermark Backdrop */}
+          <div
+            className="pointer-events-none absolute inset-0 opacity-[0.15] [mask-image:radial-gradient(ellipse_at_center,black_50%,transparent_90%)]"
+            style={{
+              backgroundImage: `url('/images/patterns/flatel-gold-lattice.svg')`,
+              backgroundRepeat: "repeat",
+              backgroundPosition: "center",
+              backgroundSize: "600px auto",
+            }}
+            aria-hidden="true"
+          />
+          <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10 relative z-10">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
               {/* Left Column: Visual Story Framed Image */}
               <div className="lg:col-span-6 relative">

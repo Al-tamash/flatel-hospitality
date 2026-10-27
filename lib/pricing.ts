@@ -15,8 +15,10 @@ export interface CalculateFareInput {
   basePricePerNight: number;
   baseAdults: number;
   selectedAdults: number;
-  selectedKids?: number; // 0 to 12 years are free
+  selectedKids?: number; // children count
+  baseKids?: number; // included in base price (default based on BHK, e.g. 1 for 1BHK)
   extraPersonFee?: number; // default ₹500
+  extraKidFee?: number; // default ₹300 per night as per client rule
   selectedPaidAddons?: SelectedPaidAddon[];
 }
 
@@ -28,6 +30,8 @@ export interface FareCalculationResult {
   baseRent: number; // discounted base rent
   extraAdults: number;
   extraGuestsTotal: number;
+  extraKids?: number;
+  extraKidsTotal?: number;
   addonsTotal: number;
   grossTotal: number;
   advancePayable: number; // 20%
@@ -81,9 +85,16 @@ export function calculateFlatelPrice(input: CalculateFareInput): FareCalculation
   const baseRentDiscount = Math.round(standardBaseRent * discountRate);
   const discountedBaseRent = standardBaseRent - baseRentDiscount;
 
-  // 2. Extra Person Fee (Only adults exceeding base capacity; kids 0-12 are ₹0)
+  // 2. Extra Person Fee (Adults exceeding base capacity; extra children exceeding baseKids charged extraKidFee)
   const extraAdults = Math.max(0, selectedAdults - baseAdults);
   const extraGuestsTotal = extraAdults * extraPersonFee * nights;
+
+  // Extra Kids Fee calculation (if baseKids defined or extraKidFee provided)
+  const baseKids = input.baseKids ?? 0;
+  const extraKidFee = input.extraKidFee ?? 300;
+  const hasExtraKidRule = input.extraKidFee !== undefined || input.baseKids !== undefined;
+  const extraKids = hasExtraKidRule ? Math.max(0, selectedKids - baseKids) : 0;
+  const extraKidsTotal = extraKids * extraKidFee * nights;
 
   // 3. Paid Add-ons Total (flat/per_booking vs per_night vs per_person)
   const addonsTotal = selectedPaidAddons.reduce((sum, addon) => {
@@ -100,7 +111,7 @@ export function calculateFlatelPrice(input: CalculateFareInput): FareCalculation
   }, 0);
 
   // 4. Gross Total & 20% Deposit Split
-  const grossTotal = Math.round(discountedBaseRent + extraGuestsTotal + addonsTotal);
+  const grossTotal = Math.round(discountedBaseRent + extraGuestsTotal + extraKidsTotal + addonsTotal);
   const advancePayable = Math.round(grossTotal * 0.20);
   const balanceDueOnArrival = grossTotal - advancePayable;
 
@@ -112,6 +123,8 @@ export function calculateFlatelPrice(input: CalculateFareInput): FareCalculation
     baseRent: discountedBaseRent,
     extraAdults,
     extraGuestsTotal,
+    extraKids,
+    extraKidsTotal,
     addonsTotal,
     grossTotal,
     advancePayable,

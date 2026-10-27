@@ -22,6 +22,10 @@ import { RoomDetail } from "@/lib/mock-rooms";
 import { getBranchBySlug } from "@/lib/constants";
 import { RoomGallery } from "@/components/rooms/room-gallery";
 import { BookingSidebar } from "@/components/rooms/booking-sidebar";
+import { usePathname } from "next/navigation";
+import { getLocaleFromPath, getDictionary } from "@/lib/i18n";
+import { getLocalizedRoom } from "@/lib/i18n/room-localizer";
+import { cn } from "@/lib/utils";
 import {
   AMENITIES_BENTO,
   getAmenityIllustration,
@@ -41,7 +45,15 @@ function cleanInventoryDescription(value: string): string {
     .replace(/100% inverter for lights and fans/gi, "inverter power backup");
 }
 
-export function RoomDetailView({ room, requestedId }: RoomDetailViewProps) {
+export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewProps) {
+  const pathname = usePathname();
+  const currentLocale = getLocaleFromPath(pathname);
+  const dict = getDictionary(currentLocale);
+  const isAr = currentLocale === "ar";
+  const localePrefix = isAr ? "/ar" : "";
+  const room = React.useMemo(() => {
+    return rawRoom ? getLocalizedRoom(rawRoom, currentLocale) : undefined;
+  }, [rawRoom, currentLocale]);
 
   // Stay Purpose State (Allows "accommodation_only" or one of the 5 purposes)
   const [selectedPurposeId, setSelectedPurposeId] = React.useState<
@@ -307,20 +319,20 @@ export function RoomDetailView({ room, requestedId }: RoomDetailViewProps) {
       >
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10 py-2.5 sm:py-3 flex items-center justify-between text-xs text-[#B8A692]">
           <div className="flex items-center gap-2 min-w-0">
-            <Link href="/" className="hover:text-[#FAF4EB] transition-colors shrink-0">
-              Home
+            <Link href={localePrefix || "/"} className="hover:text-[#FAF4EB] transition-colors shrink-0">
+              {isAr ? "الرئيسية" : "Home"}
             </Link>
-            <ChevronRight className="h-3 w-3 text-[#E5C178]/60 shrink-0" />
-            <Link href="/#flats" className="hover:text-[#FAF4EB] transition-colors shrink-0">
-              Residences
+            <ChevronRight className={cn("h-3 w-3 text-[#E5C178]/60 shrink-0", isAr && "rotate-180")} />
+            <Link href={`${localePrefix}/properties`} className="hover:text-[#FAF4EB] transition-colors shrink-0">
+              {dict.nav.properties}
             </Link>
-            <ChevronRight className="h-3 w-3 text-[#E5C178]/60 shrink-0" />
+            <ChevronRight className={cn("h-3 w-3 text-[#E5C178]/60 shrink-0", isAr && "rotate-180")} />
             {branch && (
               <>
-                <Link href={`/branches/${branch.slug}`} className="hover:text-[#FAF4EB] transition-colors shrink-0">
+                <Link href={`${localePrefix}/branches/${branch.slug}`} className="hover:text-[#FAF4EB] transition-colors shrink-0">
                   {branch.name}
                 </Link>
-                <ChevronRight className="h-3 w-3 text-[#E5C178]/60 shrink-0" />
+                <ChevronRight className={cn("h-3 w-3 text-[#E5C178]/60 shrink-0", isAr && "rotate-180")} />
               </>
             )}
             <span className="text-[#FAF4EB] font-medium truncate">

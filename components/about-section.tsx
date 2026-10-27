@@ -26,6 +26,18 @@ export function AboutSection({ className }: AboutSectionProps) {
         aria-hidden="true"
       />
 
+      {/* Moroccan Gold Lattice Watermark Backdrop (Mamounia Metamorphosis Style) */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.15] [mask-image:radial-gradient(ellipse_at_center,black_50%,transparent_90%)]"
+        style={{
+          backgroundImage: `url('/images/patterns/flatel-gold-lattice.svg')`,
+          backgroundRepeat: "repeat",
+          backgroundPosition: "center",
+          backgroundSize: "600px auto",
+        }}
+        aria-hidden="true"
+      />
+
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10 relative z-10">
         {/* Symmetrical Gold Horizontal Line Header */}
         <div className="flex items-center justify-center gap-4 sm:gap-6 mb-10 sm:mb-14">

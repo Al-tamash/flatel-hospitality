@@ -3,9 +3,12 @@
 import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { ArrowRight, ArrowLeft } from "lucide-react";
 import { BookingSearch } from "@/components/hero/booking-search";
 import { HeroFeaturedCards } from "@/components/hero-featured-cards";
+import { getLocaleFromPath, getDictionary } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
 
 interface HeroSectionProps {
   /** Optional custom hero background image URL (e.g. from Cloudflare R2) */
@@ -13,6 +16,11 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ customImageUrl }: HeroSectionProps) {
+  const pathname = usePathname();
+  const currentLocale = getLocaleFromPath(pathname);
+  const dict = getDictionary(currentLocale);
+  const isAr = currentLocale === "ar";
+  const localePrefix = isAr ? "/ar" : "";
   const heroImageSrc = customImageUrl || "/images/hero-apartment.jpg";
 
   return (
@@ -41,15 +49,25 @@ export function HeroSection({ customImageUrl }: HeroSectionProps) {
             aria-hidden="true"
           />
 
-          {/* Left Contrast Gradient: Guarantees readability for left-aligned headline */}
+          {/* Contrast Gradient: Guarantees readability for headline */}
           <div
-            className="absolute inset-y-0 left-0 w-full lg:w-[70%] bg-gradient-to-r from-[#0E0A07]/98 via-[#0E0A07]/88 sm:via-[#0E0A07]/80 to-[#0E0A07]/40 sm:to-transparent pointer-events-none"
+            className={cn(
+              "absolute inset-y-0 w-full lg:w-[70%] pointer-events-none",
+              isAr
+                ? "right-0 bg-gradient-to-l from-[#0E0A07]/98 via-[#0E0A07]/88 sm:via-[#0E0A07]/80 to-[#0E0A07]/40 sm:to-transparent"
+                : "left-0 bg-gradient-to-r from-[#0E0A07]/98 via-[#0E0A07]/88 sm:via-[#0E0A07]/80 to-[#0E0A07]/40 sm:to-transparent"
+            )}
             aria-hidden="true"
           />
 
           {/* Ambient Golden Radial Light Leak */}
           <div
-            className="absolute inset-0 bg-[radial-gradient(circle_at_20%_35%,rgba(212,163,89,0.15)_0%,transparent_65%)] pointer-events-none"
+            className={cn(
+              "absolute inset-0 pointer-events-none",
+              isAr
+                ? "bg-[radial-gradient(circle_at_80%_35%,rgba(212,163,89,0.15)_0%,transparent_65%)]"
+                : "bg-[radial-gradient(circle_at_20%_35%,rgba(212,163,89,0.15)_0%,transparent_65%)]"
+            )}
             aria-hidden="true"
           />
 
@@ -58,48 +76,47 @@ export function HeroSection({ customImageUrl }: HeroSectionProps) {
             className="absolute inset-0 bg-[#0E0A07]/45 pointer-events-none"
             aria-hidden="true"
           />
-
-          {/* Bottom Fade: Seamless blend into floating search bar and page surface */}
-          <div
-            className="absolute inset-x-0 bottom-0 h-32 sm:h-48 bg-gradient-to-t from-[#0E0A07] via-[#0E0A07]/90 to-transparent pointer-events-none"
-            aria-hidden="true"
-          />
         </div>
 
         {/* ======================================================== */}
-        {/* 2. LEFT-ALIGNED HERO EDITORIAL (Purpose-Built for Mobile) */}
+        {/* 2. HERO EDITORIAL (Purpose-Built for Mobile & RTL)       */}
         {/* ======================================================== */}
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 pt-6 sm:pt-14 lg:pt-20 pb-3 sm:pb-8">
-          <div className="max-w-2xl text-left animate-in fade-in slide-in-from-bottom-2 duration-700 ease-out">
+          <div className={cn("max-w-2xl animate-in fade-in slide-in-from-bottom-2 duration-700 ease-out", isAr ? "text-right" : "text-left")}>
             {/* Luxury Eyebrow Text & Golden Horizontal Accent */}
-            <div className="flex items-center gap-2.5 mb-2.5 sm:mb-4">
+            <div className={cn("flex items-center gap-2.5 mb-2.5 sm:mb-4", isAr && "flex-row-reverse justify-end")}>
               <div
                 className="w-8 sm:w-12 h-1 bg-[#E5C178] rounded-full shadow-xs shrink-0"
                 aria-hidden="true"
               />
               <span className="text-xs sm:text-sm font-sans font-semibold tracking-[0.14em] text-[#E5C178] uppercase">
-                SERVICED RESIDENCES · HYDERABAD
+                {dict.home.heroBadge}
               </span>
             </div>
 
-            {/* Headline with Cormorant Garamond Serif & Luxury Proportions */}
-            <h1 className="font-heading text-3xl sm:text-5xl md:text-6xl lg:text-[66px] font-semibold tracking-normal text-[#FAF4EB] leading-[1.08]">
-              Find Your Place to Stay in <span className="text-[#E5C178]">Hyderabad</span>
+            {/* Headline with Luxury Proportions */}
+            <h1 className="font-heading text-3xl sm:text-5xl md:text-6xl lg:text-[66px] font-semibold tracking-normal text-[#FAF4EB] leading-[1.12]">
+              {dict.home.heroTitleLine1}{" "}
+              <span className="text-[#E5C178] block sm:inline">{dict.home.heroTitleHighlight}</span>
             </h1>
 
-            {/* Subtitle with DM Sans & Generous Line Height */}
+            {/* Subtitle with Generous Line Height */}
             <p className="mt-3.5 sm:mt-5 text-sm sm:text-base md:text-lg text-[#D4C4B3] font-sans font-normal leading-relaxed max-w-xl text-balance">
-              Comfortable furnished flats for medical visits, business trips, family holidays, and longer stays.
+              {dict.home.heroSubtitle}
             </p>
 
-            {/* Explore Flats CTA Button: Shown on sm+ screens, hidden on small mobile to keep search interface above the fold */}
+            {/* Explore Flats CTA Button */}
             <div className="mt-5 sm:mt-7 hidden sm:block">
               <Link
-                href="/#flats"
+                href={`${localePrefix}/properties`}
                 className="inline-flex items-center gap-2.5 px-6 sm:px-7 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] hover:brightness-105 text-[#140E08] font-sans font-semibold text-xs sm:text-sm tracking-wide transition-all duration-200 shadow-lg shadow-[#E5C178]/25 active:scale-[0.98] group"
               >
-                <span>Explore Flats</span>
-                <ArrowRight className="w-4 h-4 text-[#140E08] transition-transform group-hover:translate-x-1" />
+                <span>{dict.home.exploreResidences}</span>
+                {isAr ? (
+                  <ArrowLeft className="w-4 h-4 text-[#140E08] transition-transform group-hover:-translate-x-1" />
+                ) : (
+                  <ArrowRight className="w-4 h-4 text-[#140E08] transition-transform group-hover:translate-x-1" />
+                )}
               </Link>
             </div>
           </div>
@@ -112,8 +129,7 @@ export function HeroSection({ customImageUrl }: HeroSectionProps) {
       </div>
 
       {/* ======================================================== */}
-      {/* 3. UNDER THE HERO: 4 PURPOSE CARDS ("SAME TO SAME")     */}
-      {/* Medistay | Wanderer | Work & Stay | Family & Long Stay   */}
+      {/* 3. UNDER THE HERO: 4 PURPOSE CARDS                      */}
       {/* ======================================================== */}
       <div className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 pt-6 sm:pt-8 pb-12 sm:pb-16">
         <HeroFeaturedCards />

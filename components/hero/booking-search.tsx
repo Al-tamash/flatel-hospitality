@@ -5,6 +5,7 @@ import { format, differenceInCalendarDays, parseISO } from "date-fns";
 import {
   MapPin,
   Calendar as CalendarIcon,
+  Home,
   Users,
   LayoutGrid,
   Search,
@@ -15,8 +16,11 @@ import {
 import { cn } from "@/lib/utils";
 import { BranchSelector, type BranchFilter } from "./branch-selector";
 import { DateRangePicker } from "./date-range-picker";
-import { GuestSelector } from "./guest-selector";
-import { FlatTypeSelector, type FlatTypeFilter } from "./flat-type-selector";
+import {
+  FlatOccupancyModal,
+  type FlatOccupancyState,
+  type MergedSelectionResult,
+} from "./flat-occupancy-modal";
 
 export interface BookingSearchProps {
   initialBranch?: BranchFilter | null;
@@ -36,13 +40,14 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
   const [adults, setAdults] = React.useState(2);
   const [childrenCount, setChildrenCount] = React.useState(0);
 
-    // 4. Flat Type State
-    const [selectedFlatType, setSelectedFlatType] = React.useState<FlatTypeFilter | null>(null);
+  // 4. Merged Flat & Occupancy State
+  const [selectedFlatTypes, setSelectedFlatTypes] = React.useState<string>("1bhk");
+  const [flatOccupancySummary, setFlatOccupancySummary] = React.useState<string>("1 BHK · 2 Guests");
+  const [flatOccupancyState, setFlatsOccupancyState] = React.useState<Record<string, FlatOccupancyState> | null>(null);
+  const [isFlatOccupancyModalOpen, setIsFlatOccupancyModalOpen] = React.useState(false);
 
-    // 5. Popover Control: 'branch' | 'calendar' | 'guests' | 'flatType' | null
-    const [activePopover, setActivePopover] = React.useState<
-      "branch" | "calendar" | "guests" | "flatType" | null
-    >(null);
+  // 5. Popover Control for Branch & Calendar: 'branch' | 'calendar' | null
+  const [activePopover, setActivePopover] = React.useState<"branch" | "calendar" | null>(null);
     const [calendarTargetField, setCalendarTargetField] = React.useState<
       "checkIn" | "checkOut"
     >("checkIn");
@@ -62,8 +67,12 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
             setSelectedBranch(initialBranch);
           }
           const ft = params.get("flatType");
-          if (ft && ["any", "1bhk", "2bhk", "3bhk", "4bhk", "5bhk"].includes(ft)) {
-            setSelectedFlatType(ft as FlatTypeFilter);
+          if (ft) {
+            setSelectedFlatTypes(ft);
+            if (ft !== "all" && ft !== "any") {
+              const formatted = ft.toUpperCase();
+              setFlatOccupancySummary(`${formatted}`);
+            }
           }
           const inParam = params.get("checkIn");
           if (inParam) {
@@ -166,23 +175,6 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
   }, [checkIn, checkOut]);
 
 
-  const guestsDisplay = React.useMemo(() => {
-    if (!hasSelectedGuests) return "2 Adults, 0 Children";
-    const adultStr = `${adults} ${adults === 1 ? "Adult" : "Adults"}`;
-    const childStr = `${childrenCount} ${childrenCount === 1 ? "Child" : "Children"}`;
-    return `${adultStr}, ${childStr}`;
-  }, [hasSelectedGuests, adults, childrenCount]);
-
-  const flatTypeDisplay = React.useMemo(() => {
-    if (!selectedFlatType || selectedFlatType === "any") return "All Types";
-    if (selectedFlatType === "1bhk") return "1 BHK Flat";
-    if (selectedFlatType === "2bhk") return "2 BHK Flat";
-    if (selectedFlatType === "3bhk") return "3 BHK Flat";
-    if (selectedFlatType === "4bhk") return "4 BHK Flat";
-    if (selectedFlatType === "5bhk") return "5 BHK Flat";
-    return "All Types";
-  }, [selectedFlatType]);
-
   // Handlers for Opening Popovers
   const handleOpenBranch = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -199,18 +191,23 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
     setActivePopover((prev) => (prev === "calendar" ? null : "calendar"));
   };
 
-  const handleOpenGuests = (e: React.MouseEvent) => {
+  const handleOpenFlatOccupancy = (e: React.MouseEvent) => {
     e.stopPropagation();
     setErrorMessage(null);
     setErrorField(null);
-    setActivePopover((prev) => (prev === "guests" ? null : "guests"));
+    setActivePopover(null);
+    setIsFlatOccupancyModalOpen(true);
   };
 
-  const handleOpenFlatType = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleApplyFlatOccupancy = (result: MergedSelectionResult) => {
+    setFlatsOccupancyState(result.flats);
+    setSelectedFlatTypes(result.flatTypesQuery);
+    setFlatOccupancySummary(result.summaryLabel);
+    setAdults(result.totalAdults);
+    setChildrenCount(result.totalKids);
+    setHasSelectedGuests(true);
     setErrorMessage(null);
     setErrorField(null);
-    setActivePopover((prev) => (prev === "flatType" ? null : "flatType"));
   };
 
   const handleDateSelectRange = (inDate: Date | null, outDate: Date | null) => {
@@ -247,7 +244,7 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
     // Build URL query params and notify FeaturedFlats
     const params = new URLSearchParams();
     if (selectedBranch && selectedBranch !== "all") params.set("branch", selectedBranch);
-    if (selectedFlatType && selectedFlatType !== "any") params.set("flatType", selectedFlatType);
+    if (selectedFlatTypes && selectedFlatTypes !== "all") params.set("flatType", selectedFlatTypes);
     if (checkIn) params.set("checkIn", format(checkIn, "yyyy-MM-dd"));
     if (checkOut) params.set("checkOut", format(checkOut, "yyyy-MM-dd"));
     if (hasSelectedGuests || adults !== 2 || childrenCount !== 0) {
@@ -264,7 +261,7 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
         new CustomEvent("flatel:search", {
           detail: {
             branch: selectedBranch || "all",
-            flatType: selectedFlatType || "all",
+            flatType: selectedFlatTypes || "all",
             checkIn,
             checkOut,
             adults,
@@ -426,73 +423,35 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
               />
             </div>
 
-            {/* 3. GUESTS SELECTOR (1-col on mobile, flex-1 on desktop) */}
-            <div className="col-span-1 lg:flex-1 relative min-w-0">
+            {/* 3. MERGED FLAT & OCCUPANCY SELECTOR (Full width on mobile, flex-1 on desktop) */}
+            <div className="col-span-2 lg:col-span-1 lg:flex-1 relative min-w-0">
               <button
                 type="button"
-                id="hero-guests-selector-button"
-                onClick={handleOpenGuests}
+                id="hero-flat-occupancy-button"
+                onClick={handleOpenFlatOccupancy}
                 className={cn(
-                  "w-full h-full min-h-[50px] lg:min-h-[64px] px-3 sm:px-4 py-2 rounded-xl text-left flex items-center justify-between transition-all cursor-pointer group",
+                  "w-full h-full min-h-[50px] lg:min-h-[64px] px-3.5 sm:px-4 py-2 rounded-xl text-left flex items-center justify-between transition-all cursor-pointer group",
                   "bg-[rgba(22,16,11,0.6)] border border-[rgba(212,163,89,0.2)] lg:bg-transparent lg:border-transparent hover:border-[#E5C178]/50 lg:hover:bg-[rgba(34,24,16,0.6)]",
                   "focus:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178]",
-                  activePopover === "guests" && "bg-[rgba(22,16,11,0.9)] ring-1 ring-[#E5C178] border-[#E5C178]"
+                  isFlatOccupancyModalOpen && "bg-[rgba(22,16,11,0.9)] ring-1 ring-[#E5C178] border-[#E5C178]"
                 )}
-                aria-label={`Guests: ${guestsDisplay}`}
-                aria-expanded={activePopover === "guests"}
+                aria-label={`Flat & Occupancy: ${flatOccupancySummary}`}
+                aria-haspopup="dialog"
               >
-                <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
                   <div className="w-7 h-7 rounded-lg bg-[#E5C178]/10 border border-[#E5C178]/25 flex items-center justify-center shrink-0 lg:bg-transparent lg:border-0 lg:w-auto lg:h-auto">
-                    <Users className="w-4 h-4 text-[#E5C178] shrink-0" />
+                    <Home className="w-4 h-4 text-[#E5C178] shrink-0" />
                   </div>
                   <div className="flex flex-col min-w-0 flex-1">
                     <span className="text-xs lg:text-[13px] font-sans font-semibold text-[#D4C4B3] uppercase lg:normal-case leading-none">
-                      Guests
+                      Flat & Occupancy
                     </span>
                     <span className="font-sans text-sm sm:text-base font-semibold text-[#FAF4EB] tracking-normal leading-tight mt-1 truncate">
-                      {hasSelectedGuests ? `${adults} Ad, ${childrenCount} Ch` : "2 Guests"}
+                      {flatOccupancySummary}
                     </span>
                   </div>
                 </div>
-                <ChevronDown className="w-4 h-4 text-[#D4C4B3] shrink-0 ml-1.5 sm:ml-2 group-hover:text-[#E5C178] transition-colors" />
-              </button>
-
-              {/* Desktop Divider */}
-              <div
-                className="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 w-px h-8 bg-[rgba(212,163,89,0.18)] pointer-events-none"
-                aria-hidden="true"
-              />
-            </div>
-
-            {/* 4. FLAT TYPE SELECTOR (1-col on mobile, flex-1 on desktop) */}
-            <div className="col-span-1 lg:flex-1 relative min-w-0">
-              <button
-                type="button"
-                id="hero-flat-type-selector-button"
-                onClick={handleOpenFlatType}
-                className={cn(
-                  "w-full h-full min-h-[50px] lg:min-h-[64px] px-3 sm:px-4 py-2 rounded-xl text-left flex items-center justify-between transition-all cursor-pointer group",
-                  "bg-[rgba(22,16,11,0.6)] border border-[rgba(212,163,89,0.2)] lg:bg-transparent lg:border-transparent hover:border-[#E5C178]/50 lg:hover:bg-[rgba(34,24,16,0.6)]",
-                  "focus:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178]",
-                  activePopover === "flatType" && "bg-[rgba(22,16,11,0.9)] ring-1 ring-[#E5C178] border-[#E5C178]"
-                )}
-                aria-label={`Flat Type: ${flatTypeDisplay}`}
-                aria-expanded={activePopover === "flatType"}
-              >
-                <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
-                  <div className="w-7 h-7 rounded-lg bg-[#E5C178]/10 border border-[#E5C178]/25 flex items-center justify-center shrink-0 lg:bg-transparent lg:border-0 lg:w-auto lg:h-auto">
-                    <LayoutGrid className="w-4 h-4 text-[#E5C178] shrink-0" />
-                  </div>
-                  <div className="flex flex-col min-w-0 flex-1">
-                    <span className="text-xs lg:text-[13px] font-sans font-semibold text-[#D4C4B3] uppercase lg:normal-case leading-none">
-                      Flat Type
-                    </span>
-                    <span className="font-sans text-sm sm:text-base font-semibold text-[#FAF4EB] tracking-normal leading-tight mt-1 truncate">
-                      {flatTypeDisplay}
-                    </span>
-                  </div>
-                </div>
-                <ChevronDown className="w-4 h-4 text-[#D4C4B3] shrink-0 ml-1.5 sm:ml-2 group-hover:text-[#E5C178] transition-colors" />
+                <ChevronDown className="w-4 h-4 text-[#D4C4B3] shrink-0 ml-2 group-hover:text-[#E5C178] transition-colors" />
               </button>
 
               {/* Desktop Divider */}
@@ -557,55 +516,8 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
           </div>
         )}
 
-        {activePopover === "guests" && (
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="hidden lg:block absolute bottom-full mb-3 z-50 left-[50%] -translate-x-1/2 animate-in fade-in slide-in-from-bottom-2 zoom-in-95 duration-150"
-          >
-            <GuestSelector
-              adults={adults}
-              childrenCount={childrenCount}
-              onChangeAdults={(val) => {
-                setAdults(val);
-                setHasSelectedGuests(true);
-              }}
-              onChangeChildren={(val) => {
-                setChildrenCount(val);
-                setHasSelectedGuests(true);
-              }}
-              onConfirm={() => {
-                setHasSelectedGuests(true);
-                setActivePopover(null);
-              }}
-              onReset={() => {
-                setHasSelectedGuests(false);
-                setAdults(2);
-                setChildrenCount(0);
-                setActivePopover(null);
-              }}
-              onClose={() => setActivePopover(null)}
-            />
-          </div>
-        )}
-
-        {activePopover === "flatType" && (
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="hidden lg:block absolute bottom-full mb-3 z-50 right-[15%] animate-in fade-in slide-in-from-bottom-2 zoom-in-95 duration-150"
-          >
-            <FlatTypeSelector
-              selectedType={selectedFlatType}
-              onSelectType={(t) => {
-                setSelectedFlatType(t);
-                setActivePopover(null);
-              }}
-              onClose={() => setActivePopover(null)}
-            />
-          </div>
-        )}
-
         {/* ======================================================== */}
-        {/* MOBILE MODAL OVERLAY (Centered, thumb-friendly modal)    */}
+        {/* MOBILE MODAL OVERLAY FOR BRANCH & CALENDAR              */}
         {/* ======================================================== */}
         {activePopover && (
           <div
@@ -637,47 +549,20 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
                   isMobileModal
                 />
               )}
-              {activePopover === "guests" && (
-                <GuestSelector
-                  adults={adults}
-                  childrenCount={childrenCount}
-                  onChangeAdults={(val) => {
-                    setAdults(val);
-                    setHasSelectedGuests(true);
-                  }}
-                  onChangeChildren={(val) => {
-                    setChildrenCount(val);
-                    setHasSelectedGuests(true);
-                  }}
-                  onConfirm={() => {
-                    setHasSelectedGuests(true);
-                    setActivePopover(null);
-                  }}
-                  onReset={() => {
-                    setHasSelectedGuests(false);
-                    setAdults(2);
-                    setChildrenCount(0);
-                    setActivePopover(null);
-                  }}
-                  onClose={() => setActivePopover(null)}
-                  isMobileModal
-                />
-              )}
-              {activePopover === "flatType" && (
-                <FlatTypeSelector
-                  selectedType={selectedFlatType}
-                  onSelectType={(t) => {
-                    setSelectedFlatType(t);
-                    setActivePopover(null);
-                  }}
-                  onClose={() => setActivePopover(null)}
-                  isMobileModal
-                />
-              )}
             </div>
           </div>
         )}
       </div>
+
+      {/* ======================================================== */}
+      {/* UNIFIED FLAT & OCCUPANCY MODAL (Client WhatsApp Aesthetic) */}
+      {/* ======================================================== */}
+      <FlatOccupancyModal
+        isOpen={isFlatOccupancyModalOpen}
+        onClose={() => setIsFlatOccupancyModalOpen(false)}
+        onApply={handleApplyFlatOccupancy}
+        initialSelection={flatOccupancyState}
+      />
     </>
   );
 }

@@ -15,6 +15,9 @@ import {
 import { cn } from "@/lib/utils";
 import { formatPrice, getBranchBySlug } from "@/lib/constants";
 import type { RoomDetail } from "@/lib/mock-rooms";
+import { usePathname } from "next/navigation";
+import { getLocaleFromPath, getDictionary } from "@/lib/i18n";
+import { getLocalizedRoom } from "@/lib/i18n/room-localizer";
 
 const FLAT_IMAGES: Record<string, string> = {
   "1bhk": "/images/flats/flat-1bhk-luxury.jpg",
@@ -24,6 +27,12 @@ const FLAT_IMAGES: Record<string, string> = {
 };
 
 export function PropertiesCatalogView() {
+  const pathname = usePathname();
+  const currentLocale = getLocaleFromPath(pathname);
+  const dict = getDictionary(currentLocale);
+  const isAr = currentLocale === "ar";
+  const localePrefix = isAr ? "/ar" : "";
+
   const [selectedBranch, setSelectedBranch] = React.useState<string>("all");
   const [selectedCategory, setSelectedCategory] = React.useState<string>("all");
   const [flats, setFlats] = React.useState<RoomDetail[]>([]);
@@ -158,7 +167,8 @@ export function PropertiesCatalogView() {
         </div>
       ) : (
         <div className="space-y-8 sm:space-y-10">
-          {filteredFlats.map((flat, index) => {
+          {filteredFlats.map((rawFlat, index) => {
+            const flat = getLocalizedRoom(rawFlat, currentLocale);
             const branch = flat.branchSlug ? getBranchBySlug(flat.branchSlug) : undefined;
             const photoUrl = FLAT_IMAGES[flat.category.toLowerCase()] || "/images/amenities-bedroom-bg.jpg";
 
@@ -253,11 +263,11 @@ export function PropertiesCatalogView() {
 
                       <div className="flex items-center gap-3">
                         <Link
-                          href={`/properties/${flat.slug}`}
+                          href={`${localePrefix}/properties/${flat.slug}`}
                           className="w-full sm:w-auto px-6 py-3 min-h-[46px] rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] hover:brightness-105 text-[#140E08] font-bold text-xs uppercase tracking-wider inline-flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
                         >
-                          <span>Reserve Suite</span>
-                          <ArrowRight className="w-4 h-4" />
+                          <span>{isAr ? dict.rooms.reserveUnit : "Reserve Suite"}</span>
+                          <ArrowRight className={cn("w-4 h-4", isAr && "rotate-180")} />
                         </Link>
                       </div>
                     </div>
