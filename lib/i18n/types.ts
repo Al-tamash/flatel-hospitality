@@ -141,6 +141,8 @@ export interface Dictionary {
   checkout: {
     pageTitle: string;
     pageSubtitle: string;
+    title: string;
+    subtitle: string;
     step1Title: string;
     step2Title: string;
     fullName: string;
@@ -152,16 +154,40 @@ export interface Dictionary {
     balanceAtCheckInLabel: string;
     totalPayable: string;
     proceedToPayment: string;
+    guestDetails: string;
+    bookingSummary: string;
+    advanceDueNow: string;
+    balanceDueArrival: string;
+    totalStay: string;
+    cancellationPolicy: string;
+    cancellationNotice: string;
+    photoIdNotice: string;
+    termsAgreement: string;
+    payAdvanceButton: string;
+    specialRequests: string;
+    internationalGuest: string;
   };
   confirmation: {
     pageTitle: string;
     pageSubtitle: string;
+    title: string;
+    subtitle: string;
     reservationId: string;
     congratulations: string;
     voucherReadyText: string;
     downloadVoucher: string;
     propertyLocation: string;
     checkInInstructions: string;
+    bookingReference: string;
+    sendToWhatsapp: string;
+    openGoogleMaps: string;
+    reservedResidence: string;
+    staySchedule: string;
+    paymentBreakdown: string;
+    advancePaid: string;
+    balanceDue: string;
+    photoIdNotice: string;
+    frontDeskHotline: string;
   };
   auth: {
     signInTitle: string;
