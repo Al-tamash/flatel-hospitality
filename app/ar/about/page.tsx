@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { ArrowLeft, MessageSquare } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { MissionVision } from "@/components/about/mission-vision";
 import { WHATSAPP_CONFIG } from "@/lib/constants";
 
 export const metadata: Metadata = {
@@ -134,6 +135,8 @@ export default function ArabicAboutPage() {
         </section>
 
         {/* 3. 5-Pillar Standard */}
+        <MissionVision locale="ar" />
+
         <section className="w-full py-16 sm:py-20 bg-[#120D09]">
           <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10">
             <div className="text-center max-w-2xl mx-auto mb-12">

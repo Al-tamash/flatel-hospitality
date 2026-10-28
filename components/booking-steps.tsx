@@ -304,19 +304,6 @@ export function BookingSteps({ className }: { className?: string }) {
           </div>
         </div>
 
-        {/* Subtle Brand Authority Trust Note (Integrated smoothly, no divider) */}
-        <div className="mt-10 sm:mt-12 text-center">
-          <p className="text-xs sm:text-sm text-[#D4C4B3] font-sans">
-            Rooted in authentic Hyderabadi warmth and transparent residential hospitality.{" "}
-            <Link
-              href="/about"
-              className="text-[#E5C178] font-semibold hover:underline inline-flex items-center gap-1 ml-1"
-            >
-              <span>Read our story &amp; founder&apos;s pledge</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </p>
-        </div>
       </div>
     </section>
   );

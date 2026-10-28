@@ -6,6 +6,7 @@ import { AmenitiesSection } from "@/components/amenities-section";
 import { NearbyHospitals } from "@/components/nearby-hospitals";
 import { BookingSteps } from "@/components/booking-steps";
 import { FaqSection } from "@/components/faq-section";
+import { FounderStrip } from "@/components/home/founder-strip";
 import { SiteFooter } from "@/components/site-footer";
 import type { Metadata } from "next";
 
@@ -41,6 +42,8 @@ export default function ArabicHomePage() {
         <BookingSteps />
 
         {/* 8. Frequently Asked Questions */}
+        <FounderStrip locale="ar" />
+
         <FaqSection />
       </main>
 

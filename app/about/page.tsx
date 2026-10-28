@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { MissionVision } from "@/components/about/mission-vision";
 import { WHATSAPP_CONFIG } from "@/lib/constants";
 
 export const metadata: Metadata = {
@@ -200,6 +201,8 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
+
+        <MissionVision locale="en" />
 
         {/* ======================================================== */}
         {/* 3. THE 5-PILLAR GUEST PLEDGE (Hairline List Layout)      */}
