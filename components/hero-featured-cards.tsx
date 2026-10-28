@@ -8,7 +8,7 @@ import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // =========================================================================
-// 4 CLEAN, MINIMAL STAY PURPOSE CARDS
+// 5 CLEAN, MINIMAL STAY PURPOSE CARDS (each opens its /stays/[purpose] page)
 // Inspired by Image 2: Simple, compact cards with framed imagery and clean bottom labels.
 // No heavy badges, no paragraph clutter, just pure luxury and visual clarity.
 // =========================================================================
@@ -20,9 +20,19 @@ export const FEATURED_PURPOSES = [
     title: "Medistay Healthcare",
     titleAr: "السياحة العلاجية (Medistay)",
     imageUrl: "/images/experiences/medistay-luxury-suite.jpg",
-    href: "/?purpose=medical#flats",
+    href: "/stays/medical",
     description: "Doctor assistance, wheelchair, hospital bed setup & ambulance coordination.",
     descriptionAr: "مساعدة في مواعيد الأطباء، كراسي متحركة، سرير طبي، وتنسيق الإسعاف.",
+  },
+  {
+    id: "wedding",
+    purposeKey: "wedding",
+    title: "Wedding & Celebrations",
+    titleAr: "الأعراس والمناسبات",
+    imageUrl: "/images/purposes/purpose-wedding.jpg",
+    href: "/stays/wedding",
+    description: "Group check-in for wedding families, garment steamer and optional venue, décor and photography help.",
+    descriptionAr: "تسجيل وصول جماعي لعائلات الأعراس، ومكواة بخار، وترتيبات اختيارية للقاعة والديكور والتصوير.",
   },
   {
     id: "tourism",
@@ -30,7 +40,7 @@ export const FEATURED_PURPOSES = [
     title: "Heritage & Tourism",
     titleAr: "السياحة والتراث",
     imageUrl: "/images/branch-moghal-pura.jpg",
-    href: "/?purpose=tourism#flats",
+    href: "/stays/tourism",
     description: "Charminar itinerary guide, luggage storage, and 24/7 local desk.",
     descriptionAr: "دليل زيارة تشارمينار، حفظ الأمتعة، ومكتب استقبال على مدار الساعة.",
   },
@@ -40,7 +50,7 @@ export const FEATURED_PURPOSES = [
     title: "Family & Long Stay",
     titleAr: "العائلات والإقامات الطويلة",
     imageUrl: "/images/flats/flat-3bhk-luxury.jpg",
-    href: "/?purpose=family#flats",
+    href: "/stays/family",
     description: "Infant baby cot, private modular kitchen with gas, and board games.",
     descriptionAr: "سرير أطفال مجاني، مطبخ مجهز بالكامل بالغاز، وأجواء عائلية مريحة.",
   },
@@ -50,7 +60,7 @@ export const FEATURED_PURPOSES = [
     title: "Corporate Executive",
     titleAr: "رجال الأعمال والشركات",
     imageUrl: "/images/experiences/corporate-luxury-desk.jpg",
-    href: "/?purpose=corporate#flats",
+    href: "/stays/corporate",
     description: "High-speed enterprise Wi-Fi, ergonomic desk setup, and GST invoices.",
     descriptionAr: "إنترنت عالي السرعة، مساحة عمل مريحة، وفواتير ضريبية معتمدة.",
   },
@@ -65,38 +75,18 @@ export function HeroFeaturedCards({ className }: HeroFeaturedCardsProps) {
   const isAr = pathname?.startsWith("/ar");
   const localePrefix = isAr ? "/ar" : "";
 
-  const handleCardClick = (e: React.MouseEvent, card: (typeof FEATURED_PURPOSES)[number]) => {
-    e.preventDefault();
-    if (typeof window !== "undefined") {
-      const sp = new URLSearchParams(window.location.search);
-      sp.set("purpose", card.purposeKey);
-      const newUrl = `${localePrefix}/?${sp.toString()}#flats`;
-      window.history.pushState(null, "", newUrl);
-      window.dispatchEvent(
-        new CustomEvent("flatel:set-purpose", {
-          detail: { purpose: card.purposeKey },
-        })
-      );
-      const target = document.getElementById("flats") || document.getElementById("properties");
-      if (target) {
-        target.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-    }
-  };
-
   return (
     <div
       className={cn("w-full select-none max-w-6xl mx-auto", className)}
       aria-label="FLATEL Stay Categories"
     >
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 sm:gap-4 md:gap-5">
+      <div className="flex md:grid md:grid-cols-5 gap-3.5 sm:gap-4 overflow-x-auto md:overflow-visible snap-x snap-mandatory -mx-4 px-4 md:mx-0 md:px-0 pb-1 md:pb-0 no-scrollbar">
         {FEATURED_PURPOSES.map((card) => (
           <Link
             key={card.id}
             href={`${localePrefix}${card.href}`}
-            onClick={(e) => handleCardClick(e, card)}
             className={cn(
-              "group relative flex flex-col justify-between rounded-2xl overflow-hidden",
+              "group relative flex flex-col justify-between rounded-2xl overflow-hidden snap-start shrink-0 w-[44%] sm:w-[30%] md:w-auto",
               "bg-[rgba(34,24,16,0.65)] backdrop-blur-md border border-[rgba(212,163,89,0.28)]",
               "hover:border-[#E5C178] hover:shadow-[0_16px_36px_rgba(212,163,89,0.2)]",
               "hover:-translate-y-1 transition-all duration-300",
@@ -111,7 +101,7 @@ export function HeroFeaturedCards({ className }: HeroFeaturedCardsProps) {
                   alt={isAr ? card.titleAr : card.title}
                   fill
                   className="object-cover object-center group-hover:scale-106 transition-transform duration-500 ease-out"
-                  sizes="(max-width: 640px) 50vw, 25vw"
+                  sizes="(max-width: 768px) 45vw, 20vw"
                 />
                 {/* Subtle soft dark gradient overlay for depth */}
                 <div
