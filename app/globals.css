@@ -336,6 +336,10 @@
 .flatel-dark-tiles {
   filter: brightness(0.68) invert(1) contrast(2.4) hue-rotate(180deg) saturate(0.2) brightness(0.85) !important;
 }
+/* Carto dark basemap tinted so roads read gold on near-black (shared map kit) */
+.flatel-gold-tiles {
+  filter: sepia(1) saturate(2.6) hue-rotate(-8deg) brightness(1.15) contrast(1.25) !important;
+}
 .leaflet-control-zoom {
   border: 1px solid rgba(212, 163, 89, 0.28) !important;
   border-radius: 8px !important;
