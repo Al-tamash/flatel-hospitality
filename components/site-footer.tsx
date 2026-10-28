@@ -20,6 +20,7 @@ import {
 import { getLocaleFromPath, getDictionary } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { cn } from "@/lib/utils";
+import { Starlight } from "@/components/effects/starlight";
 
 /**
  * Official WhatsApp Vector Geometry
@@ -63,6 +64,7 @@ export function SiteFooter() {
       )}
       aria-label="Site Footer"
     >
+      <Starlight seed={29} density={110} className="opacity-60" />
       {/* ── Luxury Moroccan Inward Arch Border (Mamounia Marrakech Inspired) ── */}
       {/* Deep inward curve in the center ("jada center inward") */}
       <div className="relative w-full overflow-hidden leading-none select-none -mb-px">

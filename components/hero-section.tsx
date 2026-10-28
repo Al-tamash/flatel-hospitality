@@ -8,6 +8,7 @@ import { ArrowRight, ArrowLeft } from "lucide-react";
 import { BookingSearch } from "@/components/hero/booking-search";
 import { HeroFeaturedCards } from "@/components/hero-featured-cards";
 import { getLocaleFromPath, getDictionary } from "@/lib/i18n";
+import { Starlight } from "@/components/effects/starlight";
 import { cn } from "@/lib/utils";
 
 interface HeroSectionProps {
@@ -75,6 +76,16 @@ export function HeroSection({ customImageUrl }: HeroSectionProps) {
           <div
             className="absolute inset-0 bg-[#0E0A07]/45 pointer-events-none"
             aria-hidden="true"
+          />
+
+          {/* Starlight night sky over the dark side of the hero, fading out over the photo */}
+          <Starlight
+            seed={7}
+            className={cn(
+              isAr
+                ? "[mask-image:linear-gradient(to_left,black_0%,black_35%,transparent_70%)]"
+                : "[mask-image:linear-gradient(to_right,black_0%,black_35%,transparent_70%)]"
+            )}
           />
         </div>
 
