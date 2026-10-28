@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getLocaleFromPath } from "@/lib/i18n";
+import { MOCK_ROOMS } from "@/lib/mock-rooms";
+import { getUnitCapsByFlatType } from "@/lib/inventory-stats";
 
 export interface FlatDefinition {
   id: string; // "1bhk", "2bhk", "3bhk", "4bhk"
@@ -29,12 +31,15 @@ export interface FlatDefinition {
   extraKidFee: number;
 }
 
+// Unit caps come from inventory, never hard-coded
+const UNIT_CAPS = getUnitCapsByFlatType(MOCK_ROOMS);
+
 export const FLAT_DEFINITIONS: FlatDefinition[] = [
   {
     id: "1bhk",
     title: "1 BHK",
     pricePerNight: 2000,
-    availableUnits: 1,
+    availableUnits: UNIT_CAPS["1bhk"] ?? 1,
     baseAdults: 2,
     baseKids: 1,
     maxExtraAdults: 2,
@@ -46,7 +51,7 @@ export const FLAT_DEFINITIONS: FlatDefinition[] = [
     id: "2bhk",
     title: "2 BHK",
     pricePerNight: 2500,
-    availableUnits: 3,
+    availableUnits: UNIT_CAPS["2bhk"] ?? 1,
     baseAdults: 4,
     baseKids: 2,
     maxExtraAdults: 2,
@@ -58,7 +63,7 @@ export const FLAT_DEFINITIONS: FlatDefinition[] = [
     id: "3bhk",
     title: "3 BHK",
     pricePerNight: 3000,
-    availableUnits: 2,
+    availableUnits: UNIT_CAPS["3bhk"] ?? 1,
     baseAdults: 6,
     baseKids: 3,
     maxExtraAdults: 3,
@@ -70,7 +75,7 @@ export const FLAT_DEFINITIONS: FlatDefinition[] = [
     id: "4bhk",
     title: "4 BHK",
     pricePerNight: 4000,
-    availableUnits: 1,
+    availableUnits: UNIT_CAPS["4bhk"] ?? 1,
     baseAdults: 8,
     baseKids: 4,
     maxExtraAdults: 4,

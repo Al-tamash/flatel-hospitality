@@ -63,6 +63,8 @@ interface BookingSidebarProps {
   onCheckOutChange?: (date: Date | undefined) => void;
   onAdultsChange?: (adults: number) => void;
   onChildrenChange?: (children: number) => void;
+  /** Open the check-in picker once on arrival (search without dates). */
+  autoOpenCheckIn?: boolean;
 }
 
 export const ARABIC_ADDONS_TRANSLATION: Record<string, string> = {
@@ -97,6 +99,7 @@ export function BookingSidebar({
   selectedPurposeId,
   selectedAddonIds,
   onSelectPurpose,
+  autoOpenCheckIn = false,
   checkIn: controlledCheckIn,
   checkOut: controlledCheckOut,
   adults: controlledAdults,
@@ -146,6 +149,15 @@ export function BookingSidebar({
 
   // Popover open states
   const [checkInOpen, setCheckInOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!autoOpenCheckIn) return;
+    const timer = window.setTimeout(() => {
+      document.getElementById("reservation-panel")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      setCheckInOpen(true);
+    }, 400);
+    return () => window.clearTimeout(timer);
+  }, [autoOpenCheckIn]);
   const [checkOutOpen, setCheckOutOpen] = React.useState(false);
   const [guestsOpen, setGuestsOpen] = React.useState(false);
 

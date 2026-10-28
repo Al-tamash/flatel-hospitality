@@ -142,7 +142,7 @@ export function HeroSection({ customImageUrl }: HeroSectionProps) {
       {/* ======================================================== */}
       {/* 3. UNDER THE HERO: 4 PURPOSE CARDS                      */}
       {/* ======================================================== */}
-      <div className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 pt-6 sm:pt-8 pb-12 sm:pb-16">
+      <div className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 pt-6 sm:pt-8 pb-8">
         <HeroFeaturedCards />
       </div>
     </section>

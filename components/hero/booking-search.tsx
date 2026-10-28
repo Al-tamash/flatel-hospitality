@@ -45,6 +45,7 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
 
   // 4. Merged Flat & Occupancy State
   const [selectedFlatTypes, setSelectedFlatTypes] = React.useState<string>("1bhk");
+  const [selectedUnits, setSelectedUnits] = React.useState(1);
   const [flatOccupancySummary, setFlatOccupancySummary] = React.useState<string>(() =>
     isAr ? "شقة ١ غرف وصالة · ضيفان" : "1 BHK · 2 Guests"
   );
@@ -207,6 +208,7 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
   const handleApplyFlatOccupancy = (result: MergedSelectionResult) => {
     setFlatsOccupancyState(result.flats);
     setSelectedFlatTypes(result.flatTypesQuery);
+    setSelectedUnits(result.totalUnits);
     setFlatOccupancySummary(result.summaryLabel);
     setAdults(result.totalAdults);
     setChildrenCount(result.totalKids);
@@ -221,6 +223,17 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
     setErrorMessage(null);
     setErrorField(null);
   };
+
+  // "Edit search" from the results bar brings the guest back here with the calendar open
+  React.useEffect(() => {
+    const handleEditSearch = () => {
+      containerRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      setCalendarTargetField("checkIn");
+      setActivePopover("calendar");
+    };
+    window.addEventListener("flatel:edit-search", handleEditSearch);
+    return () => window.removeEventListener("flatel:edit-search", handleEditSearch);
+  }, []);
 
   // Form Submission — Frictionless Direct Sync with Available Flats Section
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -250,6 +263,7 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
     const params = new URLSearchParams();
     if (selectedBranch && selectedBranch !== "all") params.set("branch", selectedBranch);
     if (selectedFlatTypes && selectedFlatTypes !== "all") params.set("flatType", selectedFlatTypes);
+    if (selectedUnits > 1) params.set("units", selectedUnits.toString());
     if (checkIn) params.set("checkIn", format(checkIn, "yyyy-MM-dd"));
     if (checkOut) params.set("checkOut", format(checkOut, "yyyy-MM-dd"));
     if (hasSelectedGuests || adults !== 2 || childrenCount !== 0) {
@@ -271,6 +285,7 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
             checkOut,
             adults,
             childrenCount,
+            totalUnits: selectedUnits,
           },
         })
       );

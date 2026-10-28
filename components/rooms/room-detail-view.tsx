@@ -65,6 +65,8 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
     "medical" | "wedding" | "tourism" | "corporate" | "family" | "accommodation_only" | null
   >(null);
   const [selectedAddonIds, setSelectedAddonIds] = React.useState<string[]>([]);
+  // Arrived from a search without dates: open the date picker so the guest chooses them first
+  const [autoOpenCheckIn, setAutoOpenCheckIn] = React.useState(false);
 
   // Modals
   const [amenitiesModalOpen, setAmenitiesModalOpen] = React.useState(false);
@@ -100,6 +102,7 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
         const urlKids = sp.get("kids") || sp.get("children");
         const urlPurpose = sp.get("purpose");
         const urlAddons = sp.get("addons");
+        if (sp.get("pickDates") === "1") setAutoOpenCheckIn(true);
 
         // 1. Dates
         let parsedIn: Date | undefined = undefined;
@@ -682,6 +685,7 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
                   onCheckOutChange={setCheckOut}
                   onAdultsChange={setAdults}
                   onChildrenChange={setChildrenCount}
+                  autoOpenCheckIn={autoOpenCheckIn}
                 />
               </React.Suspense>
             </div>
