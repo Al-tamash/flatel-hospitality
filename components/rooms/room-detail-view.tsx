@@ -661,7 +661,7 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
           {/* ====================================================== */}
           {/* RIGHT COLUMN: Sticky Booking Panel                     */}
           {/* ====================================================== */}
-          <div className="lg:col-span-5 xl:col-span-4 lg:sticky lg:top-28 space-y-4">
+          <div className="lg:col-span-5 xl:col-span-4 lg:sticky lg:top-28 lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto lg:overscroll-contain flatel-thin-scroll space-y-4">
             <div id="reservation-panel" className="w-full max-w-xl mx-auto lg:max-w-none">
               <React.Suspense
                 fallback={

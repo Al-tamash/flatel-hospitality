@@ -443,3 +443,8 @@
 .leaflet-control-attribution a {
   color: #E5C178 !important;
 }
+/* Thin gold scrollbar for panels that only scroll on short screens */
+.flatel-thin-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(212, 163, 89, 0.4) transparent;
+}

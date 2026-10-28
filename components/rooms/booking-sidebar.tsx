@@ -13,7 +13,6 @@ import {
   CreditCard,
   Building,
   AlertCircle,
-  CheckCircle2,
   Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -23,11 +22,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { RoomDetail, PURPOSE_PACKAGES, FacilityAddon, ALL_MASTER_ADDONS } from "@/lib/mock-rooms";
+import { RoomDetail, FacilityAddon, ALL_MASTER_ADDONS } from "@/lib/mock-rooms";
 import { WHATSAPP_CONFIG } from "@/lib/constants";
 import { calculateFlatelPrice } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
 import { getPurposeLabel, isPurposeId } from "@/lib/purpose/purpose-services";
+import { buildAddonSummary } from "@/lib/booking/addon-summary";
 import type { StayPurposeType } from "@/types/booking";
 
 interface BookingSidebarProps {
@@ -96,8 +96,6 @@ export function BookingSidebar({
   selectedPurposeId,
   selectedAddonIds,
   onSelectPurpose,
-  onToggleAddon,
-  onOpenServiceDrawer,
   checkIn: controlledCheckIn,
   checkOut: controlledCheckOut,
   adults: controlledAdults,
@@ -169,21 +167,6 @@ export function BookingSidebar({
     typeof maxAllowedChildren === "number" ? childrenCount > maxAllowedChildren : false;
   const isOverCapacity = isAdultsOverCapacity || isChildrenOverCapacity;
 
-  // Selected add-ons resolution across all packages
-  const activePackage =
-    selectedPurposeId && selectedPurposeId !== "accommodation_only"
-      ? PURPOSE_PACKAGES.find((p) => p.id === selectedPurposeId) || null
-      : null;
-
-  const getAddonName = React.useCallback(
-    (addon: { id: string; name: string }) => {
-      if (currentLocale === "ar" && ARABIC_ADDONS_TRANSLATION[addon.id]) {
-        return ARABIC_ADDONS_TRANSLATION[addon.id];
-      }
-      return addon.name;
-    },
-    [currentLocale]
-  );
 
   const activePurposeLabel =
     selectedPurposeId && (isPurposeId(selectedPurposeId) || selectedPurposeId === "accommodation_only")
@@ -218,6 +201,37 @@ export function BookingSidebar({
       selectedPaidAddons: validPaidAddons,
     });
   }, [totalNights, room, adults, childrenCount, activeAddons]);
+
+  // Add-ons are chosen in the flat page's services section; the panel only summarises them
+  const addonSummary = buildAddonSummary({
+    selected: activeAddons,
+    addonsTotal: fareResult.addonsTotal,
+    locale: currentLocale === "ar" ? "ar" : "en",
+  });
+
+  const scrollToPurposeServices = () => {
+    setIsMobileSheetOpen(false);
+    const target = document.getElementById("purpose-addons") || document.getElementById("purpose-services");
+    target?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const addonSummaryButton = (
+    <button
+      type="button"
+      onClick={scrollToPurposeServices}
+      className={cn(
+        "w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl border text-xs font-semibold text-start transition-colors cursor-pointer",
+        addonSummary.hasSelection
+          ? "bg-[#E5C178]/10 border-[#E5C178]/60 text-[#FAF4EB] hover:border-[#E5C178]"
+          : "bg-[#16100B] border-[rgba(212,163,89,0.25)] text-[#E5C178] hover:border-[#E5C178]"
+      )}
+    >
+      <span className="flex items-center gap-1.5 min-w-0">
+        <Sparkles className="w-3.5 h-3.5 text-[#E5C178] shrink-0" />
+        <span className="truncate">{addonSummary.label}</span>
+      </span>
+    </button>
+  );
 
   // Central WhatsApp Concierge link (configuration-driven)
   const whatsappUrl = WHATSAPP_CONFIG.getUrl(
@@ -609,77 +623,7 @@ export function BookingSidebar({
             </select>
           </div>
 
-          {/* Active Purpose Details & Add-ons */}
-          {selectedPurposeId && selectedPurposeId !== "accommodation_only" && (
-            <div className="space-y-2 p-3 rounded-xl bg-[#16100B]/90 border border-[rgba(212,163,89,0.3)] animate-in fade-in duration-200">
-              {/* Free Inclusions Notice */}
-              <div className="text-[11px] text-emerald-400 flex items-start gap-1.5 leading-snug">
-                <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                <span>
-                  {currentLocale === "ar"
-                    ? (selectedPurposeId === "medical"
-                        ? "يشمل تنسيق المواعيد الطبية، المساعدة بكرسي متحرك، ومجموعة قياس المؤشرات الحيوية مجاناً"
-                        : selectedPurposeId === "wedding"
-                        ? "يشمل تنسيق غرف المجموعات ومعدات كي الملابس بالبخار مجاناً"
-                        : selectedPurposeId === "corporate"
-                        ? "يشمل إنترنت عالي السرعة، مكتب عمل مخصص، وفاتورة ضريبية رسمية مجاناً"
-                        : selectedPurposeId === "tourism"
-                        ? "يشمل أدلة معالم حيدر أباد التاريخية وخدمة مكتب الاستقبال ٢٤/٧ مجاناً"
-                        : "يشمل أواني طهي عائلية، ألعاب أطفال داخلية، ومستلزمات رعاية الرضع مجاناً")
-                    : (selectedPurposeId === "medical"
-                        ? "Includes doctor appointment coordination, wheelchair assistance & vitals kit at ₹0"
-                        : selectedPurposeId === "wedding"
-                        ? "Includes group block coordination & garment steaming equipment at ₹0"
-                        : selectedPurposeId === "corporate"
-                        ? "Includes enterprise high-speed Wi-Fi, work desk & GST invoice at ₹0"
-                        : selectedPurposeId === "tourism"
-                        ? "Includes Old City monument guides & 24/7 front desk assistance at ₹0"
-                        : "Includes family cookware, indoor games & baby support at ₹0")}
-                </span>
-              </div>
-
-              {/* Available Paid Add-ons */}
-              {activePackage && activePackage.paidAddons.length > 0 && (
-                <div className="space-y-1.5 pt-2 border-t border-[rgba(212,163,89,0.18)]">
-                  <div className="text-[10.5px] font-sans font-semibold uppercase tracking-wider text-[#E5C178]">
-                    {currentLocale === "ar" ? "خدمات إضافية اختيارية" : "Add-on Services (Optional)"}
-                  </div>
-                  <div className="space-y-1">
-                    {activePackage.paidAddons.map((addon) => {
-                      const isChecked = selectedAddonIds.includes(addon.id);
-                      const priceLabel = addon.type === "per_night" || addon.pricingType === "per_night"
-                        ? (currentLocale === "ar" ? `₹${addon.price}/ليلة` : `₹${addon.price}/night`)
-                        : `₹${addon.price}`;
-                      return (
-                        <label
-                          key={addon.id}
-                          className={cn(
-                            "flex items-center justify-between p-2 rounded-lg border text-xs cursor-pointer transition-all",
-                            isChecked
-                              ? "bg-[#E5C178]/15 border-[#E5C178] text-[#FAF4EB]"
-                              : "bg-[#221810]/70 border-[rgba(212,163,89,0.2)] text-[#B8A692] hover:border-[#E5C178]/40"
-                          )}
-                        >
-                          <div className="flex items-center gap-2 min-w-0 pr-2">
-                            <input
-                              type="checkbox"
-                              checked={isChecked}
-                              onChange={() => onToggleAddon?.(addon.id)}
-                              className="w-3.5 h-3.5 accent-[#E5C178] rounded cursor-pointer shrink-0"
-                            />
-                            <span className="font-medium text-[11.5px] truncate">{getAddonName(addon)}</span>
-                          </div>
-                          <span className="font-sans font-bold text-[#E5C178] text-xs tabular-nums shrink-0">
-                            +{priceLabel}
-                          </span>
-                        </label>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+          {addonSummaryButton}
         </div>
 
         {/* ======================================================== */}
@@ -724,63 +668,17 @@ export function BookingSidebar({
             </div>
           )}
 
-          {/* Itemized Paid Add-ons */}
+          {/* Paid add-ons (chosen in the services section) */}
           {activeAddons.length > 0 && (
-            <div className="space-y-1.5 pt-1 border-t border-[rgba(212,163,89,0.15)]">
-              <div className="flex items-center justify-between text-[10px] font-sans font-medium uppercase tracking-wider text-[#B8A692]">
-                <span>
-                  {currentLocale === "ar"
-                    ? `الخدمات الإضافية المختارة (${activeAddons.length})`
-                    : `Selected Add-ons (${activeAddons.length})`}
-                </span>
-                {onOpenServiceDrawer && (
-                  <button
-                    type="button"
-                    onClick={onOpenServiceDrawer}
-                    className="text-[#E5C178] hover:text-[#FAF4EB] lowercase font-sans text-xs cursor-pointer transition-colors"
-                  >
-                    {currentLocale === "ar" ? "تعديل" : "edit"}
-                  </button>
-                )}
-              </div>
-              {activeAddons.map((addon) => {
-                const addonPrice = addon.price;
-                const isNumericPrice = typeof addonPrice === "number";
-                const subtotal = isNumericPrice
-                  ? addon.pricingType === "per_night"
-                    ? addonPrice * totalNights
-                    : addonPrice
-                  : null;
-
-                return (
-                  <div key={addon.id} className="flex justify-between items-center text-[#B8A692] text-[11px]">
-                    <span className="truncate pr-2">
-                      {getAddonName(addon)}
-                      {isNumericPrice && addon.pricingType === "per_night"
-                        ? (currentLocale === "ar" ? ` (${totalNights} ليالٍ)` : ` (${totalNights}n)`)
-                        : ""}
-                    </span>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <span className="font-serif text-xs font-medium text-[#FAF4EB] tabular-nums">
-                        {subtotal !== null
-                          ? `₹${subtotal.toLocaleString("en-IN")}`
-                          : (currentLocale === "ar" ? "تسعير حسب الطلب" : "Quote on Request")}
-                      </span>
-                      {onToggleAddon && (
-                        <button
-                          type="button"
-                          onClick={() => onToggleAddon(addon.id)}
-                          className="text-[#B8A692] hover:text-rose-400 p-0.5 text-xs font-bold leading-none cursor-pointer"
-                          title="Remove add-on"
-                          aria-label={`Remove ${addon.name}`}
-                        >
-                          ×
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
+            <div className="flex justify-between text-[#B8A692] pt-1 border-t border-[rgba(212,163,89,0.15)]">
+              <span>
+                {currentLocale === "ar"
+                  ? `الخدمات الإضافية (${activeAddons.length})`
+                  : `Add-ons (${activeAddons.length})`}
+              </span>
+              <span className="font-serif text-sm font-medium text-[#FAF4EB] tabular-nums">
+                ₹{fareResult.addonsTotal.toLocaleString("en-IN")}
+              </span>
             </div>
           )}
 
@@ -1074,45 +972,7 @@ export function BookingSidebar({
                 <option value="tourism">{currentLocale === "ar" ? "سياحة واستكشاف المعالم" : "Heritage & Tourism"}</option>
               </select>
 
-              {activePackage && activePackage.paidAddons.length > 0 && selectedPurposeId !== "accommodation_only" && (
-                <div className="space-y-1.5 pt-2">
-                  <div className="text-[11px] font-sans font-semibold uppercase tracking-wider text-[#E5C178]">
-                    {currentLocale === "ar" ? "خدمات إضافية اختيارية" : "Optional Paid Add-ons"}
-                  </div>
-                  <div className="space-y-1">
-                    {activePackage.paidAddons.map((addon) => {
-                      const isChecked = selectedAddonIds.includes(addon.id);
-                      const priceLabel = addon.type === "per_night" || addon.pricingType === "per_night"
-                        ? (currentLocale === "ar" ? `₹${addon.price}/ليلة` : `₹${addon.price}/night`)
-                        : `₹${addon.price}`;
-                      return (
-                        <label
-                          key={addon.id}
-                          className={cn(
-                            "flex items-center justify-between p-2 rounded-lg border text-xs cursor-pointer transition-all",
-                            isChecked
-                              ? "bg-[#E5C178]/15 border-[#E5C178] text-[#FAF4EB]"
-                              : "bg-[#16100B] border-[rgba(212,163,89,0.2)] text-[#B8A692]"
-                          )}
-                        >
-                          <div className="flex items-center gap-2 min-w-0 pr-2">
-                            <input
-                              type="checkbox"
-                              checked={isChecked}
-                              onChange={() => onToggleAddon?.(addon.id)}
-                              className="w-3.5 h-3.5 accent-[#E5C178] rounded cursor-pointer shrink-0"
-                            />
-                            <span className="font-medium text-[11px] truncate">{getAddonName(addon)}</span>
-                          </div>
-                          <span className="font-sans font-bold text-[#E5C178] text-[11px] tabular-nums shrink-0">
-                            +{priceLabel}
-                          </span>
-                        </label>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
+              {addonSummaryButton}
             </div>
 
             {/* Sheet Fare Breakdown */}
