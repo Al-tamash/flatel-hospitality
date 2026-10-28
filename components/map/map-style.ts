@@ -4,16 +4,29 @@
  */
 import type { PlaceCategory } from "@/lib/map/places";
 
-// Carto dark basemap (free, no API key). The `.flatel-gold-tiles` CSS filter in
-// app/globals.css turns its grey roads gold on a near-black ground.
+const ESRI_ATTRIBUTION =
+  'Tiles &copy; <a href="https://www.esri.com" target="_blank" rel="noopener noreferrer">Esri</a> &mdash; Esri, HERE, Garmin, &copy; OpenStreetMap contributors';
+
+// Esri World Dark Gray Canvas (free, no API key). The `.flatel-gold-tiles` CSS
+// filter in app/globals.css turns its grey roads gold on a near-black ground.
 export const GOLD_TILE_LAYER = {
-  url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+  url: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",
   options: {
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer">CARTO</a>',
-    subdomains: "abcd",
-    maxZoom: 19,
+    attribution: ESRI_ATTRIBUTION,
+    maxZoom: 18,
+    maxNativeZoom: 16,
     className: "flatel-gold-tiles" as const,
+  },
+};
+
+// Matching place/road labels, tinted warm white so they stay readable over gold roads.
+export const GOLD_LABEL_LAYER = {
+  url: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}",
+  options: {
+    maxZoom: 18,
+    maxNativeZoom: 16,
+    className: "flatel-gold-labels" as const,
+    pane: "overlayPane" as const,
   },
 };
 

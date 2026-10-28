@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { distanceKm, nearestBranch } from "../../lib/map/geo";
 import { BRANCH_PINS, MAP_PLACES } from "../../lib/map/places";
-import { GOLD_TILE_LAYER, buildFlagPinHtml } from "../../components/map/map-style";
+import { GOLD_TILE_LAYER, GOLD_LABEL_LAYER, buildFlagPinHtml } from "../../components/map/map-style";
 
 console.log("Running Map Kit Tests...");
 
@@ -34,7 +34,9 @@ assert.match(flag, /#0E0A07|#000|#16100B/i);
 assert.doesNotMatch(flag, /monospace/i);
 assert.match(buildFlagPinHtml({ active: true, id: "x" }), /drop-shadow|glow/i);
 
-// 6. Carto dark tiles
-assert.match(GOLD_TILE_LAYER.url, /basemaps\.cartocdn\.com\/dark_/);
+// 6. Keyless dark tiles (Carto now needs an API key) + separate label layer
+assert.match(GOLD_TILE_LAYER.url, /server\.arcgisonline\.com\/.*World_Dark_Gray_Base/);
+assert.match(GOLD_LABEL_LAYER.url, /World_Dark_Gray_Reference/);
+assert.doesNotMatch(GOLD_TILE_LAYER.url + GOLD_LABEL_LAYER.url, /cartocdn|apikey|access_token/i);
 
 console.log("Map places tests passed");

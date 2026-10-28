@@ -333,12 +333,12 @@
   outline: none;
 }
 /* OpenStreetMap Dark Luxury Map Styling for FLATEL */
-.flatel-dark-tiles {
-  filter: brightness(0.68) invert(1) contrast(2.4) hue-rotate(180deg) saturate(0.2) brightness(0.85) !important;
-}
-/* Carto dark basemap tinted so roads read gold on near-black (shared map kit) */
+/* Esri dark-gray basemap tinted so roads read gold on near-black (shared map kit) */
 .flatel-gold-tiles {
-  filter: sepia(1) saturate(2.6) hue-rotate(-8deg) brightness(1.15) contrast(1.25) !important;
+  filter: contrast(2.2) brightness(1.05) sepia(1) saturate(3.2) hue-rotate(-10deg) !important;
+}
+.flatel-gold-labels {
+  filter: sepia(0.6) brightness(1.15) !important;
 }
 .leaflet-control-zoom {
   border: 1px solid rgba(212, 163, 89, 0.28) !important;
@@ -377,19 +377,17 @@
 .leaflet-control-attribution a:hover {
   text-decoration: underline !important;
 }
-.flatel-marker-pin {
-  cursor: pointer;
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: transform;
+.flatel-map-tooltip {
+  background: #16100B !important;
+  color: #FAF4EB !important;
+  border: 1px solid rgba(212, 163, 89, 0.4) !important;
+  border-radius: 8px !important;
+  font-size: 12px !important;
+  padding: 4px 8px !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6) !important;
 }
-.flatel-marker-pin:hover {
-  transform: translateY(-4px) scale(1.08);
-}
-.flatel-marker-active {
-  z-index: 1000 !important;
-}
-.flatel-marker-active .flatel-marker-pin {
-  transform: translateY(-4px) scale(1.15);
+.flatel-map-tooltip::before {
+  border-top-color: rgba(212, 163, 89, 0.4) !important;
 }
 
 /* ==========================================================================
