@@ -14,7 +14,6 @@ import {
   MapPin,
   ExternalLink,
   ChevronRight,
-  ChevronLeft,
   Users,
   BedDouble,
   CheckCircle2,
@@ -28,16 +27,14 @@ import {
   Clock,
   Sparkles,
   ArrowRight,
-  X,
   ChevronDown,
-  Maximize2,
   Navigation,
 } from "lucide-react";
 import { BranchItem } from "@/lib/constants";
 import { RoomDetail } from "@/lib/mock-rooms";
 import { getBranchProfile } from "@/lib/branch-data";
 import { ARABIC_BRANCH_OVERLAYS } from "@/components/branch-hub";
-import { cn } from "@/lib/utils";
+import { PhotoCarousel } from "@/components/media/photo-carousel";
 
 interface BranchDetailViewProps {
   branch: BranchItem;
@@ -132,13 +129,6 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
 
     return list;
   }, [profile, properties]);
-
-  // Hero Image preview state (Controlled via clicking thumbnails)
-  const [selectedImageIndex, setSelectedImageIndex] = React.useState<number>(0);
-
-  // Lightbox modal state
-  const [isLightboxOpen, setIsLightboxOpen] = React.useState<boolean>(false);
-  const [lightboxIndex, setLightboxIndex] = React.useState<number>(0);
 
   // Share feedback
   const [copiedLink, setCopiedLink] = React.useState<boolean>(false);
@@ -298,115 +288,11 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
             {/* LEFT: Photo Preview & Thumbnails Grid (Approx 66% width) */}
             <div className="lg:col-span-8 space-y-4">
               
-              {/* PRIMARY LARGE IMAGE (PREVIEW DRIVEN BY SELECTED THUMBNAIL) */}
-              <div
-                role="button"
-                tabIndex={0}
-                onClick={() => {
-                  setLightboxIndex(selectedImageIndex);
-                  setIsLightboxOpen(true);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    setLightboxIndex(selectedImageIndex);
-                    setIsLightboxOpen(true);
-                  }
-                }}
-                className="relative w-full aspect-[16/10] sm:aspect-[16/9] rounded-2xl overflow-hidden cursor-pointer group border border-[rgba(212,163,89,0.28)] bg-[#16100B] shadow-2xl"
-                aria-label={`View enlarged photo: ${galleryPhotos[selectedImageIndex]?.title || "Residence Photo"}`}
-              >
-                <Image
-                  key={galleryPhotos[selectedImageIndex]?.src || "main"}
-                  src={galleryPhotos[selectedImageIndex]?.src || profile.heroImage}
-                  alt={galleryPhotos[selectedImageIndex]?.title || `${branch.name} Serviced Residence`}
-                  fill
-                  loading="eager"
-                  sizes="(max-width: 1024px) 100vw, 66vw"
-                  className="object-cover object-center transition-all duration-300 group-hover:scale-[1.02]"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80" />
-
-                {/* Caption Overlay */}
-                <div className="absolute bottom-4 left-4 right-4 text-[#FAF4EB] flex items-end justify-between gap-3">
-                  <div>
-                    <span className="inline-block px-2.5 py-0.5 rounded-md bg-[#0E0A07]/85 backdrop-blur-md text-[10px] font-sans font-semibold tracking-wider uppercase text-[#E5C178] border border-[rgba(212,163,89,0.2)] mb-1">
-                      {galleryPhotos[selectedImageIndex]?.category || "Interior"}
-                    </span>
-                    <h2 className="font-heading text-base sm:text-lg font-medium leading-tight text-[#FAF4EB] drop-shadow-md">
-                      {galleryPhotos[selectedImageIndex]?.title}
-                    </h2>
-                  </div>
-
-                  <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#0E0A07]/80 backdrop-blur-md text-[#FAF4EB] border border-white/10 text-xs font-medium">
-                    <Maximize2 className="w-3.5 h-3.5 text-[#E5C178]" />
-                    <span>{isAr ? "شاشة كاملة" : "Fullscreen"}</span>
-                  </span>
-                </div>
-              </div>
-
-              {/* 4 THUMBNAILS ROW (CLICKING CHOOSES AND PREVIEWS IN BIG IMAGE) */}
-              <div className="grid grid-cols-4 gap-2.5 sm:gap-3">
-                {galleryPhotos.slice(0, 3).map((photo, index) => {
-                  const isSelected = selectedImageIndex === index;
-                  return (
-                    <button
-                      key={photo.id}
-                      type="button"
-                      onClick={() => setSelectedImageIndex(index)}
-                      className={cn(
-                        "relative aspect-[4/3] rounded-xl overflow-hidden cursor-pointer transition-all duration-200 border bg-[#16100B]",
-                        isSelected
-                          ? "ring-2 ring-[#E5C178] border-[#E5C178] shadow-md shadow-[#E5C178]/20"
-                          : "border-[rgba(212,163,89,0.25)] opacity-75 hover:opacity-100 hover:border-[#E5C178]/60"
-                      )}
-                      aria-label={`Preview photo ${index + 1}: ${photo.title}`}
-                    >
-                      <Image
-                        src={photo.src}
-                        alt={photo.title}
-                        fill
-                        sizes="(max-width: 1024px) 25vw, 16vw"
-                        className="object-cover object-center"
-                      />
-                    </button>
-                  );
-                })}
-
-                {/* 4th Thumbnail slot with "+Photos" button */}
-                <div className="relative aspect-[4/3] rounded-xl overflow-hidden group">
-                  <button
-                    type="button"
-                    onClick={() => setSelectedImageIndex(3)}
-                    className={cn(
-                      "relative w-full h-full rounded-xl overflow-hidden cursor-pointer transition-all duration-200 border bg-[#16100B]",
-                      selectedImageIndex >= 3
-                        ? "ring-2 ring-[#E5C178] border-[#E5C178] shadow-md shadow-[#E5C178]/20"
-                        : "border-[rgba(212,163,89,0.25)] opacity-80 hover:opacity-100"
-                    )}
-                    aria-label="Preview more photos"
-                  >
-                    <Image
-                      src={galleryPhotos[3]?.src || galleryPhotos[0]?.src}
-                      alt="More photos"
-                      fill
-                      sizes="(max-width: 1024px) 25vw, 16vw"
-                      className="object-cover object-center"
-                    />
-                  </button>
-
-                  {/* Overlay button to open full lightbox */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setLightboxIndex(3);
-                      setIsLightboxOpen(true);
-                    }}
-                    className="absolute inset-0 bg-[#0E0A07]/65 backdrop-blur-[2px] flex items-center justify-center text-[#FAF4EB] font-sans font-semibold text-xs sm:text-sm hover:bg-[#0E0A07]/55 transition-colors cursor-pointer"
-                  >
-                    <span>{isAr ? `+${galleryPhotos.length} صور` : `+${galleryPhotos.length} Photos`}</span>
-                  </button>
-                </div>
-              </div>
+              <PhotoCarousel
+                images={galleryPhotos.map((photo) => ({ url: photo.src, alt: photo.title, category: photo.category }))}
+                title={branch.name}
+                frameClassName="aspect-[16/10] sm:aspect-[16/9]"
+              />
 
               {/* 4 CORE VALUE PROPS (Responsive Recomposition: Swipeable on Mobile) */}
               <div className="pt-3">
@@ -1103,98 +989,6 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
         </button>
       </aside>
 
-      {/* ======================================================== */}
-      {/* 11. FULLSCREEN PHOTO LIGHTBOX MODAL                      */}
-      {/* ======================================================== */}
-      {isLightboxOpen && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="fixed inset-0 z-50 bg-[#0E0A07]/95 flex flex-col justify-between p-4 sm:p-6 text-[#FAF4EB] animate-in fade-in duration-200"
-        >
-          {/* Top Bar */}
-          <div className="flex items-center justify-between max-w-7xl mx-auto w-full px-4">
-            <div>
-              <span className="text-xs uppercase tracking-wider text-[#E5C178] font-mono">
-                {galleryPhotos[lightboxIndex]?.category}
-              </span>
-              <h3 className="font-heading text-sm sm:text-base font-semibold truncate max-w-xs sm:max-w-md">
-                {galleryPhotos[lightboxIndex]?.title}
-              </h3>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-mono text-[#D4C4B3]">
-                {lightboxIndex + 1} / {galleryPhotos.length}
-              </span>
-              <button
-                type="button"
-                onClick={() => setIsLightboxOpen(false)}
-                className="w-9 h-9 rounded-full bg-[#16100B] hover:bg-[#221810] border border-[rgba(212,163,89,0.28)] flex items-center justify-center transition-colors text-[#FAF4EB] cursor-pointer"
-                aria-label={isAr ? "إغلاق المعرض" : "Close Lightbox"}
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-
-          {/* Center Image */}
-          <div className="relative flex-1 max-w-5xl mx-auto w-full my-4 flex items-center justify-center">
-            <Image
-              src={galleryPhotos[lightboxIndex]?.src || profile.heroImage}
-              alt={galleryPhotos[lightboxIndex]?.title || "Property Photo"}
-              fill
-              className="object-contain"
-              sizes="90vw"
-            />
-
-            {/* Prev Button */}
-            <button
-              type="button"
-              onClick={() =>
-                setLightboxIndex(
-                  (prev) => (prev - 1 + galleryPhotos.length) % galleryPhotos.length
-                )
-              }
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#0E0A07]/80 hover:bg-[#16100B] border border-[rgba(212,163,89,0.28)] flex items-center justify-center text-[#FAF4EB] transition-colors cursor-pointer"
-              aria-label={isAr ? "الصورة السابقة" : "Previous photo"}
-            >
-              <ChevronLeft className="w-5 h-5 rtl:rotate-180" />
-            </button>
-
-            {/* Next Button */}
-            <button
-              type="button"
-              onClick={() =>
-                setLightboxIndex((prev) => (prev + 1) % galleryPhotos.length)
-              }
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#0E0A07]/80 hover:bg-[#16100B] border border-[rgba(212,163,89,0.28)] flex items-center justify-center text-[#FAF4EB] transition-colors cursor-pointer"
-              aria-label={isAr ? "الصورة التالية" : "Next photo"}
-            >
-              <ChevronRight className="w-5 h-5 rtl:rotate-180" />
-            </button>
-          </div>
-
-          {/* Bottom Thumbnails */}
-          <div className="max-w-xl mx-auto w-full flex items-center justify-center gap-2 overflow-x-auto py-2 no-scrollbar">
-            {galleryPhotos.map((photo, i) => (
-              <button
-                key={photo.id}
-                type="button"
-                onClick={() => setLightboxIndex(i)}
-                className={cn(
-                  "relative w-14 h-10 rounded-md overflow-hidden shrink-0 border transition-all cursor-pointer bg-[#16100B]",
-                  i === lightboxIndex
-                    ? "border-[#E5C178] ring-2 ring-[#E5C178]/60"
-                    : "border-[rgba(212,163,89,0.2)] opacity-60 hover:opacity-100"
-                )}
-              >
-                <Image src={photo.src} alt={photo.title} fill className="object-cover" />
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
