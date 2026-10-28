@@ -390,7 +390,7 @@ export function FlatOccupancyModal({
       flatTypesQuery,
       primaryFlatType,
     };
-  }, [flatsState]);
+  }, [flatsState, isAr]);
 
   const handleApply = () => {
     onApply({

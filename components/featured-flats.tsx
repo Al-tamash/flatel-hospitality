@@ -9,7 +9,6 @@ import {
   MapPin,
   Sparkles,
   Building2,
-  Check,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatPrice, getBranchBySlug } from "@/lib/constants";

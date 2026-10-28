@@ -26,7 +26,7 @@ import { usePathname } from "next/navigation";
 import { getLocaleFromPath, getDictionary } from "@/lib/i18n";
 import { getLocalizedRoom } from "@/lib/i18n/room-localizer";
 import { ARABIC_BRANCH_OVERLAYS } from "@/components/branch-hub";
-import { ARABIC_AMENITIES_TRANSLATIONS, ARABIC_CATEGORIES_TRANSLATIONS } from "@/components/amenities-section";
+import { ARABIC_CATEGORIES_TRANSLATIONS } from "@/components/amenities-section";
 import { cn } from "@/lib/utils";
 import {
   AMENITIES_BENTO,
@@ -290,7 +290,7 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
         image: "/images/amenities/icon-elevator.png",
       },
     ];
-  }, [room]);
+  }, [room, isAr]);
 
   // Dynamic Landmarks
   const landmarks = React.useMemo(() => {

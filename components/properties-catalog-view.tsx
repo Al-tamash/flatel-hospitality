@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 import { formatPrice, getBranchBySlug } from "@/lib/constants";
 import type { RoomDetail } from "@/lib/mock-rooms";
 import { usePathname } from "next/navigation";
-import { getLocaleFromPath, getDictionary } from "@/lib/i18n";
+import { getLocaleFromPath } from "@/lib/i18n";
 import { getLocalizedRoom } from "@/lib/i18n/room-localizer";
 import { ARABIC_BRANCH_OVERLAYS } from "@/components/branch-hub";
 
@@ -30,7 +30,6 @@ const FLAT_IMAGES: Record<string, string> = {
 export function PropertiesCatalogView() {
   const pathname = usePathname();
   const currentLocale = getLocaleFromPath(pathname);
-  const dict = getDictionary(currentLocale);
   const isAr = currentLocale === "ar";
   const localePrefix = isAr ? "/ar" : "";
 
