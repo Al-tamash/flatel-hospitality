@@ -35,6 +35,7 @@ import { RoomDetail } from "@/lib/mock-rooms";
 import { getBranchProfile } from "@/lib/branch-data";
 import { ARABIC_BRANCH_OVERLAYS } from "@/components/branch-hub";
 import { PhotoCarousel } from "@/components/media/photo-carousel";
+import { useFloatingOffset } from "@/components/floating-contact";
 
 interface BranchDetailViewProps {
   branch: BranchItem;
@@ -129,6 +130,10 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
 
     return list;
   }, [profile, properties]);
+
+  // Mobile reservation bar lifts the floating contact buttons above itself
+  const mobileBarRef = React.useRef<HTMLElement>(null);
+  useFloatingOffset(mobileBarRef);
 
   // Share feedback
   const [copiedLink, setCopiedLink] = React.useState<boolean>(false);
@@ -964,6 +969,7 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
       {/* 10. MOBILE BOTTOM RESERVATION BAR (Non-Intrusive CTA)    */}
       {/* ======================================================== */}
       <aside
+        ref={mobileBarRef}
         aria-label="Mobile reservation bar"
         className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-[#16100B]/95 backdrop-blur-md border-t border-[rgba(212,163,89,0.28)] px-4 py-3 shadow-2xl flex items-center justify-between gap-3"
       >

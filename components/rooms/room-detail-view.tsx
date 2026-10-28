@@ -385,7 +385,7 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
                     ? `شقق فندقية مجهزة · ${branchName}`
                     : `FLATEL SERVICED RESIDENCE · ${branch?.name?.toUpperCase() || "HYDERABAD"}`}
                 </span>
-                <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#FAF4EB] tracking-[-0.015em] leading-[1.06] mt-1">
+                <h1 data-flat-title className="font-heading text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#FAF4EB] tracking-[-0.015em] leading-[1.06] mt-1">
                   {room.title}
                 </h1>
               </div>

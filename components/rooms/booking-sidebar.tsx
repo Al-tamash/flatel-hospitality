@@ -28,6 +28,7 @@ import { calculateFlatelPrice } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
 import { getPurposeLabel, isPurposeId } from "@/lib/purpose/purpose-services";
 import { buildAddonSummary } from "@/lib/booking/addon-summary";
+import { useFloatingOffset } from "@/components/floating-contact";
 import type { StayPurposeType } from "@/types/booking";
 
 interface BookingSidebarProps {
@@ -277,6 +278,8 @@ export function BookingSidebar({
 
   const panelRef = React.useRef<HTMLElement>(null);
   const [isPanelInView, setIsPanelInView] = React.useState(false);
+  const mobileBarRef = React.useRef<HTMLDivElement>(null);
+  useFloatingOffset(mobileBarRef, !isPanelInView);
 
   React.useEffect(() => {
     const el = panelRef.current;
@@ -297,7 +300,7 @@ export function BookingSidebar({
     <aside
       ref={panelRef}
       id="booking-panel"
-      className="w-full rounded-3xl border border-[rgba(212,163,89,0.28)] bg-[rgba(34,24,16,0.75)] p-5 sm:p-6 shadow-2xl backdrop-blur-md"
+      className="w-full rounded-3xl border border-[rgba(212,163,89,0.28)] bg-[rgba(34,24,16,0.75)] p-5 sm:p-6 shadow-2xl lg:backdrop-blur-md"
       aria-label="Reservation Summary and Booking Form"
     >
       {/* Top Pricing Header */}
@@ -774,6 +777,7 @@ export function BookingSidebar({
 
       {/* Mobile Fixed Bottom Summary & Action */}
       <div
+        ref={mobileBarRef}
         className={cn(
           "lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[rgba(22,16,11,0.96)] backdrop-blur-md border-t border-[rgba(212,163,89,0.25)] px-4 py-3 flex items-center justify-between shadow-2xl transition-all duration-300",
           isPanelInView ? "translate-y-full opacity-0 pointer-events-none" : "translate-y-0 opacity-100"

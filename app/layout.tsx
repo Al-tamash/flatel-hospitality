@@ -40,6 +40,7 @@ export const metadata: Metadata = {
 import { AuthProvider } from "@/context/auth-context";
 import { AuthModal } from "@/components/auth/auth-modal";
 import { RtlSync } from "@/components/ui/rtl-sync";
+import { FloatingContact } from "@/components/floating-contact";
 
 export default function RootLayout({
   children,
@@ -56,6 +57,7 @@ export default function RootLayout({
         <AuthProvider>
           <RtlSync />
           {children}
+          <FloatingContact />
           <AuthModal />
         </AuthProvider>
       </body>
