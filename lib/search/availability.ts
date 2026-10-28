@@ -53,3 +53,11 @@ export function buildResultsSummary(input: {
 export function isMultiFlatSelection(sel: { flatTypes: string[]; totalUnits: number }): boolean {
   return sel.flatTypes.length > 1 || sel.totalUnits > 1;
 }
+
+/** Map /api/bookings/availability's response to a card status; anything unverified stays bookable. */
+export function statusFromAvailabilityResponse(
+  data: { success?: boolean; available?: boolean; verified?: boolean } | null
+): AvailabilityStatus {
+  if (!data || data.success !== true || data.verified === false) return "unknown";
+  return data.available ? "available" : "booked";
+}

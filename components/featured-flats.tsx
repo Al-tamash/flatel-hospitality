@@ -15,6 +15,7 @@ import {
   buildResultsSummary,
   isMultiFlatSelection,
   sortByAvailability,
+  statusFromAvailabilityResponse,
   type AvailabilityStatus,
 } from "@/lib/search/availability";
 
@@ -198,10 +199,9 @@ export function FeaturedFlats({ className }: FeaturedFlatsProps) {
       const query = new URLSearchParams({ unitId: slug, checkIn, checkOut });
       fetch(`/api/bookings/availability?${query.toString()}`, { signal: controller.signal })
         .then((res) => res.json())
-        .then((data: { success?: boolean; available?: boolean }) => {
-          const status: AvailabilityStatus =
-            data.success === true ? (data.available ? "available" : "booked") : "unknown";
-          setAvailability((prev) => ({ ...prev, [slug]: status }));
+        .then((data: { success?: boolean; available?: boolean; verified?: boolean }) => {
+          if (controller.signal.aborted) return;
+          setAvailability((prev) => ({ ...prev, [slug]: statusFromAvailabilityResponse(data) }));
         })
         .catch(() => {
           if (!controller.signal.aborted) setAvailability((prev) => ({ ...prev, [slug]: "unknown" }));

@@ -6,6 +6,7 @@ import { Check, Gift, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   ARABIC_COMPLIMENTARY_NAMES,
+  getServiceDisclaimer,
   PURPOSE_IDS,
   getPurposeChipLabel,
   getPurposeServices,
@@ -96,8 +97,8 @@ export function PurposeServices({
                   <Check className="w-3.5 h-3.5 text-[#E5C178] shrink-0 mt-0.5" />
                   <span>
                     {(isAr && ARABIC_COMPLIMENTARY_NAMES[service.name]) || service.name}
-                    {service.disclaimer && !isAr && (
-                      <span className="block text-[11px] text-[#B8A692] mt-0.5">{service.disclaimer}</span>
+                    {service.disclaimer && (
+                      <span className="block text-[11px] text-[#B8A692] mt-0.5">{getServiceDisclaimer(service, locale)}</span>
                     )}
                   </span>
                 </li>

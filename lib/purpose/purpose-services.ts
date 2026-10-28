@@ -13,6 +13,16 @@ export function getPurposeServices(id: PurposeId): { free: ComplimentaryService[
   return { free: pkg?.complimentaryServices ?? [], paid: pkg?.paidAddons ?? [] };
 }
 
+/** Keep only the add-ons sold with this purpose, so a switched purpose never carries hidden charges. */
+export function pruneAddonsForPurpose(
+  selectedIds: string[],
+  purpose: PurposeId | "accommodation_only" | null
+): string[] {
+  if (!isPurposeId(purpose)) return [];
+  const allowed = new Set(getPurposeServices(purpose).paid.map((addon) => addon.id));
+  return selectedIds.filter((id) => allowed.has(id));
+}
+
 const PURPOSE_LABELS: Record<PurposeId | "accommodation_only", { en: string; ar: string }> = {
   medical: { en: "Medistay — Hospital & Medical", ar: "ميدستاي — رعاية صحية ومستشفيات" },
   wedding: { en: "Wedding Stay — Guests & Events", ar: "إقامة حفلات الزفاف والفعاليات" },
@@ -77,3 +87,17 @@ export const ARABIC_COMPLIMENTARY_NAMES: Record<string, string> = {
   "Kids Outdoor Sports Equipment (Badminton, Football)": "أدوات رياضية خارجية للأطفال (ريشة، كرة قدم)",
   "Smart TV with Streaming Apps": "تلفزيون ذكي مع تطبيقات البث",
 };
+
+/** Arabic versions of free-service cost notes, keyed by the English note. */
+const ARABIC_DISCLAIMERS: Record<string, string> = {
+  "Coordination is complimentary; third-party ambulance transit charges apply if booked.":
+    "التنسيق مجاني؛ وتُطبق رسوم نقل الإسعاف من الجهة الخارجية عند طلبه.",
+  "Delivery coordination free; pharmacy medicine bill paid by guest.":
+    "تنسيق التوصيل مجاني؛ ويدفع الضيف فاتورة الأدوية للصيدلية.",
+};
+
+/** A free service's cost note in the guest's language (English if no translation exists yet). */
+export function getServiceDisclaimer(service: ComplimentaryService, locale: "en" | "ar"): string | undefined {
+  if (!service.disclaimer) return undefined;
+  return locale === "ar" ? ARABIC_DISCLAIMERS[service.disclaimer] ?? service.disclaimer : service.disclaimer;
+}

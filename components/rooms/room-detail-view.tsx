@@ -24,6 +24,7 @@ import { RoomGallery } from "@/components/rooms/room-gallery";
 import { BookingSidebar } from "@/components/rooms/booking-sidebar";
 import { NearbyMap } from "@/components/rooms/nearby-map";
 import { PurposeServices } from "@/components/rooms/purpose-services";
+import { isPurposeId, pruneAddonsForPurpose } from "@/lib/purpose/purpose-services";
 import { nearbyPlaces } from "@/lib/map/places";
 import { usePathname } from "next/navigation";
 import { getLocaleFromPath, getDictionary } from "@/lib/i18n";
@@ -158,10 +159,11 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
           setSelectedPurposeId(null);
         }
 
-        // 4. Addons
+        // 4. Addons (only those sold with the chosen purpose)
         if (urlAddons) {
           const ids = urlAddons.split(",").filter(Boolean);
-          setSelectedAddonIds(ids);
+          const purposeForAddons = isPurposeId(urlPurpose) ? urlPurpose : null;
+          setSelectedAddonIds(pruneAddonsForPurpose(ids, purposeForAddons));
         }
       } else {
         setCheckIn(addDays(new Date(), 1));
@@ -213,6 +215,12 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
     if (selectedPurposeId) params.set("purpose", selectedPurposeId);
     const qStr = params.toString();
     return `${localePrefix}/properties/${suiteSlug}${qStr ? `?${qStr}` : ""}`;
+  };
+
+  // Changing purpose drops add-ons that belong to another purpose, so nothing hidden stays in the price
+  const handleSelectPurpose = (purpose: typeof selectedPurposeId) => {
+    setSelectedPurposeId(purpose);
+    setSelectedAddonIds((prev) => pruneAddonsForPurpose(prev, purpose));
   };
 
   const handleToggleAddon = (addonId: string) => {
@@ -473,7 +481,7 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
               <PurposeServices
                 selectedPurposeId={selectedPurposeId}
                 selectedAddonIds={selectedAddonIds}
-                onSelectPurpose={setSelectedPurposeId}
+                onSelectPurpose={handleSelectPurpose}
                 onToggleAddon={handleToggleAddon}
               />
             </section>
@@ -675,7 +683,7 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
                   room={room}
                   selectedPurposeId={selectedPurposeId}
                   selectedAddonIds={selectedAddonIds}
-                  onSelectPurpose={(p) => setSelectedPurposeId(p)}
+                  onSelectPurpose={handleSelectPurpose}
                   onToggleAddon={handleToggleAddon}
                   checkIn={checkIn}
                   checkOut={checkOut}

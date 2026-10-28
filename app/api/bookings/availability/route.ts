@@ -20,6 +20,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       success: true,
       available: result.available,
+      verified: result.verified !== false,
       reason: result.reason,
     });
   } catch (error: unknown) {

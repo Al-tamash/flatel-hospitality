@@ -38,3 +38,12 @@ assert.equal(isMultiFlatSelection({ flatTypes: ["1bhk", "2bhk"], totalUnits: 2 }
 assert.equal(isMultiFlatSelection({ flatTypes: ["3bhk"], totalUnits: 2 }), true);
 
 console.log("Search availability tests passed");
+
+// Final review fix: an unverifiable check is "unknown", never "booked" (Review Focus 4)
+import { statusFromAvailabilityResponse } from "../../lib/search/availability";
+assert.equal(statusFromAvailabilityResponse({ success: true, available: true }), "available");
+assert.equal(statusFromAvailabilityResponse({ success: true, available: false }), "booked");
+assert.equal(statusFromAvailabilityResponse({ success: true, available: false, verified: false }), "unknown");
+assert.equal(statusFromAvailabilityResponse({ success: false }), "unknown");
+assert.equal(statusFromAvailabilityResponse(null), "unknown");
+console.log("Availability response mapping tests passed");

@@ -13,6 +13,7 @@ import { MAP_PLACES, BRANCH_PINS, type PlaceCategory } from "@/lib/map/places";
 import { nearestBranch } from "@/lib/map/geo";
 import {
   ARABIC_COMPLIMENTARY_NAMES,
+  getServiceDisclaimer,
   getPurposeServices,
   type PurposeId,
 } from "@/lib/purpose/purpose-services";
@@ -203,8 +204,8 @@ export function PurposePageView({ purpose, locale, rooms }: PurposePageViewProps
                   <Check className="w-4 h-4 text-[#E5C178] shrink-0 mt-0.5" />
                   <span>
                     {(isAr && ARABIC_COMPLIMENTARY_NAMES[service.name]) || service.name}
-                    {service.disclaimer && !isAr && (
-                      <span className="block text-xs text-[#B8A692] mt-0.5">{service.disclaimer}</span>
+                    {service.disclaimer && (
+                      <span className="block text-xs text-[#B8A692] mt-0.5">{getServiceDisclaimer(service, locale)}</span>
                     )}
                   </span>
                 </li>

@@ -122,12 +122,17 @@ export class BookingService {
     checkInDate: string,
     checkOutDate: string,
     excludeBookingId?: string
-  ): Promise<{ available: boolean; reason?: string }> {
+  ): Promise<{ available: boolean; reason?: string; verified?: boolean }> {
     let room;
     try {
       room = await InventoryService.getAuthoritativeUnitBySlug(unitId);
     } catch (error) {
-      return { available: false, reason: error instanceof Error ? error.message : "Property availability could not be verified." };
+      // Could not look the unit up at all: not "booked", just unverified (still blocks booking)
+      return {
+        available: false,
+        verified: false,
+        reason: error instanceof Error ? error.message : "Property availability could not be verified.",
+      };
     }
 
     const checkIn = new Date(checkInDate);

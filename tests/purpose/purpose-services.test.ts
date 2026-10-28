@@ -27,3 +27,23 @@ for (const id of [...PURPOSE_IDS, "accommodation_only"] as const) {
 }
 
 console.log("Purpose services tests passed");
+
+// Final review fix: switching purpose drops add-ons that belong to another purpose
+import { pruneAddonsForPurpose } from "../../lib/purpose/purpose-services";
+assert.deepEqual(pruneAddonsForPurpose(["wedding-stage-decor", "doctor-nurse-visits"], "medical"), ["doctor-nurse-visits"]);
+assert.deepEqual(pruneAddonsForPurpose(["wedding-stage-decor"], "accommodation_only"), []);
+assert.deepEqual(pruneAddonsForPurpose(["extra-floor-mattress"], "family"), ["extra-floor-mattress"]);
+assert.deepEqual(pruneAddonsForPurpose(["wedding-stage-decor"], null), []);
+console.log("Purpose add-on pruning tests passed");
+
+// Final review fix: every free-service cost note has an Arabic version
+import { getServiceDisclaimer } from "../../lib/purpose/purpose-services";
+for (const pkg of PURPOSE_PACKAGES) {
+  for (const service of pkg.complimentaryServices) {
+    if (!service.disclaimer) continue;
+    assert.equal(getServiceDisclaimer(service, "en"), service.disclaimer);
+    assert.match(getServiceDisclaimer(service, "ar") ?? "", /[\u0600-\u06FF]/, service.name);
+  }
+}
+assert.equal(getServiceDisclaimer({ name: "x" }, "ar"), undefined);
+console.log("Disclaimer translation tests passed");
