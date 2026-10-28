@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   CreditCard,
   ShieldCheck,
@@ -18,27 +19,39 @@ import { cn } from "@/lib/utils";
 const FLATEL_GUARANTEES = [
   {
     label: "20% TO RESERVE",
+    labelAr: "٢٠٪ لتأكيد الحجز",
     sub: "Pay balance at check-in",
+    subAr: "ادفع الباقي عند تسجيل الوصول",
     icon: CreditCard,
   },
   {
     label: "FREE 48H CANCEL",
+    labelAr: "إلغاء مجاني حتى ٤٨ ساعة",
     sub: "100% refund guarantee",
+    subAr: "استرداد كامل ١٠٠٪ للعربون",
     icon: ShieldCheck,
   },
   {
     label: "WHATSAPP CHECK-IN",
+    labelAr: "تسجيل وصول عبر واتساب",
     sub: "Check-in details by WhatsApp",
+    subAr: "تفاصيل الوصول مباشرة على جوالك",
     icon: Smartphone,
   },
   {
     label: "HOUSEKEEPING INCLUDED",
+    labelAr: "خدمة تنظيف مشمولة",
     sub: "Fresh linens & tidy spaces",
+    subAr: "مفارش نظيفة وعناية دورية",
     icon: Sparkles,
   },
 ];
 
 export function BookingSteps({ className }: { className?: string }) {
+  const pathname = usePathname();
+  const isAr = pathname?.startsWith("/ar");
+  const localePrefix = isAr ? "/ar" : "";
+
   return (
     <section
       id="how-it-works"
@@ -63,7 +76,7 @@ export function BookingSteps({ className }: { className?: string }) {
             id="how-it-works-heading"
             className="text-xs sm:text-sm font-sans font-semibold tracking-[0.14em] text-[#E5C178] uppercase"
           >
-            HOW IT WORKS &amp; STAY GUARANTEES
+            {isAr ? "كيفية الحجز وضمانات الإقامة" : "HOW IT WORKS & STAY GUARANTEES"}
           </h2>
         </div>
 
@@ -85,10 +98,10 @@ export function BookingSteps({ className }: { className?: string }) {
 
                 {/* Step Label */}
                 <span className="text-xs sm:text-[13px] font-sans font-bold text-[#FAF4EB] tracking-[0.12em] uppercase mt-3 leading-snug group-hover:text-[#E5C178] transition-colors">
-                  {item.label}
+                  {isAr ? item.labelAr : item.label}
                 </span>
                 <span className="text-xs sm:text-[13px] text-[#D4C4B3] mt-1 font-medium leading-relaxed">
-                  {item.sub}
+                  {isAr ? item.subAr : item.sub}
                 </span>
               </div>
             );
@@ -107,17 +120,17 @@ export function BookingSteps({ className }: { className?: string }) {
 
           <div className="flex flex-col md:flex-row items-center justify-between gap-8 lg:gap-10 relative z-10">
             {/* -------------------------------------------------------- */}
-            {/* LEFT: SELECT. RESERVE. RELAX. (CORMORANT GARAMOND)       */}
+            {/* LEFT: SELECT. RESERVE. RELAX.                            */}
             {/* -------------------------------------------------------- */}
-            <div className="flex flex-col items-center md:items-start text-center md:text-left shrink-0">
+            <div className={cn("flex flex-col items-center shrink-0", isAr ? "md:items-end text-center md:text-right" : "md:items-start text-center md:text-left")}>
               <span className="font-heading font-medium text-4xl sm:text-5xl lg:text-[52px] text-[#E5C178] tracking-normal leading-[1.05]">
-                SELECT.
+                {isAr ? "اختر." : "SELECT."}
               </span>
               <span className="font-heading font-medium text-4xl sm:text-5xl lg:text-[52px] text-[#E5C178] tracking-normal leading-[1.05]">
-                RESERVE.
+                {isAr ? "احجز." : "RESERVE."}
               </span>
               <span className="font-heading font-medium text-4xl sm:text-5xl lg:text-[52px] text-[#E5C178] tracking-normal leading-[1.05]">
-                RELAX.
+                {isAr ? "استرخِ." : "RELAX."}
               </span>
             </div>
 
@@ -130,9 +143,9 @@ export function BookingSteps({ className }: { className?: string }) {
             {/* -------------------------------------------------------- */}
             {/* MIDDLE: 3 SIMPLE STEPS TO BOOK                           */}
             {/* -------------------------------------------------------- */}
-            <div className="flex-1 w-full max-w-lg">
+            <div className={cn("flex-1 w-full max-w-lg", isAr ? "text-right" : "text-left")}>
               <div className="text-xs sm:text-sm font-sans font-bold text-[#E5C178] tracking-[0.14em] uppercase mb-4">
-                BOOK IN 3 SIMPLE STEPS
+                {isAr ? "احجز في ٣ خطوات بسيطة" : "BOOK IN 3 SIMPLE STEPS"}
               </div>
 
               {/* 3 Steps List with Circular Gold Checkmarks */}
@@ -140,21 +153,45 @@ export function BookingSteps({ className }: { className?: string }) {
                 <div className="flex items-center gap-3">
                   <CheckCircle2 className="w-5 h-5 text-[#E5C178] shrink-0" />
                   <span>
-                    <strong className="text-[#E5C178] font-bold">1. Select Your Residence:</strong> Browse residence details and photos
+                    {isAr ? (
+                      <>
+                        <strong className="text-[#E5C178] font-bold">١. اختر شقتك:</strong> تصفح تفاصيل الشقق الفندقية وصورها
+                      </>
+                    ) : (
+                      <>
+                        <strong className="text-[#E5C178] font-bold">1. Select Your Residence:</strong> Browse residence details and photos
+                      </>
+                    )}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-3">
                   <CheckCircle2 className="w-5 h-5 text-[#E5C178] shrink-0" />
                   <span>
-                    <strong className="text-[#E5C178] font-bold">2. Reserve with 20% Deposit:</strong> Pay only 20% advance via UPI QR or Card
+                    {isAr ? (
+                      <>
+                        <strong className="text-[#E5C178] font-bold">٢. ثبّت حجزك بعربون ٢٠٪:</strong> ادفع ٢٠٪ فقط عبر البطاقة البنكية أو رمز الاستجابة السريعة
+                      </>
+                    ) : (
+                      <>
+                        <strong className="text-[#E5C178] font-bold">2. Reserve with 20% Deposit:</strong> Pay only 20% advance via UPI QR or Card
+                      </>
+                    )}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-3">
                   <CheckCircle2 className="w-5 h-5 text-[#E5C178] shrink-0" />
                   <span>
-                    <strong className="text-[#E5C178] font-bold">3. Arrive &amp; Settle Balance:</strong> Check in with the property team and pay the remaining balance at the desk
+                    {isAr ? (
+                      <>
+                        <strong className="text-[#E5C178] font-bold">٣. الوصول وسداد الباقي:</strong> استلم شقتك وسدد المبلغ المتبقي عند مكتب الاستقبال
+                      </>
+                    ) : (
+                      <>
+                        <strong className="text-[#E5C178] font-bold">3. Arrive &amp; Settle Balance:</strong> Check in with the property team and pay the remaining balance at the desk
+                      </>
+                    )}
                   </span>
                 </div>
               </div>
@@ -163,15 +200,19 @@ export function BookingSteps({ className }: { className?: string }) {
               <div className="mt-5 pt-4 border-t border-[rgba(212,163,89,0.18)] flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm">
                 <span className="text-[#D4C4B3] flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-[#E5C178]" />
-                  <span>Free Cancellation up to 48 hours prior · 100% Refund</span>
+                  <span>
+                    {isAr
+                      ? "إلغاء مجاني حتى ٤٨ ساعة قبل الموعد · استرداد ١٠٠٪ للعربون"
+                      : "Free Cancellation up to 48 hours prior · 100% Refund"}
+                  </span>
                 </span>
 
                 <Link
-                  href="/policies"
+                  href={`${localePrefix}/policies`}
                   className="text-xs sm:text-sm font-semibold text-[#E5C178] hover:underline inline-flex items-center gap-1.5 transition-colors cursor-pointer"
                 >
-                  <span>View Cancellation Terms</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <span>{isAr ? "عرض شروط وسياسات الحجز" : "View Cancellation Terms"}</span>
+                  <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
                 </Link>
               </div>
             </div>
@@ -179,7 +220,7 @@ export function BookingSteps({ className }: { className?: string }) {
             {/* -------------------------------------------------------- */}
             {/* RIGHT: ELEGANT GOLD BOTANICAL LEAF BRANCH (EXACT MATCH)   */}
             {/* -------------------------------------------------------- */}
-            <div className="hidden lg:flex items-center justify-center shrink-0 pr-2">
+            <div className="hidden lg:flex items-center justify-center shrink-0 pr-2 rtl:pr-0 rtl:pl-2">
               <svg
                 viewBox="0 0 160 210"
                 fill="none"

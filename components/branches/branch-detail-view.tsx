@@ -36,6 +36,7 @@ import {
 import { BranchItem } from "@/lib/constants";
 import { RoomDetail } from "@/lib/mock-rooms";
 import { getBranchProfile } from "@/lib/branch-data";
+import { ARABIC_BRANCH_OVERLAYS } from "@/components/branch-hub";
 import { cn } from "@/lib/utils";
 
 interface BranchDetailViewProps {
@@ -49,6 +50,13 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
   const isAr = pathname?.startsWith("/ar");
   const basePath = isAr ? "/ar" : "";
   const profile = React.useMemo(() => getBranchProfile(branch.slug), [branch.slug]);
+  const branchOverlay = isAr && branch?.slug ? ARABIC_BRANCH_OVERLAYS[branch.slug] : null;
+  const branchDisplayName = branchOverlay?.name || branch.name;
+  const branchBadge = branchOverlay?.badge || profile.badge;
+  const branchAddress = branchOverlay?.verifiedAddress || branchOverlay?.address || branch.address;
+  const branchDescription = branchOverlay?.description || profile.description;
+  const branchTagline = branchOverlay?.tagline || profile.tagline;
+  const branchLandmarks = branchOverlay?.landmarks || profile.landmarks;
 
   // Selected flat state (defaults to first available property)
   const [selectedRoomSlug, setSelectedRoomSlug] = React.useState<string>(
@@ -210,9 +218,9 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
             </Link>
             <ChevronRight className="h-3 w-3 text-[#D4C4B3]/50 shrink-0" />
             <span className="text-[#D4C4B3]/70">{isAr ? "حيدر أباد" : "Hyderabad"}</span>
-            <ChevronRight className="h-3 w-3 text-[#D4C4B3]/50 shrink-0" />
+            <ChevronRight className="h-3 w-3 text-[#D4C4B3]/50 shrink-0 rtl:rotate-180" />
             <span className="text-[#FAF4EB] font-medium truncate">
-              {branch.name} Serviced Residences
+              {isAr ? `شقق فندقية مجهزة — ${branchDisplayName}` : `${branch.name} Serviced Residences`}
             </span>
           </div>
         </div>
@@ -228,19 +236,19 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
               <div className="flex items-center gap-2 mb-2">
                 <span className="w-2 h-2 rounded-full bg-[#E5C178] animate-pulse" />
                 <span className="text-xs font-sans font-semibold tracking-[0.14em] text-[#E5C178] uppercase">
-                  {profile.badge}
+                  {branchBadge}
                 </span>
               </div>
 
               <div className="flex flex-wrap items-center gap-3">
                 <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl text-[#FAF4EB] font-normal tracking-tight">
-                  {branch.name} Serviced Residences
+                  {isAr ? `شقق فندقية مجهزة — ${branchDisplayName}` : `${branch.name} Serviced Residences`}
                 </h1>
               </div>
 
               <div className="mt-2 flex items-center gap-1.5 text-xs sm:text-sm text-[#D4C4B3]">
                 <MapPin className="w-3.5 h-3.5 text-[#E5C178] shrink-0" />
-                <span>{branch.address}</span>
+                <span>{branchAddress}</span>
               </div>
             </div>
 
@@ -254,12 +262,12 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
                 {copiedLink ? (
                   <>
                     <CheckCheck className="w-3.5 h-3.5 text-emerald-400" />
-                    <span className="text-emerald-400">Link Copied</span>
+                    <span className="text-emerald-400">{isAr ? "تم نسخ الرابط" : "Link Copied"}</span>
                   </>
                 ) : (
                   <>
                     <Share2 className="w-3.5 h-3.5 text-[#D4C4B3]" />
-                    <span>Share</span>
+                    <span>{isAr ? "مشاركة" : "Share"}</span>
                   </>
                 )}
               </button>
@@ -272,7 +280,7 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
                   className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-[rgba(212,163,89,0.28)] bg-[rgba(34,24,16,0.65)] hover:bg-[#221810] text-[#E5C178] text-xs font-medium transition-colors shadow-sm"
                 >
                   <MapPin className="w-3.5 h-3.5" />
-                  <span>View on Map</span>
+                  <span>{isAr ? "عرض على الخريطة" : "View on Map"}</span>
                 </a>
               )}
             </div>
@@ -331,7 +339,7 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
 
                   <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#0E0A07]/80 backdrop-blur-md text-[#FAF4EB] border border-white/10 text-xs font-medium">
                     <Maximize2 className="w-3.5 h-3.5 text-[#E5C178]" />
-                    <span>Fullscreen</span>
+                    <span>{isAr ? "شاشة كاملة" : "Fullscreen"}</span>
                   </span>
                 </div>
               </div>
@@ -395,7 +403,7 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
                     }}
                     className="absolute inset-0 bg-[#0E0A07]/65 backdrop-blur-[2px] flex items-center justify-center text-[#FAF4EB] font-sans font-semibold text-xs sm:text-sm hover:bg-[#0E0A07]/55 transition-colors cursor-pointer"
                   >
-                    <span>+{galleryPhotos.length} Photos</span>
+                    <span>{isAr ? `+${galleryPhotos.length} صور` : `+${galleryPhotos.length} Photos`}</span>
                   </button>
                 </div>
               </div>
@@ -409,10 +417,10 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
                     </div>
                     <div>
                       <span className="block text-xs font-semibold text-[#FAF4EB]">
-                        Spacious Flats
+                        {isAr ? "شقق فسيحة وواسعة" : "Spacious Flats"}
                       </span>
                       <span className="block text-[11px] text-[#D4C4B3] mt-0.5">
-                        Ideal for families &amp; groups
+                        {isAr ? "مثالية للعائلات والمجموعات" : "Ideal for families & groups"}
                       </span>
                     </div>
                   </div>
@@ -423,10 +431,10 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
                     </div>
                     <div>
                       <span className="block text-xs font-semibold text-[#FAF4EB]">
-                        Fully Furnished
+                        {isAr ? "مفروشة بالكامل" : "Fully Furnished"}
                       </span>
                       <span className="block text-[11px] text-[#D4C4B3] mt-0.5">
-                        Modern interiors &amp; kitchen
+                        {isAr ? "تصاميم عصرية ومطبخ مجهز" : "Modern interiors & kitchen"}
                       </span>
                     </div>
                   </div>
@@ -437,10 +445,10 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
                     </div>
                     <div>
                       <span className="block text-xs font-semibold text-[#FAF4EB]">
-                        Flexible Check-in
+                        {isAr ? "تسجيل وصول مرن" : "Flexible Check-in"}
                       </span>
                       <span className="block text-[11px] text-[#D4C4B3] mt-0.5">
-                        11:00 AM – 1:00 PM
+                        {isAr ? "١١:٠٠ صباحاً – ١:٠٠ ظهراً" : "11:00 AM – 1:00 PM"}
                       </span>
                     </div>
                   </div>
@@ -451,10 +459,10 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
                     </div>
                     <div>
                       <span className="block text-xs font-semibold text-[#FAF4EB]">
-                        Housekeeping
+                        {isAr ? "خدمة تنظيف فندقية" : "Housekeeping"}
                       </span>
                       <span className="block text-[11px] text-[#D4C4B3] mt-0.5">
-                        Alternate-day service
+                        {isAr ? "خدمة تنظيف دورية منتظمة" : "Alternate-day service"}
                       </span>
                     </div>
                   </div>
@@ -469,16 +477,16 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
                 {/* Rate Header */}
                 <div className="pb-4 border-b border-[rgba(212,163,89,0.2)] flex items-baseline justify-between">
                   <div>
-                    <span className="text-xs text-[#D4C4B3]">Starting from</span>
+                    <span className="text-xs text-[#D4C4B3]">{isAr ? "ابتداءً من" : "Starting from"}</span>
                     <div className="flex items-baseline gap-1 mt-0.5">
                       <span className="font-heading text-2xl sm:text-3xl font-bold text-[#E5C178]">
                         ₹<span className="tabular-nums">{startingPrice.toLocaleString("en-IN")}</span>
                       </span>
-                      <span className="text-xs text-[#D4C4B3]">/ night</span>
+                      <span className="text-xs text-[#D4C4B3]">{isAr ? "/ ليلة" : "/ night"}</span>
                     </div>
                   </div>
                   <span className="text-[11px] font-sans font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-                    Active &amp; Available
+                    {isAr ? "متاح وجاهز للحجز" : "Active & Available"}
                   </span>
                 </div>
 
@@ -486,7 +494,7 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
                 {properties.length > 1 && (
                   <div>
                     <label htmlFor="branch-residence-category" className="block text-[11px] uppercase tracking-wider text-[#D4C4B3] font-medium mb-1.5">
-                      Select Residence Category
+                      {isAr ? "اختر فئة الشقة الفندقية" : "Select Residence Category"}
                     </label>
                     <select
                       id="branch-residence-category"
@@ -496,7 +504,7 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
                     >
                       {properties.map((p) => (
                         <option key={p.slug} value={p.slug}>
-                          {p.title} (₹{p.basePricePerNight.toLocaleString("en-IN")}/N · {p.baseAdults} Adults)
+                          {p.title} (₹{p.basePricePerNight.toLocaleString("en-IN")}{isAr ? "/ليلة" : "/N"} · {p.baseAdults} {isAr ? "بالغين" : "Adults"})
                         </option>
                       ))}
                     </select>
@@ -507,7 +515,7 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
                 <div className="grid grid-cols-2 gap-2.5">
                   <div>
                     <label htmlFor="branch-check-in" className="block text-[11px] uppercase tracking-wider text-[#D4C4B3] font-medium mb-1">
-                      Check-in
+                      {isAr ? "تسجيل الوصول" : "Check-in"}
                     </label>
                     <input
                       id="branch-check-in"
@@ -529,7 +537,7 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
 
                   <div>
                     <label htmlFor="branch-check-out" className="block text-[11px] uppercase tracking-wider text-[#D4C4B3] font-medium mb-1">
-                      Check-out
+                      {isAr ? "تسجيل المغادرة" : "Check-out"}
                     </label>
                     <input
                       id="branch-check-out"
@@ -560,7 +568,7 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
                 {/* Guests Selector */}
                 <div className="relative" ref={guestDropdownRef}>
                   <label className="block text-[11px] uppercase tracking-wider text-[#D4C4B3] font-medium mb-1">
-                    Guests
+                    {isAr ? "الضيوف" : "Guests"}
                   </label>
                   <button
                     type="button"
@@ -570,8 +578,9 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
                     <div className="flex items-center gap-2">
                       <Users className="w-4 h-4 text-[#E5C178]" />
                       <span>
-                        {adults} {adults === 1 ? "Adult" : "Adults"}
-                        {childrenCount > 0 ? `, ${childrenCount} ${childrenCount === 1 ? "Child" : "Children"}` : ""}
+                        {isAr
+                          ? `${adults} ${adults === 1 ? "بالغ" : "بالغين"}${childrenCount > 0 ? `، ${childrenCount} ${childrenCount === 1 ? "طفل" : "أطفال"}` : ""}`
+                          : `${adults} ${adults === 1 ? "Adult" : "Adults"}${childrenCount > 0 ? `, ${childrenCount} ${childrenCount === 1 ? "Child" : "Children"}` : ""}`}
                       </span>
                     </div>
                     <ChevronDown className="w-4 h-4 text-[#D4C4B3]" />
@@ -582,8 +591,12 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
                     <div className="absolute top-full left-0 right-0 mt-2 p-4 rounded-xl border border-[rgba(212,163,89,0.28)] bg-[#16100B] shadow-2xl z-30 space-y-3">
                       <div className="flex items-center justify-between">
                         <div>
-                          <span className="block text-xs font-medium text-[#FAF4EB]">Adults</span>
-                          <span className="text-[10px] text-[#D4C4B3]">Age 13+</span>
+                          <span className="block text-xs font-medium text-[#FAF4EB]">
+                            {isAr ? "البالغين" : "Adults"}
+                          </span>
+                          <span className="text-[10px] text-[#D4C4B3]">
+                            {isAr ? "١٣ سنة فما فوق" : "Age 13+"}
+                          </span>
                         </div>
                         <div className="flex items-center gap-2">
                           <button
@@ -614,8 +627,12 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
 
                       <div className="flex items-center justify-between pt-2 border-t border-[rgba(212,163,89,0.18)]">
                         <div>
-                          <span className="block text-xs font-medium text-[#FAF4EB]">Children</span>
-                          <span className="text-[10px] text-emerald-400">0–12 yrs (Stay free)</span>
+                          <span className="block text-xs font-medium text-[#FAF4EB]">
+                            {isAr ? "الأطفال" : "Children"}
+                          </span>
+                          <span className="text-[10px] text-emerald-400">
+                            {isAr ? "٠–١٢ سنة (إقامة مجانية)" : "0–12 yrs (Stay free)"}
+                          </span>
                         </div>
                         <div className="flex items-center gap-2">
                           <button
@@ -647,19 +664,23 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
                   onClick={handleProceedBooking}
                   className="w-full h-12 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] font-bold text-sm hover:brightness-105 active:scale-[0.99] transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer border-none"
                 >
-                  <span>Check Availability</span>
-                  <ArrowRight className="w-4 h-4 text-[#140E08]" />
+                  <span>{isAr ? "التحقق من التوفر ومتابعة الحجز" : "Check Availability"}</span>
+                  <ArrowRight className="w-4 h-4 text-[#140E08] rtl:rotate-180" />
                 </button>
 
                 {/* Booking Policy Micro-notes */}
                 <div className="pt-2 border-t border-[rgba(212,163,89,0.2)] space-y-1.5 text-[11px] text-[#D4C4B3]">
                   <div className="flex items-center gap-1.5">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                    <span>20% advance payment to hold reservation</span>
+                    <span>
+                      {isAr ? "عربون ٢٠٪ لتأكيد حجز الشقة فوراً" : "20% advance payment to hold reservation"}
+                    </span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                    <span>Free cancellation up to 48 hours before check-in</span>
+                    <span>
+                      {isAr ? "إلغاء مجاني حتى ٤٨ ساعة قبل موعد الوصول" : "Free cancellation up to 48 hours before check-in"}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -677,13 +698,13 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
             {/* Left Copy */}
             <div className="md:col-span-7 space-y-3">
               <span className="text-[11px] font-semibold tracking-wider uppercase text-[#E5C178]">
-                About this property
+                {isAr ? "عن هذا الفرع" : "About this property"}
               </span>
               <h2 className="font-heading text-2xl sm:text-3xl text-[#FAF4EB] font-normal tracking-tight">
-                Independent comfort with hotel reliability
+                {isAr ? "راحة البيت المستقل مع موثوقية الخدمة الفندقية" : "Independent comfort with hotel reliability"}
               </h2>
               <p className="text-sm sm:text-base text-[#D4C4B3] leading-relaxed pt-1 font-sans">
-                {profile.description}
+                {branchDescription}
               </p>
             </div>
 
@@ -696,7 +717,7 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
                       ? "/images/amenities-bedroom-bg.jpg"
                       : "/images/flats/flat-2bhk-luxury.jpg"
                   }
-                  alt={`${branch.name} Master Suite`}
+                  alt={`${branchDisplayName} Master Suite`}
                   fill
                   sizes="(max-width: 768px) 100vw, 40vw"
                   className="object-cover object-center"
@@ -715,10 +736,10 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
           <div className="flex items-center justify-between mb-6 sm:mb-8">
             <div>
               <span className="text-[11px] font-semibold tracking-wider uppercase text-[#E5C178] block">
-                Available Residences
+                {isAr ? "الشقق المتوفرة" : "Available Residences"}
               </span>
               <h2 className="font-heading text-2xl sm:text-3xl text-[#FAF4EB] font-normal tracking-tight mt-1">
-                Explore units at {branch.name}
+                {isAr ? `استكشف الوحدات المتاحة في ${branchDisplayName}` : `Explore units at ${branch.name}`}
               </h2>
             </div>
 
@@ -775,7 +796,7 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
                       </span>
                       <span className="flex items-center gap-1.5">
                         <Users className="w-3.5 h-3.5 text-[#E5C178]" />
-                        <span>Up to {property.maxAdults} Guests</span>
+                        <span>{isAr ? `حتى ${property.maxAdults} ضيوف` : `Up to ${property.maxAdults} Guests`}</span>
                       </span>
                     </div>
                   </div>
@@ -783,7 +804,9 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
                   {/* Price & Action */}
                   <div className="pt-3 border-t border-[rgba(212,163,89,0.18)] flex items-center justify-between">
                     <div>
-                      <span className="text-[10px] text-[#D4C4B3] uppercase block">From</span>
+                      <span className="text-[10px] text-[#D4C4B3] uppercase block">
+                        {isAr ? "من" : "From"}
+                      </span>
                       <div className="flex items-baseline gap-1">
                         <span className="font-heading text-lg font-bold text-[#E5C178]">
                           ₹<span className="tabular-nums">{property.basePricePerNight.toLocaleString("en-IN")}</span>
@@ -807,7 +830,7 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
 
           {/* Mobile Swipe Hint */}
           <div className="md:hidden flex items-center justify-center gap-1.5 pt-2 text-[11px] text-[#D4C4B3]/60">
-            <span>← Swipe to explore all flats →</span>
+            <span>{isAr ? "← اسحب لاستعراض كافة الشقق →" : "← Swipe to explore all flats →"}</span>
           </div>
         </div>
       </section>
@@ -819,10 +842,10 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10">
           <div className="mb-6 sm:mb-8">
             <span className="text-[11px] font-semibold tracking-wider uppercase text-[#E5C178] block">
-              Amenities
+              {isAr ? "المزايا والتجهيزات" : "Amenities"}
             </span>
             <h2 className="font-heading text-2xl sm:text-3xl text-[#FAF4EB] font-normal tracking-tight mt-1">
-              Thoughtfully equipped for a comfortable stay
+              {isAr ? "مجهزة بعناية فائقة لإقامة مريحة وممتعة" : "Thoughtfully equipped for a comfortable stay"}
             </h2>
           </div>
 
@@ -830,9 +853,11 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
             <div className="p-3.5 sm:p-4 rounded-xl bg-[rgba(34,24,16,0.65)] border border-[rgba(212,163,89,0.22)] flex items-start gap-3">
               <Tv className="w-4 h-4 text-[#E5C178] shrink-0 mt-0.5" />
               <div>
-                <span className="block text-xs font-semibold text-[#FAF4EB]">Living Area</span>
+                <span className="block text-xs font-semibold text-[#FAF4EB]">
+                  {isAr ? "صالة جلوس واسعة" : "Living Area"}
+                </span>
                 <span className="block text-[11px] text-[#D4C4B3] mt-0.5">
-                  Sofa, TV, Wi-Fi
+                  {isAr ? "أريكة مريحة، تلفزيون ذكي، واي فاي" : "Sofa, TV, Wi-Fi"}
                 </span>
               </div>
             </div>
@@ -840,9 +865,11 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
             <div className="p-3.5 sm:p-4 rounded-xl bg-[rgba(34,24,16,0.65)] border border-[rgba(212,163,89,0.22)] flex items-start gap-3">
               <UtensilsCrossed className="w-4 h-4 text-[#E5C178] shrink-0 mt-0.5" />
               <div>
-                <span className="block text-xs font-semibold text-[#FAF4EB]">Kitchen &amp; Dining</span>
+                <span className="block text-xs font-semibold text-[#FAF4EB]">
+                  {isAr ? "مطبخ وتناول طعام" : "Kitchen & Dining"}
+                </span>
                 <span className="block text-[11px] text-[#D4C4B3] mt-0.5">
-                  Refrigerator, Microwave
+                  {isAr ? "ثلاجة، مايكروويف، موقد غاز" : "Refrigerator, Microwave"}
                 </span>
               </div>
             </div>
@@ -850,9 +877,11 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
             <div className="p-3.5 sm:p-4 rounded-xl bg-[rgba(34,24,16,0.65)] border border-[rgba(212,163,89,0.22)] flex items-start gap-3">
               <Sparkles className="w-4 h-4 text-[#E5C178] shrink-0 mt-0.5" />
               <div>
-                <span className="block text-xs font-semibold text-[#FAF4EB]">Air Conditioning</span>
+                <span className="block text-xs font-semibold text-[#FAF4EB]">
+                  {isAr ? "تكييف هواء مركزي" : "Air Conditioning"}
+                </span>
                 <span className="block text-[11px] text-[#D4C4B3] mt-0.5">
-                  In all bedrooms
+                  {isAr ? "في جميع غرف النوم" : "In all bedrooms"}
                 </span>
               </div>
             </div>
@@ -860,9 +889,11 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
             <div className="p-3.5 sm:p-4 rounded-xl bg-[rgba(34,24,16,0.65)] border border-[rgba(212,163,89,0.22)] flex items-start gap-3">
               <Sparkles className="w-4 h-4 text-[#E5C178] shrink-0 mt-0.5" />
               <div>
-                <span className="block text-xs font-semibold text-[#FAF4EB]">Housekeeping</span>
+                <span className="block text-xs font-semibold text-[#FAF4EB]">
+                  {isAr ? "تنظيف فندقي دوري" : "Housekeeping"}
+                </span>
                 <span className="block text-[11px] text-[#D4C4B3] mt-0.5">
-                  Regular cleaning service
+                  {isAr ? "تنظيف منتظم وتعقيم شامل" : "Regular cleaning service"}
                 </span>
               </div>
             </div>
@@ -870,9 +901,11 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
             <div className="p-3.5 sm:p-4 rounded-xl bg-[rgba(34,24,16,0.65)] border border-[rgba(212,163,89,0.22)] flex items-start gap-3">
               <Car className="w-4 h-4 text-[#E5C178] shrink-0 mt-0.5" />
               <div>
-                <span className="block text-xs font-semibold text-[#FAF4EB]">Parking</span>
+                <span className="block text-xs font-semibold text-[#FAF4EB]">
+                  {isAr ? "مواقف سيارات خاصة" : "Parking"}
+                </span>
                 <span className="block text-[11px] text-[#D4C4B3] mt-0.5">
-                  On-site parking
+                  {isAr ? "مواقف سيارات مؤمنة" : "On-site parking"}
                 </span>
               </div>
             </div>
@@ -880,9 +913,11 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
             <div className="p-3.5 sm:p-4 rounded-xl bg-[rgba(34,24,16,0.65)] border border-[rgba(212,163,89,0.22)] flex items-start gap-3">
               <ShieldCheck className="w-4 h-4 text-[#E5C178] shrink-0 mt-0.5" />
               <div>
-                <span className="block text-xs font-semibold text-[#FAF4EB]">Security</span>
+                <span className="block text-xs font-semibold text-[#FAF4EB]">
+                  {isAr ? "أمن وحراسة ٢٤/٧" : "Security"}
+                </span>
                 <span className="block text-[11px] text-[#D4C4B3] mt-0.5">
-                  24/7 security
+                  {isAr ? "حراسة مدار الساعة وكاميرات مراقبة" : "24/7 security"}
                 </span>
               </div>
             </div>
@@ -890,9 +925,11 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
             <div className="p-3.5 sm:p-4 rounded-xl bg-[rgba(34,24,16,0.65)] border border-[rgba(212,163,89,0.22)] flex items-start gap-3">
               <Building2 className="w-4 h-4 text-[#E5C178] shrink-0 mt-0.5" />
               <div>
-                <span className="block text-xs font-semibold text-[#FAF4EB]">Lift Access</span>
+                <span className="block text-xs font-semibold text-[#FAF4EB]">
+                  {isAr ? "مصعد كهربائي" : "Lift Access"}
+                </span>
                 <span className="block text-[11px] text-[#D4C4B3] mt-0.5">
-                  Elevator &amp; ramp entry
+                  {isAr ? "مصعد حديث ومدخل ميسر" : "Elevator & ramp entry"}
                 </span>
               </div>
             </div>
@@ -900,9 +937,11 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
             <div className="p-3.5 sm:p-4 rounded-xl bg-[rgba(34,24,16,0.65)] border border-[rgba(212,163,89,0.22)] flex items-start gap-3">
               <Users className="w-4 h-4 text-[#E5C178] shrink-0 mt-0.5" />
               <div>
-                <span className="block text-xs font-semibold text-[#FAF4EB]">Family Friendly</span>
+                <span className="block text-xs font-semibold text-[#FAF4EB]">
+                  {isAr ? "مناسبة للعائلات" : "Family Friendly"}
+                </span>
                 <span className="block text-[11px] text-[#D4C4B3] mt-0.5">
-                  Safe &amp; peaceful setting
+                  {isAr ? "بيئة آمنة وهادئة تماماً" : "Safe & peaceful setting"}
                 </span>
               </div>
             </div>
@@ -920,16 +959,16 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
             <div className="lg:col-span-5 space-y-4">
               <div>
                 <span className="text-[11px] font-semibold tracking-wider uppercase text-[#E5C178] block">
-                  Location
+                  {isAr ? "الموقع الجغرافي" : "Location"}
                 </span>
                 <h2 className="font-heading text-2xl sm:text-3xl text-[#FAF4EB] font-normal tracking-tight mt-1">
-                  Well connected in Hyderabad
+                  {isAr ? "موقع استراتيجي متصل بأهم معالم حيدر أباد" : "Well connected in Hyderabad"}
                 </h2>
               </div>
 
               <div className="flex items-start gap-2 text-xs sm:text-sm text-[#D4C4B3]">
                 <MapPin className="w-4 h-4 text-[#E5C178] shrink-0 mt-0.5" />
-                <span>{branch.address}</span>
+                <span>{branchAddress}</span>
               </div>
 
               {branch.googleMapsUrl && (
@@ -939,7 +978,7 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[rgba(212,163,89,0.28)] bg-[rgba(34,24,16,0.65)] hover:bg-[#221810] text-[#E5C178] text-xs font-semibold transition-colors shadow-sm"
                 >
-                  <span>View on Google Maps</span>
+                  <span>{isAr ? "عرض على خرائط Google" : "View on Google Maps"}</span>
                   <ExternalLink className="w-3.5 h-3.5" />
                 </a>
               )}
@@ -953,20 +992,20 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
                   <Navigation className="w-5 h-5 text-[#E5C178]" />
                 </div>
                 <span className="font-heading text-sm font-semibold text-[#FAF4EB]">
-                  {branch.name} Serviced Residences
+                  {isAr ? `شقق فندقية مجهزة — ${branchDisplayName}` : `${branch.name} Serviced Residences`}
                 </span>
                 <span className="text-[11px] text-[#D4C4B3] mt-0.5">
-                  {profile.tagline}
+                  {branchTagline}
                 </span>
               </div>
 
               {/* Landmarks List */}
               <div className="sm:col-span-5 space-y-3">
                 <span className="text-xs font-semibold text-[#FAF4EB] uppercase tracking-wider block">
-                  Nearby landmarks
+                  {isAr ? "معالم قريبة ومراكز حيوية" : "Nearby landmarks"}
                 </span>
                 <div className="space-y-2 text-xs">
-                  {profile.landmarks.map((lm, i) => (
+                  {branchLandmarks.map((lm, i) => (
                     <div key={i} className="flex items-center text-[#D4C4B3]">
                       <div className="flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-[#E5C178]" />
@@ -988,47 +1027,47 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10">
           <div className="mb-6 sm:mb-8">
             <span className="text-[11px] font-semibold tracking-wider uppercase text-[#E5C178] block">
-              Policies
+              {isAr ? "السياسات والشروط" : "Policies"}
             </span>
             <h2 className="font-heading text-2xl sm:text-3xl text-[#FAF4EB] font-normal tracking-tight mt-1">
-              Important information
+              {isAr ? "معلومات هامة للإقامة" : "Important information"}
             </h2>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
             <div className="p-4 rounded-xl bg-[rgba(34,24,16,0.65)] border border-[rgba(212,163,89,0.22)] space-y-1">
               <span className="block text-xs font-semibold text-[#FAF4EB]">
-                Check-in / Check-out
+                {isAr ? "تسجيل الوصول / المغادرة" : "Check-in / Check-out"}
               </span>
               <span className="block text-xs text-[#D4C4B3]">
-                11:00 AM – 1:00 PM / 11:00 AM
+                {isAr ? "١١:٠٠ ص – ١:٠٠ م / ١١:٠٠ ص" : "11:00 AM – 1:00 PM / 11:00 AM"}
               </span>
             </div>
 
             <div className="p-4 rounded-xl bg-[rgba(34,24,16,0.65)] border border-[rgba(212,163,89,0.22)] space-y-1">
               <span className="block text-xs font-semibold text-[#FAF4EB]">
-                20% Advance Hold
+                {isAr ? "عربون حجز ٢٠٪" : "20% Advance Hold"}
               </span>
               <span className="block text-xs text-[#D4C4B3]">
-                Balance 80% on arrival
+                {isAr ? "المتبقي ٨٠٪ عند الوصول" : "Balance 80% on arrival"}
               </span>
             </div>
 
             <div className="p-4 rounded-xl bg-[rgba(34,24,16,0.65)] border border-[rgba(212,163,89,0.22)] space-y-1">
               <span className="block text-xs font-semibold text-[#FAF4EB]">
-                Cancellation Policy
+                {isAr ? "سياسة الإلغاء" : "Cancellation Policy"}
               </span>
               <span className="block text-xs text-[#D4C4B3]">
-                Free up to 48 hours
+                {isAr ? "إلغاء مجاني حتى ٤٨ ساعة" : "Free up to 48 hours"}
               </span>
             </div>
 
             <div className="p-4 rounded-xl bg-[rgba(34,24,16,0.65)] border border-[rgba(212,163,89,0.22)] space-y-1">
               <span className="block text-xs font-semibold text-[#FAF4EB]">
-                Guest Verification
+                {isAr ? "إثبات الهوية" : "Guest Verification"}
               </span>
               <span className="block text-xs text-[#D4C4B3]">
-                Valid Govt ID required
+                {isAr ? "مطلوب هوية رسمية سارية" : "Valid Govt ID required"}
               </span>
             </div>
           </div>
@@ -1043,12 +1082,14 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
         className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-[#16100B]/95 backdrop-blur-md border-t border-[rgba(212,163,89,0.28)] px-4 py-3 shadow-2xl flex items-center justify-between gap-3"
       >
         <div>
-          <span className="block text-[10px] text-[#D4C4B3] uppercase">Starting from</span>
+          <span className="block text-[10px] text-[#D4C4B3] uppercase">
+            {isAr ? "ابتداءً من" : "Starting from"}
+          </span>
           <div className="flex items-baseline gap-1">
             <span className="font-heading text-lg font-bold text-[#E5C178]">
               ₹<span className="tabular-nums">{startingPrice.toLocaleString("en-IN")}</span>
             </span>
-            <span className="text-[11px] text-[#D4C4B3]">/ night</span>
+            <span className="text-[11px] text-[#D4C4B3]">{isAr ? "/ ليلة" : "/ night"}</span>
           </div>
         </div>
 
@@ -1057,8 +1098,8 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
           onClick={handleProceedBooking}
           className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] font-semibold text-xs shadow-md flex items-center gap-1.5 cursor-pointer border-none hover:brightness-105"
         >
-          <span>Check Availability</span>
-          <ArrowRight className="w-3.5 h-3.5 text-[#140E08]" />
+          <span>{isAr ? "التحقق من التوفر" : "Check Availability"}</span>
+          <ArrowRight className="w-3.5 h-3.5 text-[#140E08] rtl:rotate-180" />
         </button>
       </aside>
 
@@ -1090,7 +1131,7 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
                 type="button"
                 onClick={() => setIsLightboxOpen(false)}
                 className="w-9 h-9 rounded-full bg-[#16100B] hover:bg-[#221810] border border-[rgba(212,163,89,0.28)] flex items-center justify-center transition-colors text-[#FAF4EB] cursor-pointer"
-                aria-label="Close Lightbox"
+                aria-label={isAr ? "إغلاق المعرض" : "Close Lightbox"}
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1116,9 +1157,9 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
                 )
               }
               className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#0E0A07]/80 hover:bg-[#16100B] border border-[rgba(212,163,89,0.28)] flex items-center justify-center text-[#FAF4EB] transition-colors cursor-pointer"
-              aria-label="Previous photo"
+              aria-label={isAr ? "الصورة السابقة" : "Previous photo"}
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="w-5 h-5 rtl:rotate-180" />
             </button>
 
             {/* Next Button */}
@@ -1128,9 +1169,9 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
                 setLightboxIndex((prev) => (prev + 1) % galleryPhotos.length)
               }
               className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#0E0A07]/80 hover:bg-[#16100B] border border-[rgba(212,163,89,0.28)] flex items-center justify-center text-[#FAF4EB] transition-colors cursor-pointer"
-              aria-label="Next photo"
+              aria-label={isAr ? "الصورة التالية" : "Next photo"}
             >
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight className="w-5 h-5 rtl:rotate-180" />
             </button>
           </div>
 

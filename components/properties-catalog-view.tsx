@@ -18,6 +18,7 @@ import type { RoomDetail } from "@/lib/mock-rooms";
 import { usePathname } from "next/navigation";
 import { getLocaleFromPath, getDictionary } from "@/lib/i18n";
 import { getLocalizedRoom } from "@/lib/i18n/room-localizer";
+import { ARABIC_BRANCH_OVERLAYS } from "@/components/branch-hub";
 
 const FLAT_IMAGES: Record<string, string> = {
   "1bhk": "/images/flats/flat-1bhk-luxury.jpg",
@@ -80,13 +81,13 @@ export function PropertiesCatalogView() {
         {/* Branch Filter */}
         <div className="flex flex-col sm:flex-row items-center gap-3 w-full xl:w-auto">
           <span className="text-xs font-sans font-bold uppercase tracking-wider text-[#E5C178] shrink-0 self-start sm:self-center">
-            Branch:
+            {isAr ? "الفرع:" : "Branch:"}
           </span>
           <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#0E0A07] border border-[rgba(212,163,89,0.2)] w-full sm:w-auto overflow-x-auto">
             {[
-              { id: "all", label: "All Properties" },
-              { id: "barkas-salala", label: "Barkas Salala" },
-              { id: "moghal-pura", label: "Moghal Pura" },
+              { id: "all", label: isAr ? "كافة الفروع" : "All Properties" },
+              { id: "barkas-salala", label: isAr ? "بركاس صلالة" : "Barkas Salala" },
+              { id: "moghal-pura", label: isAr ? "مغل بورة" : "Moghal Pura" },
             ].map((b) => (
               <button
                 key={b.id}
@@ -108,11 +109,11 @@ export function PropertiesCatalogView() {
         {/* BHK Category Filter */}
         <div className="flex flex-col sm:flex-row items-center gap-3 w-full xl:w-auto">
           <span className="text-xs font-sans font-bold uppercase tracking-wider text-[#E5C178] shrink-0 self-start sm:self-center">
-            Apartment Type:
+            {isAr ? "نوع الشقة:" : "Apartment Type:"}
           </span>
           <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#0E0A07] border border-[rgba(212,163,89,0.2)] w-full sm:w-auto overflow-x-auto">
             {[
-              { id: "all", label: "All BHK" },
+              { id: "all", label: isAr ? "كافة الشقق" : "All BHK" },
               { id: "1bhk", label: "1 BHK" },
               { id: "2bhk", label: "2 BHK" },
               { id: "3bhk", label: "3 BHK" },
@@ -140,19 +141,25 @@ export function PropertiesCatalogView() {
       {/* 2. CATALOG LIST (Editorial Showcase Layout)              */}
       {/* ======================================================== */}
       {isLoading ? (
-        <p className="py-12 text-center text-sm text-[#D4C4B3]" role="status">Loading current residences…</p>
+        <p className="py-12 text-center text-sm text-[#D4C4B3]" role="status">
+          {isAr ? "جاري تحميل الشقق المتوفرة..." : "Loading current residences…"}
+        </p>
       ) : filteredFlats.length === 0 ? (
         <div className="text-center py-16 px-4 rounded-2xl bg-[#16100B] border border-[rgba(212,163,89,0.22)]">
           <Building2 className="w-12 h-12 text-[#E5C178]/50 mx-auto mb-3" />
           <h3 className="font-heading text-xl font-bold text-[#FAF4EB]">
-            {inventoryError ? "Residence information is unavailable" : flats.length === 0 ? "No residences are listed" : "No residences match your current filter"}
+            {inventoryError
+              ? (isAr ? "معلومات الشقق غير متوفرة حالياً" : "Residence information is unavailable")
+              : flats.length === 0
+                ? (isAr ? "لا توجد شقق مدرجة حالياً" : "No residences are listed")
+                : (isAr ? "لا توجد شقق مطابقة للتصفية الحالية" : "No residences match your current filter")}
           </h3>
           <p className="text-sm text-[#D4C4B3] mt-1 max-w-md mx-auto">
             {inventoryError
-              ? "Current residence and rate information could not be loaded. Please try again shortly."
+              ? (isAr ? "تعذر تحميل الأسعار والوحدات الشاغرة. يرجى المحاولة مرة أخرى لاحقاً." : "Current residence and rate information could not be loaded. Please try again shortly.")
               : flats.length === 0
-                ? "Please check back later for current residence availability."
-                : "Try switching to All Properties or All BHK to view residences across Hyderabad."}
+                ? (isAr ? "يرجى التحقق لاحقاً من الشقق المتاحة." : "Please check back later for current residence availability.")
+                : (isAr ? "جرب التبديل إلى كافة الفروع أو كافة الشقق لعرض المزيد من الخيارات في حيدر أباد." : "Try switching to All Properties or All BHK to view residences across Hyderabad.")}
           </p>
           {flats.length > 0 && <button
             type="button"
@@ -162,7 +169,7 @@ export function PropertiesCatalogView() {
             }}
             className="mt-5 px-5 py-2.5 rounded-xl bg-[rgba(34,24,16,0.9)] border border-[rgba(212,163,89,0.35)] text-[#E5C178] text-xs font-bold uppercase tracking-wider hover:border-[#E5C178] transition-colors cursor-pointer"
           >
-            Reset Filters
+            {isAr ? "إعادة ضبط التصفية" : "Reset Filters"}
           </button>}
         </div>
       ) : (
@@ -170,6 +177,9 @@ export function PropertiesCatalogView() {
           {filteredFlats.map((rawFlat, index) => {
             const flat = getLocalizedRoom(rawFlat, currentLocale);
             const branch = flat.branchSlug ? getBranchBySlug(flat.branchSlug) : undefined;
+            const branchOverlay = isAr && flat.branchSlug ? ARABIC_BRANCH_OVERLAYS[flat.branchSlug] : null;
+            const branchName = branchOverlay?.badge || branch?.name || (isAr ? "حيدر أباد" : "Hyderabad");
+            const branchAddress = branchOverlay?.address || branch?.address || "";
             const photoUrl = FLAT_IMAGES[flat.category.toLowerCase()] || "/images/amenities-bedroom-bg.jpg";
 
             return (
@@ -204,9 +214,13 @@ export function PropertiesCatalogView() {
                       {/* Branch & Locality Header */}
                       <div className="flex items-center gap-2 text-xs font-sans text-[#E5C178] font-bold uppercase tracking-wider mb-2">
                         <MapPin className="w-3.5 h-3.5 text-[#E5C178]" />
-                        <span>{branch?.name || "Hyderabad"}</span>
-                        <span className="text-[rgba(212,163,89,0.4)]">·</span>
-                        <span className="text-[#D4C4B3] font-normal">{branch?.address}</span>
+                        <span>{branchName}</span>
+                        {branchAddress && (
+                          <>
+                            <span className="text-[rgba(212,163,89,0.4)]">·</span>
+                            <span className="text-[#D4C4B3] font-normal">{branchAddress}</span>
+                          </>
+                        )}
                       </div>
 
                       <h3 className="font-heading text-2xl sm:text-3xl font-bold text-[#FAF4EB]">
@@ -236,13 +250,13 @@ export function PropertiesCatalogView() {
                       {/* Inclusions Strip */}
                       <div className="mt-4 flex flex-wrap gap-2 text-xs text-[#D4C4B3]">
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[rgba(34,24,16,0.6)] border border-[rgba(212,163,89,0.18)]">
-                          <Check className="w-3 h-3 text-[#E5C178]" /> Alternate-Day Housekeeping
+                          <Check className="w-3 h-3 text-[#E5C178]" /> {isAr ? "تنظيف دوري للغرف" : "Alternate-Day Housekeeping"}
                         </span>
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[rgba(34,24,16,0.6)] border border-[rgba(212,163,89,0.18)]">
-                          <Check className="w-3 h-3 text-[#E5C178]" /> Piped Cooking Gas
+                          <Check className="w-3 h-3 text-[#E5C178]" /> {isAr ? "غاز طهي مركزي مجاني" : "Piped Cooking Gas"}
                         </span>
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[rgba(34,24,16,0.6)] border border-[rgba(212,163,89,0.18)]">
-                          <Check className="w-3 h-3 text-[#E5C178]" /> Inverter Power Backup
+                          <Check className="w-3 h-3 text-[#E5C178]" /> {isAr ? "مولد طاقة احتياطي متواصل" : "Inverter Power Backup"}
                         </span>
                       </div>
                     </div>
@@ -254,10 +268,14 @@ export function PropertiesCatalogView() {
                           <span className="font-heading text-3xl font-bold text-[#E5C178]">
                             {formatPrice(flat.basePricePerNight)}
                           </span>
-                          <span className="text-xs text-[#D4C4B3] font-sans">/ night base rate</span>
+                          <span className="text-xs text-[#D4C4B3] font-sans">
+                            {isAr ? "/ ليلة (السعر الأساسي)" : "/ night base rate"}
+                          </span>
                         </div>
                         <p className="text-xs text-[#FAF4EB]/70 mt-0.5">
-                          20% advance deposit ({formatPrice(Math.round(flat.basePricePerNight * 0.2))}) to reserve
+                          {isAr
+                            ? `عربون ٢٠٪ (${formatPrice(Math.round(flat.basePricePerNight * 0.2))}) لتثبيت الحجز`
+                            : `20% advance deposit (${formatPrice(Math.round(flat.basePricePerNight * 0.2))}) to reserve`}
                         </p>
                       </div>
 
@@ -266,7 +284,7 @@ export function PropertiesCatalogView() {
                           href={`${localePrefix}/properties/${flat.slug}`}
                           className="w-full sm:w-auto px-6 py-3 min-h-[46px] rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] hover:brightness-105 text-[#140E08] font-bold text-xs uppercase tracking-wider inline-flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
                         >
-                          <span>{isAr ? dict.rooms.reserveUnit : "Reserve Suite"}</span>
+                          <span>{isAr ? "حجز الشقة الآن" : "Reserve Suite"}</span>
                           <ArrowRight className={cn("w-4 h-4", isAr && "rotate-180")} />
                         </Link>
                       </div>

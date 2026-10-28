@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
 import { BookingRecord } from "@/types/booking";
 import { getRoomById } from "@/lib/mock-rooms";
+import { getLocalizedRoom } from "@/lib/i18n/room-localizer";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { formatPrice } from "@/lib/constants";
@@ -72,7 +73,7 @@ export default function ArabicMyBookingsPage() {
       return;
     }
     setLookupError(null);
-    router.push(`/ar/booking-confirmation?bookingId=${encodeURIComponent(lookupCode.trim())}`);
+    router.push(`/ar/booking-confirmation/${encodeURIComponent(lookupCode.trim().toUpperCase())}`);
   };
 
   const copyBookingId = (id: string) => {
@@ -84,7 +85,7 @@ export default function ArabicMyBookingsPage() {
   // Unauthenticated View
   if (!user && !authLoading) {
     return (
-      <div className="min-h-screen bg-background text-[#FAF4EB] flex flex-col selection:bg-[#E5C178]/20 selection:text-[#E5C178] font-arabic">
+      <div className="min-h-screen bg-background text-[#FAF4EB] flex flex-col selection:bg-[#E5C178]/20 selection:text-[#E5C178] font-arabic" dir="rtl">
         <SiteHeader />
         <main className="flex-1 flex items-center justify-center py-16 px-4">
           <div className="max-w-md w-full space-y-6">
@@ -160,7 +161,7 @@ export default function ArabicMyBookingsPage() {
 
   // Authenticated Guest View
   return (
-    <div className="min-h-screen bg-background text-[#FAF4EB] flex flex-col selection:bg-[#E5C178]/20 selection:text-[#E5C178] font-arabic">
+    <div className="min-h-screen bg-background text-[#FAF4EB] flex flex-col selection:bg-[#E5C178]/20 selection:text-[#E5C178] font-arabic" dir="rtl">
       <SiteHeader />
       <main className="flex-1 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
@@ -236,7 +237,8 @@ export default function ArabicMyBookingsPage() {
             ) : (
               <div className="space-y-4">
                 {bookings.map((booking) => {
-                  const room = getRoomById(booking.unitId);
+                  const rawRoom = getRoomById(booking.unitId);
+                  const room = rawRoom ? getLocalizedRoom(rawRoom, "ar") : null;
                   return (
                     <div
                       key={booking.id}

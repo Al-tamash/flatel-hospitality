@@ -127,6 +127,65 @@ export const HOSPITALS_DATA: HospitalItem[] = [
 
 export const HOSPITAL_RECORDS = HOSPITALS_DATA;
 
+export const ARABIC_HOSPITAL_TRANSLATIONS: Record<
+  string,
+  {
+    name: string;
+    specialty: string;
+    locality: string;
+    address: string;
+  }
+> = {
+  "owaisi": {
+    name: "مستشفى ومركز أبحاث أويسي",
+    specialty: "متعدد التخصصات",
+    locality: "كانشانباغ / سانتوش ناغار",
+    address: "بالقرب من طريق دي إم آر إل، كانشانباغ، حيدر أباد",
+  },
+  "apollo": {
+    name: "مستشفيات أبولو",
+    specialty: "متعدد التخصصات",
+    locality: "جوبيلي هيلز",
+    address: "طريق رقم ٧٢، جوبيلي هيلز، حيدر أباد",
+  },
+  "yashoda": {
+    name: "مستشفيات ياشودا",
+    specialty: "علاج الأورام",
+    locality: "سوماجيغودا",
+    address: "طريق راج بهافان، سوماجيغودا، حيدر أباد",
+  },
+  "kims": {
+    name: "مستشفيات كيمز (KIMS)",
+    specialty: "متعدد التخصصات",
+    locality: "سيكندر أباد",
+    address: "طريق مينيستر، سيكندر أباد، حيدر أباد",
+  },
+  "virinchi": {
+    name: "مستشفيات فيرينتشي",
+    specialty: "متعدد التخصصات",
+    locality: "بانجارا هيلز",
+    address: "طريق رقم ١، بانجارا هيلز، حيدر أباد",
+  },
+  "aig": {
+    name: "مستشفيات إيه آي جي (AIG)",
+    specialty: "أمراض وجراحة الجهاز الهضمي",
+    locality: "غاتشيباولي",
+    address: "طريق مايند سبيس، غاتشيباولي، حيدر أباد",
+  },
+  "aware-global": {
+    name: "مستشفى أوير غلوبال",
+    specialty: "متعدد التخصصات",
+    locality: "إل بي ناغار",
+    address: "طريق ساغار، إل بي ناغار، حيدر أباد",
+  },
+  "gandhi": {
+    name: "مستشفى غاندي",
+    specialty: "مستشفى حكومي",
+    locality: "سيكندر أباد",
+    address: "مشير أباد، بادماراو ناغار، سيكندر أباد",
+  },
+};
+
 const SPECIALTY_TABS = [
   { id: "all", labelEn: "All Hospitals", labelAr: "كافة المستشفيات" },
   { id: "multi-speciality", labelEn: "Multi-Speciality", labelAr: "متعدد التخصصات" },
@@ -149,12 +208,17 @@ export function HospitalDirectoryView() {
       const matchesSpecialty =
         selectedSpecialty === "all" || item.specialtyCode === selectedSpecialty;
       const q = searchQuery.toLowerCase().trim();
+      const arData = ARABIC_HOSPITAL_TRANSLATIONS[item.id];
       const matchesSearch =
         !q ||
         item.name.toLowerCase().includes(q) ||
         item.locality.toLowerCase().includes(q) ||
         item.address.toLowerCase().includes(q) ||
-        item.specialty.toLowerCase().includes(q);
+        item.specialty.toLowerCase().includes(q) ||
+        Boolean(arData?.name.toLowerCase().includes(q)) ||
+        Boolean(arData?.locality.toLowerCase().includes(q)) ||
+        Boolean(arData?.address.toLowerCase().includes(q)) ||
+        Boolean(arData?.specialty.toLowerCase().includes(q));
       return matchesSpecialty && matchesSearch;
     });
   }, [selectedSpecialty, searchQuery]);
@@ -228,69 +292,77 @@ export function HospitalDirectoryView() {
         {/* Directory Grid */}
         {filteredHospitals.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-            {filteredHospitals.map((hospital) => (
-              <div
-                key={hospital.id}
-                className="rounded-2xl bg-[#16100B] border border-[rgba(212,163,89,0.28)] hover:border-[#E5C178] transition-colors flex flex-col justify-between overflow-hidden shadow-lg group"
-              >
-                {/* Image & Badges */}
-                <div className="relative h-36 w-full overflow-hidden bg-[#0E0A07]">
-                  <Image
-                    src={hospital.imageUrl}
-                    alt={hospital.name}
-                    fill
-                    className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#16100B] via-black/40 to-black/10" />
-                  <div className="absolute top-2.5 left-2.5">
-                    <span className="px-2.5 py-1 rounded text-xs font-semibold uppercase tracking-wider bg-[rgba(22,16,11,0.9)] backdrop-blur-xs text-[#E5C178] border border-[rgba(212,163,89,0.25)]">
-                      {hospital.specialty}
-                    </span>
-                  </div>
-                  <div className="absolute bottom-2 left-2.5 text-xs text-[#E5C178] font-medium flex items-center gap-1.5 drop-shadow-sm">
-                    <span className="sr-only">Hospital information</span>
-                  </div>
-                </div>
+            {filteredHospitals.map((hospital) => {
+              const arData = isAr ? ARABIC_HOSPITAL_TRANSLATIONS[hospital.id] : null;
+              const hospitalName = arData?.name || hospital.name;
+              const hospitalSpecialty = arData?.specialty || hospital.specialty;
+              const hospitalLocality = arData?.locality || hospital.locality;
+              const hospitalAddress = arData?.address || hospital.address;
 
-                {/* Body Content */}
-                <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-3.5">
-                  <div>
-                    <h2 className="font-heading text-lg sm:text-xl font-bold text-[#FAF4EB] group-hover:text-[#E5C178] transition-colors leading-snug tracking-normal">
-                      {hospital.name}
-                    </h2>
-                    <p className="text-xs sm:text-sm text-[#E5C178] font-medium mt-1">
-                      {hospital.locality}
-                    </p>
-                    <p className="text-xs sm:text-sm text-[#D4C4B3] line-clamp-2 mt-2 flex items-start gap-1.5">
-                      <MapPin className="w-4 h-4 text-[#E5C178] shrink-0 mt-0.5" />
-                      <span>{hospital.address}</span>
-                    </p>
+              return (
+                <div
+                  key={hospital.id}
+                  className="rounded-2xl bg-[#16100B] border border-[rgba(212,163,89,0.28)] hover:border-[#E5C178] transition-colors flex flex-col justify-between overflow-hidden shadow-lg group"
+                >
+                  {/* Image & Badges */}
+                  <div className="relative h-36 w-full overflow-hidden bg-[#0E0A07]">
+                    <Image
+                      src={hospital.imageUrl}
+                      alt={hospitalName}
+                      fill
+                      className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#16100B] via-black/40 to-black/10" />
+                    <div className="absolute top-2.5 left-2.5 rtl:left-auto rtl:right-2.5">
+                      <span className="px-2.5 py-1 rounded text-xs font-semibold uppercase tracking-wider bg-[rgba(22,16,11,0.9)] backdrop-blur-xs text-[#E5C178] border border-[rgba(212,163,89,0.25)]">
+                        {hospitalSpecialty}
+                      </span>
+                    </div>
+                    <div className="absolute bottom-2 left-2.5 text-xs text-[#E5C178] font-medium flex items-center gap-1.5 drop-shadow-sm">
+                      <span className="sr-only">Hospital information</span>
+                    </div>
                   </div>
 
-                  {/* Actions */}
-                  <div className="pt-3.5 border-t border-[rgba(212,163,89,0.18)] flex items-center gap-2">
-                    <Link
-                      href={`${basePath}/#flats`}
-                      className="flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] hover:brightness-105 text-[#140E08] font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all text-center min-h-[44px]"
-                    >
-                      <span>{isAr ? "شقق قريبة" : "Nearby Flats"}</span>
-                      <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
-                    </Link>
-                    <a
-                      href={hospital.googleMapsUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="py-2.5 px-3 rounded-xl bg-[rgba(22,16,11,0.85)] hover:bg-[rgba(45,32,22,0.9)] text-[#FAF4EB] border border-[rgba(212,163,89,0.25)] hover:border-[#E5C178] text-xs sm:text-sm font-semibold flex items-center justify-center gap-1 transition-colors min-h-[44px]"
-                      aria-label={isAr ? `الاتجاهات إلى ${hospital.name}` : `Get directions to ${hospital.name}`}
-                    >
-                      <Navigation className="w-3.5 h-3.5 text-[#E5C178]" />
-                      <span>{isAr ? "الخريطة" : "Map"}</span>
-                    </a>
+                  {/* Body Content */}
+                  <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-3.5">
+                    <div>
+                      <h2 className="font-heading text-lg sm:text-xl font-bold text-[#FAF4EB] group-hover:text-[#E5C178] transition-colors leading-snug tracking-normal">
+                        {hospitalName}
+                      </h2>
+                      <p className="text-xs sm:text-sm text-[#E5C178] font-medium mt-1">
+                        {hospitalLocality}
+                      </p>
+                      <p className="text-xs sm:text-sm text-[#D4C4B3] line-clamp-2 mt-2 flex items-start gap-1.5">
+                        <MapPin className="w-4 h-4 text-[#E5C178] shrink-0 mt-0.5" />
+                        <span>{hospitalAddress}</span>
+                      </p>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="pt-3.5 border-t border-[rgba(212,163,89,0.18)] flex items-center gap-2">
+                      <Link
+                        href={`${basePath}/#flats`}
+                        className="flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] hover:brightness-105 text-[#140E08] font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all text-center min-h-[44px]"
+                      >
+                        <span>{isAr ? "شقق قريبة" : "Nearby Flats"}</span>
+                        <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
+                      </Link>
+                      <a
+                        href={hospital.googleMapsUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="py-2.5 px-3 rounded-xl bg-[rgba(22,16,11,0.85)] hover:bg-[rgba(45,32,22,0.9)] text-[#FAF4EB] border border-[rgba(212,163,89,0.25)] hover:border-[#E5C178] text-xs sm:text-sm font-semibold flex items-center justify-center gap-1 transition-colors min-h-[44px]"
+                        aria-label={isAr ? `الاتجاهات إلى ${hospitalName}` : `Get directions to ${hospital.name}`}
+                      >
+                        <Navigation className="w-3.5 h-3.5 text-[#E5C178]" />
+                        <span>{isAr ? "الخريطة" : "Map"}</span>
+                      </a>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className="p-8 text-center rounded-2xl bg-[#16100B] border border-[rgba(212,163,89,0.28)]">

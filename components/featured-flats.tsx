@@ -247,7 +247,7 @@ export function FeaturedFlats({ className }: FeaturedFlatsProps) {
 
           {/* Active Purpose Package Highlight Banner */}
           {activePurposePackage && (
-            <div className="mt-4 p-3.5 sm:p-4 rounded-2xl bg-[rgba(34,24,16,0.92)] border border-[#E5C178]/50 shadow-xl max-w-2xl mx-auto backdrop-blur-md animate-in fade-in duration-200 text-left">
+            <div className={cn("mt-4 p-3.5 sm:p-4 rounded-2xl bg-[rgba(34,24,16,0.92)] border border-[#E5C178]/50 shadow-xl max-w-2xl mx-auto backdrop-blur-md animate-in fade-in duration-200", isAr ? "text-right" : "text-left")}>
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-start gap-3">
                   <div className="w-8 h-8 rounded-xl bg-[#E5C178]/15 border border-[#E5C178]/30 flex items-center justify-center shrink-0 mt-0.5 text-[#E5C178]">
@@ -256,28 +256,35 @@ export function FeaturedFlats({ className }: FeaturedFlatsProps) {
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-xs sm:text-sm font-heading font-semibold text-[#E5C178] uppercase tracking-wider">
-                        {activePurposePackage.name}
+                        {isAr
+                          ? activePurposePackage.id === "medical"
+                            ? "باقة الإقامة الطبية والاستشفاء (Medistay)"
+                            : activePurposePackage.id === "tourism"
+                            ? "باقة السياحة وزيارة المعالم التراثية"
+                            : activePurposePackage.id === "family"
+                            ? "باقة العائلات والإقامات الطويلة"
+                            : activePurposePackage.id === "corporate"
+                            ? "باقة الشركات ورجال الأعمال"
+                            : activePurposePackage.name
+                          : activePurposePackage.name}
                       </span>
                       <span className="text-xs font-sans text-emerald-300 bg-emerald-500/15 px-2.5 py-0.5 rounded-full border border-emerald-500/30 font-medium">
-                        Complimentary Inclusions Active
+                        {isAr ? "مزايا مجانية إضافية مفعّلة" : "Complimentary Inclusions Active"}
                       </span>
                     </div>
                     <p className="text-sm text-[#FAF4EB] font-medium leading-relaxed">
-                      {activePurposePackage.tagline}
+                      {isAr
+                        ? activePurposePackage.id === "medical"
+                          ? "مخصصة ومجهزة لمرافقي المرضى والزيارات العلاجية"
+                          : activePurposePackage.id === "tourism"
+                          ? "دليل سياحي وحفظ أمتعة بالقرب من تشارمينار"
+                          : activePurposePackage.id === "family"
+                          ? "مطبخ متكامل وسرير أطفال مجاني وإقامة عائلية رحبة"
+                          : activePurposePackage.id === "corporate"
+                          ? "إنترنت فائق السرعة ومكتب عمل مريح"
+                          : activePurposePackage.tagline
+                        : activePurposePackage.tagline}
                     </p>
-                    <div className="flex flex-wrap items-center gap-x-3.5 gap-y-1 pt-1 text-xs text-[#D4C4B3]">
-                      {activePurposePackage.freeFacilities.slice(0, 3).map((f) => (
-                        <span key={f} className="flex items-center gap-1.5">
-                          <Check className="w-3.5 h-3.5 text-[#E5C178]" />
-                          <span>{f}</span>
-                        </span>
-                      ))}
-                      {activePurposePackage.freeFacilities.length > 3 && (
-                        <span className="text-[#E5C178] font-semibold">
-                          +{activePurposePackage.freeFacilities.length - 3} more complimentary benefits
-                        </span>
-                      )}
-                    </div>
                   </div>
                 </div>
                 <button
@@ -287,11 +294,11 @@ export function FeaturedFlats({ className }: FeaturedFlatsProps) {
                     const sp = new URLSearchParams(window.location.search);
                     sp.delete("purpose");
                     const q = sp.toString();
-                    window.history.pushState(null, "", q ? `/?${q}#flats` : "/#flats");
+                    window.history.pushState(null, "", q ? `${localePrefix}/?${q}#flats` : `${localePrefix}/#flats`);
                   }}
                   className="text-xs sm:text-sm font-semibold text-[#E5C178] hover:text-[#FAF4EB] underline cursor-pointer shrink-0"
                 >
-                  Clear Filter
+                  {isAr ? "إلغاء التصفية" : "Clear Filter"}
                 </button>
               </div>
             </div>
@@ -305,7 +312,15 @@ export function FeaturedFlats({ className }: FeaturedFlatsProps) {
                   <Sparkles className="w-3.5 h-3.5 text-[#E5C178]" />
                 </div>
                 <span>
-                  Showing rates for <strong className="text-[#E5C178] font-mono">{searchDates.nights} Nights</strong> ({searchDates.checkIn} to {searchDates.checkOut}) · <strong className="text-[#FAF4EB]">{searchDates.adults || 2} Adults{searchDates.kids ? `, ${searchDates.kids} Children` : ""}</strong>
+                  {isAr ? (
+                    <>
+                      عرض الأسعار لـ <strong className="text-[#E5C178] font-mono">{searchDates.nights} ليالٍ</strong> ({searchDates.checkIn} إلى {searchDates.checkOut}) · <strong className="text-[#FAF4EB]">{searchDates.adults || 2} بالغين{searchDates.kids ? `، ${searchDates.kids} أطفال` : ""}</strong>
+                    </>
+                  ) : (
+                    <>
+                      Showing rates for <strong className="text-[#E5C178] font-mono">{searchDates.nights} Nights</strong> ({searchDates.checkIn} to {searchDates.checkOut}) · <strong className="text-[#FAF4EB]">{searchDates.adults || 2} Adults{searchDates.kids ? `, ${searchDates.kids} Children` : ""}</strong>
+                    </>
+                  )}
                 </span>
               </div>
               <button
@@ -319,12 +334,12 @@ export function FeaturedFlats({ className }: FeaturedFlatsProps) {
                     sp.delete("adults");
                     sp.delete("kids");
                     const q = sp.toString();
-                    window.history.pushState(null, "", q ? `/?${q}#flats` : "/#flats");
+                    window.history.pushState(null, "", q ? `${localePrefix}/?${q}#flats` : `${localePrefix}/#flats`);
                   }
                 }}
                 className="text-xs sm:text-sm font-semibold text-[#E5C178] hover:text-[#FAF4EB] underline cursor-pointer"
               >
-                Clear Dates
+                {isAr ? "إلغاء التواريخ" : "Clear Dates"}
               </button>
             </div>
           )}

@@ -25,6 +25,8 @@ import { BookingSidebar } from "@/components/rooms/booking-sidebar";
 import { usePathname } from "next/navigation";
 import { getLocaleFromPath, getDictionary } from "@/lib/i18n";
 import { getLocalizedRoom } from "@/lib/i18n/room-localizer";
+import { ARABIC_BRANCH_OVERLAYS } from "@/components/branch-hub";
+import { ARABIC_AMENITIES_TRANSLATIONS, ARABIC_CATEGORIES_TRANSLATIONS } from "@/components/amenities-section";
 import { cn } from "@/lib/utils";
 import {
   AMENITIES_BENTO,
@@ -184,6 +186,9 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
   }, [amenitiesModalOpen, policiesModalOpen]);
 
   const branch = room?.branchSlug ? getBranchBySlug(room.branchSlug) : undefined;
+  const branchOverlay = isAr && branch?.slug ? ARABIC_BRANCH_OVERLAYS[branch.slug] : null;
+  const branchName = branchOverlay?.badge || branch?.name || (isAr ? "حيدر أباد" : "Hyderabad");
+  const branchAddress = branchOverlay?.address || branch?.address || "";
 
   // Filter other suites at this branch (strictly excluding the current room)
   const branchSuites = branchInventory.filter(
@@ -201,7 +206,7 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
     if (childrenCount > 0) params.set("kids", childrenCount.toString());
     if (selectedPurposeId) params.set("purpose", selectedPurposeId);
     const qStr = params.toString();
-    return `/properties/${suiteSlug}${qStr ? `?${qStr}` : ""}`;
+    return `${localePrefix}/properties/${suiteSlug}${qStr ? `?${qStr}` : ""}`;
   };
 
   const handleToggleAddon = (addonId: string) => {
@@ -216,29 +221,31 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
     if (room.amenities && room.amenities.length > 0) {
       return room.amenities.map((a) => {
         const lower = a.name.toLowerCase();
-        const desc = lower.includes("wi-fi") || lower.includes("wifi")
-          ? "High-speed Wi-Fi"
-          : lower.includes("kitchen")
-            ? "Private kitchen with cooking facilities"
-            : lower.includes("geyser")
-              ? "Water-softening geyser"
-              : lower.includes("tv")
-                ? "Smart TV"
-                : lower.includes("refrigerator") || lower.includes("fridge")
-                  ? "Refrigerator"
-                  : lower.includes("lift") || lower.includes("elevator")
-                    ? "Passenger elevator access"
-                    : lower.includes("water supply")
-                      ? "Water supply"
-                      : lower.includes("water")
-                        ? "RO water purifier"
-                        : lower.includes("power") || lower.includes("inverter") || lower.includes("backup")
-                          ? "Inverter power backup"
-                          : lower.includes("ac") || lower.includes("conditioning")
-                            ? "Air conditioning"
-                            : a.description && a.description !== "Verified flat inclusion"
-                              ? a.description
-                              : "Included with this residence";
+        const desc = isAr
+          ? (a.description || "مشمول مجاناً في الشقة")
+          : (lower.includes("wi-fi") || lower.includes("wifi")
+            ? "High-speed Wi-Fi"
+            : lower.includes("kitchen")
+              ? "Private kitchen with cooking facilities"
+              : lower.includes("geyser")
+                ? "Water-softening geyser"
+                : lower.includes("tv")
+                  ? "Smart TV"
+                  : lower.includes("refrigerator") || lower.includes("fridge")
+                    ? "Refrigerator"
+                    : lower.includes("lift") || lower.includes("elevator")
+                      ? "Passenger elevator access"
+                      : lower.includes("water supply")
+                        ? "Water supply"
+                        : lower.includes("water")
+                          ? "RO water purifier"
+                          : lower.includes("power") || lower.includes("inverter") || lower.includes("backup")
+                            ? "Inverter power backup"
+                            : lower.includes("ac") || lower.includes("conditioning")
+                              ? "Air conditioning"
+                              : a.description && a.description !== "Verified flat inclusion"
+                                ? a.description
+                                : "Included with this residence");
         return {
           title: a.name,
           desc,
@@ -293,16 +300,20 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
   if (!room) {
     return (
       <div className="mx-auto w-full max-w-4xl px-4 py-24 text-center select-none">
-        <h1 className="font-heading text-3xl font-normal text-[#FAF4EB]">Residence Not Found</h1>
+        <h1 className="font-heading text-3xl font-normal text-[#FAF4EB]">
+          {isAr ? "الشقة غير موجودة" : "Residence Not Found"}
+        </h1>
         <p className="text-sm text-[#B8A692] mt-2">
-          The requested apartment ID &ldquo;{requestedId}&rdquo; was not found.
+          {isAr
+            ? `لم يتم العثور على الشقة برمز "${requestedId}".`
+            : `The requested apartment ID "${requestedId}" was not found.`}
         </p>
         <Link
-          href="/#flats"
+          href={`${localePrefix}/#flats`}
           className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] font-bold text-xs shadow-md hover:opacity-95 transition-opacity"
         >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Explore All Residences</span>
+          <ArrowLeft className={cn("w-4 h-4", isAr && "rotate-180")} />
+          <span>{isAr ? "استكشف كافة الشقق الفندقية" : "Explore All Residences"}</span>
         </Link>
       </div>
     );
@@ -330,7 +341,7 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
             {branch && (
               <>
                 <Link href={`${localePrefix}/branches/${branch.slug}`} className="hover:text-[#FAF4EB] transition-colors shrink-0">
-                  {branch.name}
+                  {branchName}
                 </Link>
                 <ChevronRight className={cn("h-3 w-3 text-[#E5C178]/60 shrink-0", isAr && "rotate-180")} />
               </>
@@ -359,7 +370,9 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
             <section className="space-y-4">
               <div>
                 <span className="text-xs font-sans font-medium tracking-[0.16em] uppercase text-[#E5C178]">
-                  FLATEL SERVICED RESIDENCE · {branch?.name?.toUpperCase() || "HYDERABAD"}
+                  {isAr
+                    ? `شقق فندقية مجهزة · ${branchName}`
+                    : `FLATEL SERVICED RESIDENCE · ${branch?.name?.toUpperCase() || "HYDERABAD"}`}
                 </span>
                 <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#FAF4EB] tracking-[-0.015em] leading-[1.06] mt-1">
                   {room.title}
@@ -370,7 +383,7 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
               <div className="flex items-center gap-3 text-xs sm:text-sm text-[#B8A692] flex-wrap">
                 <div className="flex items-center gap-1 text-[#FAF4EB]/90">
                   <MapPin className="w-3.5 h-3.5 text-[#E5C178]" />
-                  <span>{branch?.address || "Hyderabad"}</span>
+                  <span>{branchAddress || "Hyderabad"}</span>
                 </div>
                 {branch?.googleMapsUrl && (
                   <>
@@ -381,7 +394,7 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
                       rel="noopener noreferrer"
                       className="text-[#E5C178] hover:underline font-semibold inline-flex items-center gap-1"
                     >
-                      <span>Google Maps</span>
+                      <span>{isAr ? "خرائط Google" : "Google Maps"}</span>
                       <ExternalLink className="w-3 h-3" />
                     </a>
                   </>
@@ -392,7 +405,7 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
               <div className="flex flex-wrap items-center gap-y-2 gap-x-5 pt-1 text-xs sm:text-sm text-[#FAF4EB]">
                 <div className="flex items-center gap-1.5">
                   <Users className="w-4 h-4 text-[#E5C178]" />
-                  <span>Up to {room.maxAdults} Guests</span>
+                  <span>{isAr ? `حتى ${room.maxAdults} ضيوف` : `Up to ${room.maxAdults} Guests`}</span>
                 </div>
                 <span>•</span>
                 <div className="flex items-center gap-1.5">
@@ -407,12 +420,12 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
                 <span>•</span>
                 <div className="flex items-center gap-1.5">
                   <UtensilsCrossed className="w-4 h-4 text-[#E5C178]" />
-                  <span>Modular Kitchen</span>
+                  <span>{isAr ? "مطبخ مجهز بالكامل" : "Modular Kitchen"}</span>
                 </div>
                 <span>•</span>
                 <div className="flex items-center gap-1.5">
                   <Zap className="w-4 h-4 text-[#E5C178]" />
-                  <span>Inverter Backup</span>
+                  <span>{isAr ? "مولد طاقة احتياطي" : "Inverter Backup"}</span>
                 </div>
               </div>
 
@@ -421,9 +434,9 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
                 <span className="font-heading text-2xl sm:text-3xl font-normal text-[#FAF4EB] tabular-nums">
                   ₹{room.basePricePerNight.toLocaleString("en-IN")}
                 </span>
-                <span className="text-sm text-[#B8A692]">/ night</span>
+                <span className="text-sm text-[#B8A692]">{isAr ? "/ ليلة" : "/ night"}</span>
                 <span className="text-xs text-[#E5C178] font-medium ml-2">
-                  Pay 20% now to confirm
+                  {isAr ? "عربون ٢٠٪ فقط لتأكيد الحجز" : "Pay 20% now to confirm"}
                 </span>
               </div>
 
@@ -446,10 +459,12 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
               <div className="flex items-baseline justify-between gap-4 flex-wrap">
                 <div>
                   <h2 id="amenities-heading" className="font-heading text-xl sm:text-2xl font-normal text-[#FAF4EB]">
-                    Included with your flat
+                    {isAr ? "المزايا المشمولة في الشقة" : "Included with your flat"}
                   </h2>
                   <p className="text-xs text-[#B8A692] mt-0.5">
-                    Included in your accommodation at no extra charge.
+                    {isAr
+                      ? "مشمولة مجاناً في سعر إقامتك دون أي رسوم إضافية."
+                      : "Included in your accommodation at no extra charge."}
                   </p>
                 </div>
                 <button
@@ -457,8 +472,8 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
                   onClick={() => setAmenitiesModalOpen(true)}
                   className="text-xs font-semibold text-[#E5C178] hover:text-[#FAF4EB] cursor-pointer flex items-center gap-1 transition-colors"
                 >
-                  <span>View all amenities</span>
-                  <span>→</span>
+                  <span>{isAr ? "عرض كافة المزايا والخدمات" : "View all amenities"}</span>
+                  <span className={cn(isAr && "rotate-180")}>→</span>
                 </button>
               </div>
 
@@ -500,10 +515,12 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
               <div className="flex items-baseline justify-between gap-4 flex-wrap">
                 <div>
                   <h2 id="location-heading" className="font-heading text-xl sm:text-2xl font-normal text-[#FAF4EB]">
-                    Location &amp; Nearby Places
+                    {isAr ? "الموقع والمعالم القريبة" : "Location & Nearby Places"}
                   </h2>
                   <p className="text-xs text-[#B8A692] mt-0.5">
-                    Located in Moghal Pura, near Charminar. Use the map for directions.
+                    {isAr
+                      ? `يقع في ${branchName}. استخدم الخريطة للتوجيه المباشر.`
+                      : `Located in ${branch?.name || "Hyderabad"}. Use the map for directions.`}
                   </p>
                 </div>
                 {branch?.googleMapsUrl && (
@@ -513,7 +530,7 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
                     rel="noopener noreferrer"
                     className="text-xs font-semibold text-[#E5C178] hover:text-[#FAF4EB] transition-colors"
                   >
-                    Open Google Maps Navigation →
+                    {isAr ? "فتح التوجيه عبر خرائط Google ←" : "Open Google Maps Navigation →"}
                   </a>
                 )}
               </div>
@@ -526,7 +543,7 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
                   >
                     <span className="text-[#FAF4EB] font-medium truncate pr-2 text-xs">{lm.name}</span>
                     <span className="font-sans text-xs text-[#E5C178] shrink-0 font-semibold tabular-nums">
-                      {lm.name}
+                      {lm.time || lm.dist || ""}
                     </span>
                   </div>
                 ))}
@@ -540,10 +557,12 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
               <div className="flex items-baseline justify-between gap-4 flex-wrap">
                 <div>
                   <h2 id="policies-heading" className="font-heading text-xl sm:text-2xl font-normal text-[#FAF4EB]">
-                    Stay Policies &amp; House Rules
+                    {isAr ? "سياسات الإقامة وشروط الحجز" : "Stay Policies & House Rules"}
                   </h2>
                   <p className="text-xs text-[#B8A692] mt-0.5">
-                    Simple check-in, payment, and cancellation terms.
+                    {isAr
+                      ? "شروط ميسرة وواضحة لتسجيل الوصول والدفع والإلغاء."
+                      : "Simple check-in, payment, and cancellation terms."}
                   </p>
                 </div>
                 <button
@@ -551,31 +570,65 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
                   onClick={() => setPoliciesModalOpen(true)}
                   className="text-xs font-semibold text-[#E5C178] hover:text-[#FAF4EB] cursor-pointer transition-colors"
                 >
-                  View full cancellation policy →
+                  {isAr ? "عرض سياسة الإلغاء الكاملة ←" : "View full cancellation policy →"}
                 </button>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-[#B8A692]">
                 <div className="space-y-1">
-                  <h3 className="text-[#FAF4EB] font-medium text-xs">Check-In &amp; Check-Out</h3>
+                  <h3 className="text-[#FAF4EB] font-medium text-xs">
+                    {isAr ? "تسجيل الوصول والمغادرة" : "Check-In & Check-Out"}
+                  </h3>
                   <p className="text-xs leading-relaxed text-[#B8A692]">
-                    Check-in: <span className="font-medium text-[#FAF4EB]">11:00 AM – 1:00 PM</span>
-                    <br />
-                    Check-out: By <span className="font-medium text-[#FAF4EB]">11:00 AM</span>
+                    {isAr ? (
+                      <>
+                        تسجيل الوصول: <span className="font-medium text-[#FAF4EB]">١١:٠٠ ص – ١:٠٠ م</span>
+                        <br />
+                        تسجيل المغادرة: حتى <span className="font-medium text-[#FAF4EB]">١١:٠٠ ص</span>
+                      </>
+                    ) : (
+                      <>
+                        Check-in: <span className="font-medium text-[#FAF4EB]">11:00 AM – 1:00 PM</span>
+                        <br />
+                        Check-out: By <span className="font-medium text-[#FAF4EB]">11:00 AM</span>
+                      </>
+                    )}
                   </p>
                 </div>
                 <div className="space-y-1">
-                  <h3 className="text-[#FAF4EB] font-medium text-xs">Payment Terms</h3>
+                  <h3 className="text-[#FAF4EB] font-medium text-xs">
+                    {isAr ? "شروط الدفع" : "Payment Terms"}
+                  </h3>
                   <p className="text-xs leading-relaxed text-[#B8A692]">
-                    <span className="font-medium text-[#FAF4EB]">20%</span> advance payable online to reserve
-                    <br />
-                    <span className="font-medium text-[#FAF4EB]">80%</span> remaining balance at check-in (Cash / UPI)
+                    {isAr ? (
+                      <>
+                        عربون <span className="font-medium text-[#FAF4EB]">٢٠٪</span> عبر الإنترنت لتثبيت الحجز
+                        <br />
+                        الرصيد المتبقي <span className="font-medium text-[#FAF4EB]">٨٠٪</span> عند الوصول (نقداً أو UPI)
+                      </>
+                    ) : (
+                      <>
+                        <span className="font-medium text-[#FAF4EB]">20%</span> advance payable online to reserve
+                        <br />
+                        <span className="font-medium text-[#FAF4EB]">80%</span> remaining balance at check-in (Cash / UPI)
+                      </>
+                    )}
                   </p>
                 </div>
                 <div className="space-y-1">
-                  <h3 className="text-[#FAF4EB] font-medium text-xs">Cancellation Policy</h3>
+                  <h3 className="text-[#FAF4EB] font-medium text-xs">
+                    {isAr ? "سياسة الإلغاء" : "Cancellation Policy"}
+                  </h3>
                   <p className="text-xs leading-relaxed text-[#B8A692]">
-                    <span className="font-medium text-[#FAF4EB]">100%</span> refund up to <span className="font-medium text-[#FAF4EB]">48 hrs</span> before check-in. Non-refundable within <span className="font-medium text-[#FAF4EB]">48 hrs</span>.
+                    {isAr ? (
+                      <>
+                        استرداد <span className="font-medium text-[#FAF4EB]">١٠٠٪</span> حتى <span className="font-medium text-[#FAF4EB]">٤٨ ساعة</span> قبل الوصول. غير مسترد خلال <span className="font-medium text-[#FAF4EB]">٤٨ ساعة</span>.
+                      </>
+                    ) : (
+                      <>
+                        <span className="font-medium text-[#FAF4EB]">100%</span> refund up to <span className="font-medium text-[#FAF4EB]">48 hrs</span> before check-in. Non-refundable within <span className="font-medium text-[#FAF4EB]">48 hrs</span>.
+                      </>
+                    )}
                   </p>
                 </div>
               </div>
@@ -620,20 +673,21 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
             <div className="flex items-baseline justify-between gap-4 flex-wrap">
               <div>
                 <h2 id="other-flats-heading" className="font-heading text-xl sm:text-2xl font-normal text-[#FAF4EB]">
-                  Other Residences at {branch?.name || "This Location"}
+                  {isAr ? `شقق أخرى في فرع ${branchName}` : `Other Residences at ${branch?.name || "This Location"}`}
                 </h2>
                 <p className="text-xs text-[#B8A692] mt-0.5">
-                  Compare other available BHK configurations at this branch.
+                  {isAr ? "قارن بين فئات الشقق الأخرى المتاحة في هذا الفرع." : "Compare other available BHK configurations at this branch."}
                 </p>
               </div>
               <span className="text-xs text-[#E5C178] font-medium hidden sm:inline">
-                Explore more configurations
+                {isAr ? "استكشف المزيد من الوحدات" : "Explore more configurations"}
               </span>
             </div>
 
             {/* Mobile: Horizontal Swipeable Snap Slider; Tablet/Desktop: Grid */}
             <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-3 sm:pb-0 no-scrollbar sm:grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
               {branchSuites.map((s) => {
+                const localizedS = getLocalizedRoom(s, currentLocale);
                 const suiteImage = s.gallery?.[0]?.url || "/images/flats/flat-1bhk-luxury.jpg";
                 return (
                   <div
@@ -644,7 +698,7 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
                     <div className="relative aspect-[16/10] w-full overflow-hidden rounded-lg bg-[#16100B]">
                       <Image
                         src={suiteImage}
-                        alt={s.title}
+                        alt={localizedS.title}
                         fill
                         sizes="(max-width: 640px) 280px, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -663,12 +717,16 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
                     <div className="pt-3 flex-1 flex flex-col justify-between">
                       <div>
                         <h3 className="font-sans text-sm sm:text-base font-semibold text-[#FAF4EB] truncate group-hover:text-[#E5C178] transition-colors">
-                          {s.title}
+                          {localizedS.title}
                         </h3>
 
                         <p className="text-xs text-[#B8A692] flex items-center gap-1.5 mt-1 truncate">
                           <Users className="w-3.5 h-3.5 text-[#E5C178] shrink-0" />
-                          <span>Up to {s.maxAdults} Guests • {s.specs.bedrooms}</span>
+                          <span>
+                            {isAr
+                              ? `حتى ${s.maxAdults} ضيوف • ${localizedS.specs.bedrooms}`
+                              : `Up to ${s.maxAdults} Guests • ${s.specs.bedrooms}`}
+                          </span>
                         </p>
                       </div>
 
@@ -679,10 +737,10 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
                             <span className="font-heading text-base font-normal text-[#FAF4EB] tabular-nums">
                               ₹{s.basePricePerNight.toLocaleString("en-IN")}
                             </span>
-                            <span className="text-xs text-[#B8A692]">/ night</span>
+                            <span className="text-xs text-[#B8A692]">{isAr ? "/ ليلة" : "/ night"}</span>
                           </div>
                           <span className="text-xs text-[#E5C178] font-medium">
-                            20% Advance
+                            {isAr ? "عربون ٢٠٪" : "20% Advance"}
                           </span>
                         </div>
 
@@ -690,8 +748,8 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
                           href={buildSuiteUrl(s.slug)}
                           className="w-full mt-2.5 h-9 rounded-xl bg-[#16100B] hover:bg-gradient-to-r hover:from-[#E5C178] hover:to-[#C69344] border border-[rgba(212,163,89,0.3)] hover:border-transparent text-[#FAF4EB] hover:text-[#140E08] text-xs font-semibold flex items-center justify-center gap-1.5 transition-all active:scale-[0.98] group/btn cursor-pointer"
                         >
-                          <span>View Residence</span>
-                          <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
+                          <span>{isAr ? "عرض التفاصيل" : "View Residence"}</span>
+                          <ArrowRight className={cn("w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform", isAr && "rotate-180")} />
                         </Link>
                       </div>
                     </div>
@@ -721,17 +779,19 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
             <div className="flex items-center justify-between border-b border-[rgba(212,163,89,0.2)] pb-4">
               <div>
                 <h3 className="font-heading text-xl font-normal text-[#FAF4EB]">
-                  Residence amenities
+                  {isAr ? "مزايا وتجهيزات الشقة الفندقية" : "Residence amenities"}
                 </h3>
                 <p className="text-xs text-[#B8A692] mt-0.5">
-                  Amenities listed for {room.title} ({branch?.name || "Hyderabad"}).
+                  {isAr
+                    ? `قائمة المزايا والتجهيزات المتوفرة في ${room.title} (${branchName}).`
+                    : `Amenities listed for ${room.title} (${branch?.name || "Hyderabad"}).`}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setAmenitiesModalOpen(false)}
                 className="h-8 w-8 rounded-full bg-[#221810] hover:bg-[#2a1e14] text-[#FAF4EB] flex items-center justify-center border border-[rgba(212,163,89,0.25)] cursor-pointer transition-colors"
-                aria-label="Close"
+                aria-label={isAr ? "إغلاق" : "Close"}
               >
                 <X className="w-4 h-4" />
               </button>
@@ -741,7 +801,9 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
             <div className="p-3.5 rounded-2xl bg-[#221810]/70 border border-[rgba(212,163,89,0.2)] text-xs text-[#B8A692] flex items-start gap-2.5">
               <Info className="w-4 h-4 text-[#E5C178] shrink-0 mt-0.5" />
               <p>
-                Property amenities are compulsory inclusions in the accommodation price for the flats where they are provided. They are purely informational and not separately selectable or chargeable.
+                {isAr
+                  ? "تجهيزات الشقق مشمولة تلقائياً وبشكل مجاني بالكامل في السعر الإجمالي للإقامة دون أي رسوم إضافية خفية."
+                  : "Property amenities are compulsory inclusions in the accommodation price for the flats where they are provided. They are purely informational and not separately selectable or chargeable."}
               </p>
             </div>
 
@@ -749,28 +811,65 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
             <div className="space-y-6">
               {AMENITIES_BENTO.map((cat) => {
                 const catIllustration = getAmenityIllustration(cat.category);
+                const catKey = cat.category.toLowerCase().replace(/ & /g, "-").replace(/ /g, "-");
+                const catAr = isAr
+                  ? (catKey.includes("living")
+                    ? ARABIC_CATEGORIES_TRANSLATIONS["living-bedroom"]
+                    : catKey.includes("kitchen")
+                    ? ARABIC_CATEGORIES_TRANSLATIONS["kitchen-dining"]
+                    : catKey.includes("bath")
+                    ? ARABIC_CATEGORIES_TRANSLATIONS["bathroom-care"]
+                    : catKey.includes("power") || catKey.includes("laundry")
+                    ? ARABIC_CATEGORIES_TRANSLATIONS["power-laundry"]
+                    : catKey.includes("service") || catKey.includes("hospitality")
+                    ? ARABIC_CATEGORIES_TRANSLATIONS["hospitality-care"]
+                    : ARABIC_CATEGORIES_TRANSLATIONS["family-recreation"])
+                  : null;
+
+                const catTitle = catAr?.title || cat.category;
+                const catDesc = catAr?.subtitle || cat.description;
+
                 return (
                   <div key={cat.category} className="space-y-2.5">
                     <div className="flex items-center gap-2.5">
                       <div className="relative w-7 h-7 rounded-lg bg-[#E5C178]/10 border border-[#E5C178]/30 flex items-center justify-center shrink-0 overflow-hidden p-0.5">
                         <Image
                           src={catIllustration}
-                          alt={cat.category}
+                          alt={catTitle}
                           fill
                           sizes="28px"
                           className="object-contain"
                         />
                       </div>
                       <h4 className="text-xs font-bold uppercase tracking-wider text-[#FAF4EB]">
-                        {cat.category}
+                        {catTitle}
                       </h4>
                     </div>
                     <p className="text-[11px] text-[#B8A692] italic">
-                      {cat.description}
+                      {catDesc}
                     </p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {cat.items.map((it) => {
                         const itemIllustration = getAmenityIllustration(it.name);
+                        let itemName = it.name;
+                        if (isAr) {
+                          const itLower = it.name.toLowerCase();
+                          if (itLower.includes("wi-fi") || itLower.includes("wifi")) itemName = "إنترنت واي فاي فائق السرعة";
+                          else if (itLower.includes("ac") || itLower.includes("air")) itemName = "تكييف سبليت مستقل";
+                          else if (itLower.includes("tv")) itemName = "شاشة ذكية مع تطبيقات البث";
+                          else if (itLower.includes("fridge") || itLower.includes("refrigerator")) itemName = "ثلاجة كبيرة ببابين";
+                          else if (itLower.includes("gas") || itLower.includes("stove")) itemName = "موقد غاز بالغاز الطبيعي";
+                          else if (itLower.includes("geyser") || itLower.includes("water heater")) itemName = "سخان مياه فوري";
+                          else if (itLower.includes("ro") || itLower.includes("purifier")) itemName = "فلتر مياه نقي RO";
+                          else if (itLower.includes("inverter") || itLower.includes("backup")) itemName = "مولد كهرباء احتياطي ٢٤/٧";
+                          else if (itLower.includes("laundry") || itLower.includes("washer")) itemName = "غسالة ملابس آلية";
+                          else if (itLower.includes("elevator") || itLower.includes("lift")) itemName = "مصعد كهربائي مريح";
+                          else if (itLower.includes("kitchen")) itemName = "مطبخ مجهز بالكامل";
+                          else if (itLower.includes("housekeeping")) itemName = "تنظيف دوري مع بياضات نقية";
+                          else if (itLower.includes("bed") || itLower.includes("linen")) itemName = "بياضات وأغطية نقية";
+                          else if (itLower.includes("desk") || itLower.includes("laptop")) itemName = "مكتب عمل مريح";
+                        }
+
                         return (
                           <div
                             key={it.name}
@@ -779,13 +878,13 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
                             <div className="relative w-6 h-6 rounded-md bg-[#16100B] border border-[rgba(212,163,89,0.25)] flex items-center justify-center shrink-0 overflow-hidden p-0.5">
                               <Image
                                 src={itemIllustration}
-                                alt={it.name}
+                                alt={itemName}
                                 fill
                                 sizes="24px"
                                 className="object-contain"
                               />
                             </div>
-                            <span className="truncate">{it.name}</span>
+                            <span className="truncate">{itemName}</span>
                           </div>
                         );
                       })}
@@ -797,14 +896,14 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
 
             <div className="border-t border-[rgba(212,163,89,0.2)] pt-4 flex items-center justify-between text-xs">
               <span className="text-[#B8A692] font-mono">
-                Included in base nightly rent &bull; ₹0 extra fee
+                {isAr ? "مشمولة في السعر الأساسي للإقامة • رسوم إضافية ₹٠" : "Included in base nightly rent • ₹0 extra fee"}
               </span>
               <button
                 type="button"
                 onClick={() => setAmenitiesModalOpen(false)}
                 className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] font-bold text-xs cursor-pointer shadow-md hover:opacity-95"
               >
-                Close
+                {isAr ? "إغلاق" : "Close"}
               </button>
             </div>
           </div>
@@ -827,13 +926,13 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
           >
             <div className="flex items-center justify-between border-b border-[rgba(212,163,89,0.2)] pb-3">
               <h3 className="font-heading text-lg font-normal text-[#FAF4EB]">
-                FLATEL Stay &amp; Cancellation Policies
+                {isAr ? "سياسات الإقامة والإلغاء في فلاتيل" : "FLATEL Stay & Cancellation Policies"}
               </h3>
               <button
                 type="button"
                 onClick={() => setPoliciesModalOpen(false)}
                 className="h-7 w-7 rounded-full bg-[#221810] hover:bg-[#2a1e14] text-[#FAF4EB] flex items-center justify-center border border-[rgba(212,163,89,0.25)] cursor-pointer transition-colors"
-                aria-label="Close"
+                aria-label={isAr ? "إغلاق" : "Close"}
               >
                 <X className="w-4 h-4" />
               </button>
@@ -841,27 +940,52 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
 
             <div className="space-y-4 text-[#B8A692] leading-relaxed">
               <div>
-                <strong className="text-[#FAF4EB] block font-semibold mb-1">Advance Payment &amp; Balance</strong>
+                <strong className="text-[#FAF4EB] block font-semibold mb-1">
+                  {isAr ? "الدفع المسبق والرصيد المتبقي" : "Advance Payment & Balance"}
+                </strong>
                 <p>
-                  Reservations are secured with a <span className="font-serif tabular-nums text-[#FAF4EB]">20%</span> online advance deposit. The remaining <span className="font-serif tabular-nums text-[#FAF4EB]">80%</span> balance
-                  is strictly payable at check-in by Cash or UPI.
+                  {isAr ? (
+                    <>
+                      يتم تأكيد الحجز إلكترونياً بدفع عربون <span className="font-serif tabular-nums text-[#FAF4EB]">٢٠٪</span> فقط عبر الإنترنت. الرصيد المتبقي وقدره <span className="font-serif tabular-nums text-[#FAF4EB]">٨٠٪</span> يسدد عند استلام الشقة نقداً أو عبر UPI.
+                    </>
+                  ) : (
+                    <>
+                      Reservations are secured with a <span className="font-serif tabular-nums text-[#FAF4EB]">20%</span> online advance deposit. The remaining <span className="font-serif tabular-nums text-[#FAF4EB]">80%</span> balance
+                      is strictly payable at check-in by Cash or UPI.
+                    </>
+                  )}
                 </p>
               </div>
 
               <div>
-                <strong className="text-[#FAF4EB] block font-semibold mb-1">Cancellation &amp; Refunds</strong>
+                <strong className="text-[#FAF4EB] block font-semibold mb-1">
+                  {isAr ? "الإلغاء والاسترداد" : "Cancellation & Refunds"}
+                </strong>
                 <p>
-                  • Free Cancellation (<span className="font-serif tabular-nums text-[#FAF4EB]">100%</span> Refund of 20% advance deposit): If cancelled <span className="font-serif tabular-nums text-[#FAF4EB]">48 hours</span> or more prior to check-in (<span className="font-serif tabular-nums text-[#FAF4EB]">11:00 AM</span>).
-                  <br />
-                  • Non-Refundable: Cancellations made within <span className="font-serif tabular-nums text-[#FAF4EB]">48 hours</span> of check-in forfeit the <span className="font-serif tabular-nums text-[#FAF4EB]">20%</span> advance deposit (date reservation hold fee).
+                  {isAr ? (
+                    <>
+                      • إلغاء مجاني (استرداد <span className="font-serif tabular-nums text-[#FAF4EB]">١٠٠٪</span> من العربون): عند الإلغاء قبل <span className="font-serif tabular-nums text-[#FAF4EB]">٤٨ ساعة</span> أو أكثر من موعد تسجيل الوصول (<span className="font-serif tabular-nums text-[#FAF4EB]">١١:٠٠ صباحاً</span>).
+                      <br />
+                      • غير مسترد: عند الإلغاء خلال <span className="font-serif tabular-nums text-[#FAF4EB]">٤٨ ساعة</span> من موعد الوصول يعتبر العربون (<span className="font-serif tabular-nums text-[#FAF4EB]">٢٠٪</span>) غير مسترد كرسوم حجز وتثبيت للوحدة.
+                    </>
+                  ) : (
+                    <>
+                      • Free Cancellation (<span className="font-serif tabular-nums text-[#FAF4EB]">100%</span> Refund of 20% advance deposit): If cancelled <span className="font-serif tabular-nums text-[#FAF4EB]">48 hours</span> or more prior to check-in (<span className="font-serif tabular-nums text-[#FAF4EB]">11:00 AM</span>).
+                      <br />
+                      • Non-Refundable: Cancellations made within <span className="font-serif tabular-nums text-[#FAF4EB]">48 hours</span> of check-in forfeit the <span className="font-serif tabular-nums text-[#FAF4EB]">20%</span> advance deposit (date reservation hold fee).
+                    </>
+                  )}
                 </p>
               </div>
 
               <div>
-                <strong className="text-[#FAF4EB] block font-semibold mb-1">Mandatory Photo Identification</strong>
+                <strong className="text-[#FAF4EB] block font-semibold mb-1">
+                  {isAr ? "إثبات الهوية الإلزامي" : "Mandatory Photo Identification"}
+                </strong>
                 <p>
-                  Original government-issued photo ID (Aadhaar / Driving License / Voter ID) is required
-                  for all domestic adults. International guests must present an original passport.
+                  {isAr
+                    ? "يشترط تقديم إثبات هوية رسمي ساري المفعول (الهوية الوطنية / رخصة القيادة للضيوف المحليين، أو جواز السفر الأصلي للضيوف الدوليين) لجميع النزلاء البالغين."
+                    : "Original government-issued photo ID (Aadhaar / Driving License / Voter ID) is required for all domestic adults. International guests must present an original passport."}
                 </p>
               </div>
             </div>
@@ -872,7 +996,7 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
                 onClick={() => setPoliciesModalOpen(false)}
                 className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] font-bold text-xs cursor-pointer shadow-md hover:opacity-95"
               >
-                Close
+                {isAr ? "إغلاق" : "Close"}
               </button>
             </div>
           </div>

@@ -26,6 +26,7 @@ import { useAuth } from "@/context/auth-context";
 import { cn } from "@/lib/utils";
 import { getLocaleFromPath, getDictionary } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
+import { ARABIC_BRANCH_OVERLAYS } from "@/components/branch-hub";
 
 // Branch navigation metadata with descriptions and specs
 const BRANCH_ITEMS = [
@@ -294,6 +295,9 @@ function SiteHeaderContent() {
                       {BRANCH_ITEMS.map((branch) => {
                         const targetHref = `${localePrefix}${branch.href}`;
                         const isCurrent = pathname === targetHref;
+                        const bName = (isAr && ARABIC_BRANCH_OVERLAYS[branch.slug]?.name) || branch.name;
+                        const bLoc = (isAr && (branch.slug === "barkas-salala" ? "قرب تشاندريانغوتا وطريق المطار" : "قرب شارمينار والبلدة القديمة")) || branch.location;
+                        const bDesc = (isAr && (branch.slug === "barkas-salala" ? "شقتان ٣ غرف وصالة · ٦–٩ ضيوف" : "شقق ١، ٢ و٤ غرف وصالة · ٢–١٢ ضيفاً")) || branch.description;
                         return (
                           <Link
                             key={branch.slug}
@@ -309,15 +313,15 @@ function SiteHeaderContent() {
                           >
                             <div className="flex items-center justify-between">
                               <span className="font-heading text-base font-semibold tracking-normal text-[#FAF4EB] group-hover:text-[#E5C178]">
-                                {branch.name}
+                                {bName}
                               </span>
-                              <ChevronRight className="h-4 w-4 text-[#D4C4B3]/50 group-hover:text-[#E5C178] group-hover:translate-x-0.5 transition-all" />
+                              <ChevronRight className={cn("h-4 w-4 text-[#D4C4B3]/50 group-hover:text-[#E5C178] group-hover:translate-x-0.5 transition-all", isAr && "rotate-180 group-hover:-translate-x-0.5")} />
                             </div>
                             <span className="text-xs font-sans text-[#E5C178] font-medium">
-                              {branch.location}
+                              {bLoc}
                             </span>
                             <span className="text-xs font-sans text-[#D4C4B3] line-clamp-1">
-                              {branch.description}
+                              {bDesc}
                             </span>
                           </Link>
                         );
@@ -521,7 +525,11 @@ function SiteHeaderContent() {
           role="dialog"
           aria-modal="true"
           aria-label="Navigation Menu"
-          className="fixed inset-0 z-50 flex flex-col bg-[#0E0A07]/98 backdrop-blur-xl text-[#FAF4EB] animate-in fade-in duration-200"
+          dir={isAr ? "rtl" : "ltr"}
+          className={cn(
+            "fixed inset-0 z-50 flex flex-col bg-[#0E0A07]/98 backdrop-blur-xl text-[#FAF4EB] animate-in fade-in duration-200",
+            isAr && "font-arabic"
+          )}
         >
           {/* Mobile Panel Header: Brand + 44px Close Button */}
           <div className="flex items-center justify-between h-[68px] sm:h-[74px] px-4 sm:px-6 border-b border-[rgba(212,163,89,0.22)] bg-[#0E0A07] shrink-0">
@@ -628,27 +636,32 @@ function SiteHeaderContent() {
 
                   {isMobileBranchesOpen && (
                     <div className="px-3 pb-3 pt-1 space-y-1.5 border-t border-[rgba(212,163,89,0.18)]">
-                      {BRANCH_ITEMS.map((branch) => (
-                        <Link
-                          key={branch.slug}
-                          href={`${localePrefix}${branch.href}`}
-                          onClick={() => setIsMobileMenuOpen(false)}
-                          className="flex flex-col p-2.5 rounded-xl bg-[#16100B] border border-[rgba(212,163,89,0.22)] hover:border-[#E5C178]/50 transition-colors"
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="font-heading text-sm font-semibold text-[#FAF4EB]">
-                              {branch.name}
+                      {BRANCH_ITEMS.map((branch) => {
+                        const bName = (isAr && ARABIC_BRANCH_OVERLAYS[branch.slug]?.name) || branch.name;
+                        const bLoc = (isAr && (branch.slug === "barkas-salala" ? "قرب تشاندريانغوتا وطريق المطار" : "قرب شارمينار والبلدة القديمة")) || branch.location;
+                        const bDesc = (isAr && (branch.slug === "barkas-salala" ? "شقتان ٣ غرف وصالة · ٦–٩ ضيوف" : "شقق ١، ٢ و٤ غرف وصالة · ٢–١٢ ضيفاً")) || branch.description;
+                        return (
+                          <Link
+                            key={branch.slug}
+                            href={`${localePrefix}${branch.href}`}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="flex flex-col p-2.5 rounded-xl bg-[#16100B] border border-[rgba(212,163,89,0.22)] hover:border-[#E5C178]/50 transition-colors"
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="font-heading text-sm font-semibold text-[#FAF4EB]">
+                                {bName}
+                              </span>
+                              <ChevronRight className={cn("h-3.5 w-3.5 text-[#E5C178]", isAr && "rotate-180")} />
+                            </div>
+                            <span className="text-[11px] font-sans text-[#E5C178] mt-0.5">
+                              {bLoc}
                             </span>
-                            <ChevronRight className={cn("h-3.5 w-3.5 text-[#E5C178]", isAr && "rotate-180")} />
-                          </div>
-                          <span className="text-[11px] font-sans text-[#E5C178] mt-0.5">
-                            {branch.location}
-                          </span>
-                          <span className="text-[11px] font-sans text-[#D4C4B3]">
-                            {branch.description}
-                          </span>
-                        </Link>
-                      ))}
+                            <span className="text-[11px] font-sans text-[#D4C4B3]">
+                              {bDesc}
+                            </span>
+                          </Link>
+                        );
+                      })}
 
                       <Link
                         href={`${localePrefix}/#locations`}
@@ -704,7 +717,7 @@ function SiteHeaderContent() {
                     className="flex items-center justify-center gap-1.5 py-3 rounded-xl border border-[rgba(212,163,89,0.5)] text-[#E5C178] hover:bg-[rgba(212,163,89,0.1)] font-semibold text-xs transition-colors cursor-pointer"
                   >
                     <LogIn className="h-3.5 w-3.5" />
-                    <span>Log In</span>
+                    <span>{dict.common.signIn}</span>
                   </button>
                   <button
                     type="button"
@@ -715,7 +728,7 @@ function SiteHeaderContent() {
                     className="flex items-center justify-center gap-1.5 py-3 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] font-bold text-xs shadow-md shadow-[#E5C178]/20 transition-all cursor-pointer"
                   >
                     <UserPlus className="h-3.5 w-3.5" />
-                    <span>Create Account</span>
+                    <span>{isAr ? "إنشاء حساب" : "Create Account"}</span>
                   </button>
                 </div>
               ) : (

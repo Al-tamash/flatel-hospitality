@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 export default function ArabicHomePage() {
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col selection:bg-primary/20 selection:text-primary font-arabic">
+    <div className="min-h-screen bg-background text-foreground flex flex-col selection:bg-primary/20 selection:text-primary font-arabic" dir="rtl">
       {/* 1. Header with Language Switcher */}
       <SiteHeader />
 

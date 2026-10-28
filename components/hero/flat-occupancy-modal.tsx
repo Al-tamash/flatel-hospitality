@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { usePathname } from "next/navigation";
 import {
   X,
   Home,
@@ -13,6 +14,7 @@ import {
   Check,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getLocaleFromPath } from "@/lib/i18n";
 
 export interface FlatDefinition {
   id: string; // "1bhk", "2bhk", "3bhk", "4bhk"
@@ -112,6 +114,10 @@ export function FlatOccupancyModal({
   onApply,
   initialSelection,
 }: FlatOccupancyModalProps) {
+  const pathname = usePathname();
+  const currentLocale = getLocaleFromPath(pathname);
+  const isAr = currentLocale === "ar";
+
   // Default selection: 1 unit of 1 BHK with 2 Adults, 0 Children
   const createDefaultState = React.useCallback((): Record<string, FlatOccupancyState> => {
     const state: Record<string, FlatOccupancyState> = {};
@@ -340,8 +346,8 @@ export function FlatOccupancyModal({
     const totalGuests = totalAdults + totalKids;
 
     // Build human-friendly summary label for search bar
-    let summaryLabel = "Select Flat & Occupancy";
-    let confirmedBadgeLabel = "None Selected";
+    let summaryLabel = isAr ? "اختر نوع الشقة والنزلاء" : "Select Flat & Occupancy";
+    let confirmedBadgeLabel = isAr ? "لم يتم الاختيار" : "None Selected";
     let flatTypesQuery = "all";
     let primaryFlatType: string | null = null;
 
@@ -349,15 +355,25 @@ export function FlatOccupancyModal({
       const f = activeFlats[0];
       primaryFlatType = f.id;
       flatTypesQuery = f.id;
+      const guestsText = isAr
+        ? totalGuests === 1
+          ? "ضيف واحد"
+          : `${totalGuests} ضيوف`
+        : `${totalGuests} ${totalGuests === 1 ? "Guest" : "Guests"}`;
+
       if (f.units === 1) {
-        summaryLabel = `${f.title} · ${totalGuests} ${totalGuests === 1 ? "Guest" : "Guests"}`;
+        summaryLabel = `${f.title} · ${guestsText}`;
         confirmedBadgeLabel = `${f.title}`;
       } else {
-        summaryLabel = `${f.units}x ${f.title} · ${totalGuests} Guests`;
+        summaryLabel = isAr
+          ? `${f.units}x ${f.title} · ${guestsText}`
+          : `${f.units}x ${f.title} · ${totalGuests} Guests`;
         confirmedBadgeLabel = `${f.units}x ${f.title}`;
       }
     } else if (activeFlats.length > 1) {
-      summaryLabel = `${totalUnits} Flats · ${totalGuests} Guests`;
+      const guestsText = isAr ? `${totalGuests} ضيوف` : `${totalGuests} Guests`;
+      const flatsText = isAr ? `${totalUnits} شقق` : `${totalUnits} Flats`;
+      summaryLabel = `${flatsText} · ${guestsText}`;
       confirmedBadgeLabel = activeFlats.map((f) => `${f.units}x ${f.title}`).join(" + ");
       flatTypesQuery = activeFlats.map((f) => f.id).join(",");
       primaryFlatType = activeFlats[0].id;
@@ -433,10 +449,10 @@ export function FlatOccupancyModal({
               </div>
               <div className="flex flex-col">
                 <span className="font-serif tracking-wider text-xs uppercase text-[#E5C178] font-semibold leading-tight">
-                  Flatel Hospitality
+                  {isAr ? "ضيافة فلاتيل" : "Flatel Hospitality"}
                 </span>
                 <span className="text-[10px] uppercase tracking-widest text-[#B8A692] leading-none">
-                  Serviced Apartments · Hyderabad
+                  {isAr ? "شقق فندقية مجهزة · حيدر أباد" : "Serviced Apartments · Hyderabad"}
                 </span>
               </div>
             </div>
@@ -446,7 +462,7 @@ export function FlatOccupancyModal({
               type="button"
               onClick={onClose}
               className="w-8 h-8 rounded-full border border-[rgba(212,163,89,0.25)] bg-[rgba(22,16,11,0.7)] text-[#D4C4B3] hover:text-[#FAF4EB] hover:border-[#E5C178] flex items-center justify-center transition-colors cursor-pointer"
-              aria-label="Close flat type selector"
+              aria-label={isAr ? "إغلاق نافذة اختيار الشقة" : "Close flat type selector"}
             >
               <X className="w-4 h-4" />
             </button>
@@ -458,7 +474,7 @@ export function FlatOccupancyModal({
               id="select-flat-type-title"
               className="text-xl sm:text-2xl font-serif font-semibold text-[#FAF4EB] tracking-normal"
             >
-              Select Flat Type
+              {isAr ? "اختر نوع الشقة" : "Select Flat Type"}
             </h2>
             <button
               type="button"
@@ -466,7 +482,7 @@ export function FlatOccupancyModal({
               className="text-xs text-[#E5C178] hover:text-[#FAF4EB] flex items-center gap-1 cursor-pointer transition-colors"
             >
               <RotateCcw className="w-3 h-3" />
-              <span>Reset</span>
+              <span>{isAr ? "إعادة ضبط" : "Reset"}</span>
             </button>
           </div>
         </div>
@@ -523,12 +539,13 @@ export function FlatOccupancyModal({
                           <span className="font-mono text-sm sm:text-base font-bold text-[#E5C178]">
                             ₹{flat.pricePerNight.toLocaleString("en-IN")}
                           </span>
-                          <span className="text-xs text-[#B8A692]">/ night</span>
+                          <span className="text-xs text-[#B8A692]">{isAr ? "/ ليلة" : "/ night"}</span>
                         </div>
 
                         <span className="text-xs text-[#D4C4B3] mt-0.5 leading-relaxed">
-                          Base Capacity: {flat.baseAdults} Adults & {flat.baseKids}{" "}
-                          {flat.baseKids === 1 ? "Child" : "Children"}
+                          {isAr
+                            ? `السعة الأساسية: ${flat.baseAdults} بالغين و ${flat.baseKids} أطفال`
+                            : `Base Capacity: ${flat.baseAdults} Adults & ${flat.baseKids} ${flat.baseKids === 1 ? "Child" : "Children"}`}
                         </span>
                       </div>
                     </div>
@@ -536,7 +553,7 @@ export function FlatOccupancyModal({
                     {/* Right: Number of Flats Stepper */}
                     <div className="flex flex-col items-end shrink-0">
                       <span className="text-[11px] font-sans font-semibold text-[#D4C4B3] uppercase tracking-wider mb-1">
-                        Number of Flats
+                        {isAr ? "عدد الشقق" : "Number of Flats"}
                       </span>
                       <div className="flex items-center gap-1.5 sm:gap-2">
                         <button
@@ -573,7 +590,9 @@ export function FlatOccupancyModal({
                       </div>
 
                       <span className="text-[10px] text-[#B8A692] mt-1 font-mono">
-                        {flat.availableUnits} {flat.availableUnits === 1 ? "unit left" : "units left"}
+                        {isAr
+                          ? `متبقي ${flat.availableUnits} شقق`
+                          : `${flat.availableUnits} ${flat.availableUnits === 1 ? "unit left" : "units left"}`}
                       </span>
                     </div>
                   </div>
@@ -585,7 +604,7 @@ export function FlatOccupancyModal({
                       <div>
                         <div className="flex items-center justify-between mb-2">
                           <span className="text-xs font-sans font-semibold text-[#E5C178] uppercase tracking-wider">
-                            Actual Guests Arriving (Included in Base)
+                            {isAr ? "النزلاء الفعليون (مشمولون في السعر الأساسي)" : "Actual Guests Arriving (Included in Base)"}
                           </span>
                         </div>
 
@@ -593,8 +612,12 @@ export function FlatOccupancyModal({
                           {/* Base Adults */}
                           <div className="p-2 sm:p-2.5 rounded-xl bg-[rgba(22,16,11,0.7)] border border-[rgba(212,163,89,0.2)] flex items-center justify-between">
                             <div className="flex flex-col">
-                              <span className="text-xs font-sans font-medium text-[#FAF4EB]">Adults</span>
-                              <span className="text-[10px] text-[#B8A692]">Max {maxBaseAdultsForUnits}</span>
+                              <span className="text-xs font-sans font-medium text-[#FAF4EB]">
+                                {isAr ? "البالغين" : "Adults"}
+                              </span>
+                              <span className="text-[10px] text-[#B8A692]">
+                                {isAr ? `حد أقصى ${maxBaseAdultsForUnits}` : `Max ${maxBaseAdultsForUnits}`}
+                              </span>
                             </div>
                             <div className="flex items-center gap-1.5">
                               <button
@@ -624,8 +647,12 @@ export function FlatOccupancyModal({
                           {/* Base Children */}
                           <div className="p-2 sm:p-2.5 rounded-xl bg-[rgba(22,16,11,0.7)] border border-[rgba(212,163,89,0.2)] flex items-center justify-between">
                             <div className="flex flex-col">
-                              <span className="text-xs font-sans font-medium text-[#FAF4EB]">Children</span>
-                              <span className="text-[10px] text-[#B8A692]">Max {maxBaseKidsForUnits}</span>
+                              <span className="text-xs font-sans font-medium text-[#FAF4EB]">
+                                {isAr ? "الأطفال" : "Children"}
+                              </span>
+                              <span className="text-[10px] text-[#B8A692]">
+                                {isAr ? `حد أقصى ${maxBaseKidsForUnits}` : `Max ${maxBaseKidsForUnits}`}
+                              </span>
                             </div>
                             <div className="flex items-center gap-1.5">
                               <button
@@ -659,11 +686,11 @@ export function FlatOccupancyModal({
                         <button
                           type="button"
                           onClick={() => toggleAdditionalAccordion(flat.id)}
-                          className="w-full px-3 py-2 flex items-center justify-between text-left hover:bg-[rgba(34,24,16,0.6)] transition-colors cursor-pointer"
+                          className="w-full px-3 py-2 flex items-center justify-between text-left rtl:text-right hover:bg-[rgba(34,24,16,0.6)] transition-colors cursor-pointer"
                           aria-expanded={state.isAdditionalOpen}
                         >
                           <span className="text-xs font-sans font-semibold text-[#D4C4B3] flex items-center gap-1.5">
-                            Additional Occupancy (Chargeable)
+                            {isAr ? "نزلاء إضافيون (برسوم إضافية)" : "Additional Occupancy (Chargeable)"}
                             {(state.extraAdults > 0 || state.extraKids > 0) && (
                               <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-[#E5C178]/20 text-[#E5C178]">
                                 +{state.extraAdults + state.extraKids}
@@ -683,10 +710,12 @@ export function FlatOccupancyModal({
                             <div className="flex items-center justify-between">
                               <div className="flex flex-col">
                                 <span className="text-xs font-medium text-[#FAF4EB]">
-                                  Additional Adults (+{maxExtraAdultsForUnits} extra)
+                                  {isAr
+                                    ? `بالغون إضافيون (+${maxExtraAdultsForUnits} متاحين)`
+                                    : `Additional Adults (+${maxExtraAdultsForUnits} extra)`}
                                 </span>
                                 <span className="text-[10px] text-[#E5C178] font-mono">
-                                  ₹{flat.extraAdultFee} / night per adult
+                                  {isAr ? `₹${flat.extraAdultFee} / ليلة لكل بالغ` : `₹${flat.extraAdultFee} / night per adult`}
                                 </span>
                               </div>
                               <div className="flex items-center gap-1.5">
@@ -718,10 +747,10 @@ export function FlatOccupancyModal({
                             <div className="flex items-center justify-between pt-1 border-t border-[rgba(212,163,89,0.1)]">
                               <div className="flex flex-col">
                                 <span className="text-xs font-medium text-[#FAF4EB]">
-                                  Additional Children per night
+                                  {isAr ? "أطفال إضافيون لكل ليلة" : "Additional Children per night"}
                                 </span>
                                 <span className="text-[10px] text-[#E5C178] font-mono">
-                                  ₹{flat.extraKidFee} / night per child
+                                  {isAr ? `₹${flat.extraKidFee} / ليلة لكل طفل` : `₹${flat.extraKidFee} / night per child`}
                                 </span>
                               </div>
                               <div className="flex items-center gap-1.5">
@@ -767,18 +796,22 @@ export function FlatOccupancyModal({
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[rgba(229,193,120,0.12)] border border-[#E5C178]/40 text-[#FAF4EB]">
                 <Sparkles className="w-3.5 h-3.5 text-[#E5C178]" />
                 <span className="text-xs sm:text-sm font-medium tracking-wide">
-                  Confirmed:{" "}
+                  {isAr ? "المحدد: " : "Confirmed: "}
                   <strong className="text-[#E5C178] font-bold">
-                    {aggregate.totalUnits > 0 ? aggregate.confirmedBadgeLabel : "Select Flat"}
+                    {aggregate.totalUnits > 0
+                      ? aggregate.confirmedBadgeLabel
+                      : (isAr ? "اختر شقة" : "Select Flat")}
                   </strong>
                 </span>
               </div>
 
               {aggregate.totalUnits > 0 && (
                 <div className="text-right sm:hidden">
-                  <span className="text-[10px] text-[#B8A692] block leading-none">Est. Rate</span>
+                  <span className="text-[10px] text-[#B8A692] block leading-none">
+                    {isAr ? "السعر التقديري" : "Est. Rate"}
+                  </span>
                   <span className="font-mono text-sm font-bold text-[#E5C178]">
-                    ₹{aggregate.estimatedPricePerNight.toLocaleString("en-IN")}/N
+                    ₹{aggregate.estimatedPricePerNight.toLocaleString("en-IN")}{isAr ? "/ليلة" : "/N"}
                   </span>
                 </div>
               )}
@@ -789,11 +822,13 @@ export function FlatOccupancyModal({
               {aggregate.totalUnits > 0 && (
                 <div className="hidden sm:flex flex-col text-right">
                   <span className="text-[10px] uppercase tracking-wider text-[#B8A692]">
-                    Total Rate
+                    {isAr ? "السعر الإجمالي" : "Total Rate"}
                   </span>
                   <span className="font-mono text-base font-bold text-[#E5C178]">
                     ₹{aggregate.estimatedPricePerNight.toLocaleString("en-IN")}{" "}
-                    <span className="text-xs text-[#FAF4EB] font-sans font-normal">/ night</span>
+                    <span className="text-xs text-[#FAF4EB] font-sans font-normal">
+                      {isAr ? "/ ليلة" : "/ night"}
+                    </span>
                   </span>
                 </div>
               )}
@@ -810,7 +845,7 @@ export function FlatOccupancyModal({
                 )}
               >
                 <Check className="w-4 h-4 stroke-[2.5]" />
-                <span>Apply Selection</span>
+                <span>{isAr ? "تأكيد الاختيار" : "Apply Selection"}</span>
               </button>
             </div>
           </div>

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   MapPin,
   ArrowRight,
@@ -89,11 +90,62 @@ const BRANCHES_MAP_DATA: Record<"moghal-pura" | "barkas-salala", BranchMapLocati
   },
 };
 
+export interface ArabicBranchOverlay {
+  name: string;
+  code: string;
+  tagline: string;
+  badge: string;
+  verifiedAddress: string;
+  address?: string;
+  description: string;
+  status: string;
+  landmarks: Array<{ name: string; dist?: string }>;
+}
+
+export const ARABIC_BRANCH_OVERLAYS: Record<string, ArabicBranchOverlay> = {
+  "moghal-pura": {
+    name: "مغل بورا",
+    code: "الفرع ٠١",
+    tagline: "البلدة القديمة التاريخية ومحيط تشارمينار",
+    badge: "تراث، ثقافة ورعاية صحية",
+    verifiedAddress: "مغل بورا، بالقرب من تشارمينار، حيدر أباد",
+    address: "مغل بورا، بالقرب من تشارمينار، حيدر أباد",
+    description: "شقق خاصة ١، ٢، و٤ غرف وصالة بالقرب من تشارمينار، مع مطبخ متكامل وتنظيف دوري.",
+    status: "مفتوح ويستقبل الضيوف",
+    landmarks: [
+      { name: "تشارمينار وسوق لاد بازار التاريخي", dist: "على بُعد دقائق مشياً" },
+      { name: "مستشفى برنسيس إسراء (ديكان الطبية)", dist: "٥ دقائق" },
+      { name: "قصر تشوماهالا", dist: "٧ دقائق" },
+      { name: "متحف سالار جونغ", dist: "١٠ دقائق" },
+    ],
+  },
+  "barkas-salala": {
+    name: "باركاس صلالة",
+    code: "الفرع ٠٢",
+    tagline: "باركاس صلالة، حيدر أباد",
+    badge: "باركاس صلالة",
+    verifiedAddress: "باركاس صلالة، بالقرب من شاندريانجونا، حيدر أباد",
+    address: "باركاس صلالة، بالقرب من شاندريانجونا، حيدر أباد",
+    description: "شقق فسيحة ٣ غرف وصالة في باركاس صلالة للعائلات ومرافقي المرضى.",
+    status: "مفتوح ويستقبل الضيوف",
+    landmarks: [
+      { name: "مستشفى برنسيس در الشهوار", dist: "على بُعد دقائق" },
+      { name: "مستشفى ومركز أبحاث أويسي", dist: "١٠ دقائق" },
+      { name: "أسواق فهدي شريف التراثية", dist: "٥ دقائق" },
+      { name: "مطار راجيف غاندي الدولي (RGIA)", dist: "٢٠ دقيقة بالسيارة" },
+    ],
+  },
+};
+
 interface BranchHubProps {
   className?: string;
 }
 
 export function BranchHub({ className }: BranchHubProps) {
+  const pathname = usePathname();
+  const isAr = pathname?.startsWith("/ar");
+  const localePrefix = isAr ? "/ar" : "";
+
   const [activeBranchId, setActiveBranchId] = React.useState<"moghal-pura" | "barkas-salala">("moghal-pura");
   const [branchStartingPrices, setBranchStartingPrices] = React.useState<Partial<Record<"moghal-pura" | "barkas-salala", number>>>({});
   const [isMapReady, setIsMapReady] = React.useState(false);
@@ -360,24 +412,34 @@ export function BranchHub({ className }: BranchHubProps) {
         {/* ========================================================= */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-2">
           {/* Left: Heading & Descriptive Copy */}
-          <div className="max-w-2xl space-y-3">
+          <div className={cn("max-w-2xl space-y-3", isAr ? "text-right" : "text-left")}>
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#E5C178]/10 border border-[#E5C178]/30 text-xs sm:text-sm font-sans font-semibold tracking-[0.14em] text-[#E5C178] uppercase">
               <Compass className="w-4 h-4 text-[#E5C178]" />
-              <span>ROOTED IN HYDERABAD</span>
+              <span>{isAr ? "أصالة حيدر أباد" : "ROOTED IN HYDERABAD"}</span>
             </div>
 
             <h2
               id="branch-hub-heading"
               className="font-heading text-3xl sm:text-4xl lg:text-[46px] font-normal tracking-normal text-[#FAF4EB] leading-[1.08]"
             >
-              Find Your{" "}
-              <span className="font-heading italic text-[#E5C178]">
-                Nearest Flatel
-              </span>
+              {isAr ? (
+                <>
+                  اعثر على <span className="font-heading italic text-[#E5C178]">أقرب فرع لفلاتيل</span>
+                </>
+              ) : (
+                <>
+                  Find Your{" "}
+                  <span className="font-heading italic text-[#E5C178]">
+                    Nearest Flatel
+                  </span>
+                </>
+              )}
             </h2>
 
             <p className="text-sm sm:text-base md:text-lg text-[#D4C4B3] font-sans leading-relaxed">
-              Explore FLATEL locations across Hyderabad and discover comfortable flats to stay near the places that matter to you.
+              {isAr
+                ? "استكشف فروع فلاتيل في حيدر أباد واعثر على شقق مريحة للإقامة بالقرب من وجهاتك الهامة."
+                : "Explore FLATEL locations across Hyderabad and discover comfortable flats to stay near the places that matter to you."}
             </p>
           </div>
 
@@ -388,7 +450,7 @@ export function BranchHub({ className }: BranchHubProps) {
                 {BRANCHES.length}
               </span>
               <span className="text-xs sm:text-sm font-sans font-bold tracking-[0.14em] text-[#D4C4B3] uppercase block truncate">
-                BRANCHES
+                {isAr ? "فروع" : "BRANCHES"}
               </span>
             </div>
 
@@ -397,7 +459,7 @@ export function BranchHub({ className }: BranchHubProps) {
                 5
               </span>
               <span className="text-xs sm:text-sm font-sans font-bold tracking-[0.14em] text-[#D4C4B3] uppercase block truncate">
-                RESIDENCES
+                {isAr ? "شقق فندقية" : "RESIDENCES"}
               </span>
             </div>
 
@@ -406,7 +468,7 @@ export function BranchHub({ className }: BranchHubProps) {
                 24×7
               </span>
               <span className="text-xs sm:text-sm font-sans font-bold tracking-[0.14em] text-[#D4C4B3] uppercase block truncate">
-                FRONT DESK
+                {isAr ? "استقبال ٢٤×٧" : "FRONT DESK"}
               </span>
             </div>
           </div>
@@ -429,7 +491,9 @@ export function BranchHub({ className }: BranchHubProps) {
             <div className="absolute inset-0 bg-[#0E0A07]/70 backdrop-blur-xs flex items-center justify-center pointer-events-none z-10 transition-opacity">
               <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[rgba(34,24,16,0.95)] border border-[rgba(212,163,89,0.28)] text-xs text-[#E5C178]">
                 <Loader2 className="w-4 h-4 animate-spin text-[#E5C178]" />
-                <span className="text-[#FAF4EB] font-medium">Loading Hyderabad Map…</span>
+                <span className="text-[#FAF4EB] font-medium">
+                  {isAr ? "جارٍ تحميل خريطة حيدر أباد…" : "Loading Hyderabad Map…"}
+                </span>
               </div>
             </div>
           )}
@@ -440,7 +504,9 @@ export function BranchHub({ className }: BranchHubProps) {
               <div className="p-3 rounded-xl bg-[rgba(34,24,16,0.95)] border border-amber-500/40 text-xs text-[#B8A692] flex items-center gap-2.5 shadow-xl">
                 <AlertCircle className="w-4 h-4 text-[#E5C178] shrink-0" />
                 <p className="text-[11px] leading-snug">
-                  Network tile connectivity limited. Direct branch details &amp; verified Google Maps directions remain fully active below.
+                  {isAr
+                    ? "اتصال خريطة الشبكة محدود حالياً. تظل تفاصيل الفروع والاتجاهات المباشرة عبر خرائط Google نشطة بالكامل أدناه."
+                    : "Network tile connectivity limited. Direct branch details & verified Google Maps directions remain fully active below."}
                 </p>
               </div>
             </div>
@@ -452,20 +518,20 @@ export function BranchHub({ className }: BranchHubProps) {
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
                 <span className="text-xs font-sans font-semibold tracking-[0.14em] text-[#E5C178] uppercase">
-                  HYDERABAD NETWORK
+                  {isAr ? "شبكة فروع حيدر أباد" : "HYDERABAD NETWORK"}
                 </span>
               </div>
               <h3 className="font-heading text-sm sm:text-base font-bold text-[#FAF4EB] tracking-normal">
-                {BRANCHES.length} Flatel Branches
+                {isAr ? `${BRANCHES.length} فروع لفلاتيل` : `${BRANCHES.length} Flatel Branches`}
               </h3>
               <p className="text-xs sm:text-sm text-[#D4C4B3]">
-                Select a marker to explore.
+                {isAr ? "انقر على أي نقطة على الخريطة للاستكشاف." : "Select a marker to explore."}
               </p>
             </div>
           </div>
 
           {/* ── Overlay 2: Desktop Selected Branch Floating Card (Bottom-Right, non-obtrusive) ── */}
-          <div className="hidden md:block absolute bottom-5 right-5 max-w-[380px] w-full z-20 pointer-events-auto">
+          <div className={cn("hidden md:block absolute bottom-5 max-w-[380px] w-full z-20 pointer-events-auto", isAr ? "left-5 text-right" : "right-5 text-left")}>
             <div className="p-4 sm:p-5 rounded-2xl bg-[#16100B] border border-[rgba(212,163,89,0.28)] shadow-2xl space-y-3.5 text-[#FAF4EB]">
               
               {/* Branch Title & Verified Status */}
@@ -473,27 +539,29 @@ export function BranchHub({ className }: BranchHubProps) {
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-sans font-semibold text-[#E5C178] tracking-wider">
-                      {currentBranch.code}
+                      {isAr ? ARABIC_BRANCH_OVERLAYS[activeBranchId].code : currentBranch.code}
                     </span>
                     <span className="text-xs font-sans text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 font-medium">
-                      {currentBranch.status}
+                      {isAr ? ARABIC_BRANCH_OVERLAYS[activeBranchId].status : currentBranch.status}
                     </span>
                   </div>
                   <h4 className="font-heading text-xl sm:text-2xl font-bold text-[#FAF4EB] tracking-normal">
-                    {currentBranch.name}
+                    {isAr ? ARABIC_BRANCH_OVERLAYS[activeBranchId].name : currentBranch.name}
                   </h4>
                   <p className="text-xs sm:text-sm text-[#D4C4B3] flex items-center gap-1.5">
                     <MapPin className="w-4 h-4 text-[#E5C178] shrink-0" />
-                    <span className="truncate max-w-[210px]">{currentBranch.verifiedAddress}</span>
+                    <span className="truncate max-w-[210px]">
+                      {isAr ? ARABIC_BRANCH_OVERLAYS[activeBranchId].verifiedAddress : currentBranch.verifiedAddress}
+                    </span>
                   </p>
                 </div>
 
-                <div className="text-right shrink-0">
+                <div className={cn("shrink-0", isAr ? "text-left" : "text-right")}>
                   <span className="font-heading text-xl sm:text-2xl font-medium text-[#E5C178] tabular-nums block">
-                    from {startingPriceLabel(currentBranch)}
+                    {isAr ? `من ${startingPriceLabel(currentBranch)}` : `from ${startingPriceLabel(currentBranch)}`}
                   </span>
                   <span className="text-xs text-[#D4C4B3] block">
-                    / night
+                    {isAr ? "/ ليلة" : "/ night"}
                   </span>
                 </div>
               </div>
@@ -501,10 +569,12 @@ export function BranchHub({ className }: BranchHubProps) {
               {/* Suites & Verified Proximity Highlights */}
               <div className="pt-2.5 border-t border-[rgba(212,163,89,0.18)] space-y-2 text-xs sm:text-sm text-[#D4C4B3]">
                 <div className="flex items-center justify-between text-xs sm:text-sm text-[#FAF4EB] font-medium">
-                  <span>Inventory:</span>
-                  <span className="font-sans font-semibold text-[#E5C178]">View available residences</span>
+                  <span>{isAr ? "الوحدات:" : "Inventory:"}</span>
+                  <span className="font-sans font-semibold text-[#E5C178]">
+                    {isAr ? "عرض الشقق المتاحة" : "View available residences"}
+                  </span>
                 </div>
-                {currentBranch.landmarks.slice(0, 2).map((item) => (
+                {(isAr ? ARABIC_BRANCH_OVERLAYS[activeBranchId].landmarks : currentBranch.landmarks).slice(0, 2).map((item) => (
                   <div key={item.name} className="flex items-center justify-between text-xs sm:text-[13px]">
                     <span className="truncate max-w-[220px] text-[#D4C4B3]">{item.name}</span>
                   </div>
@@ -514,11 +584,11 @@ export function BranchHub({ className }: BranchHubProps) {
               {/* Action Buttons */}
               <div className="flex items-center gap-2.5 pt-1.5">
                 <Link
-                  href={`/branches/${currentBranch.slug}`}
+                  href={`${localePrefix}/branches/${currentBranch.slug}`}
                   className="flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] hover:brightness-105 text-[#140E08] font-bold text-xs sm:text-sm text-center transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer min-h-[44px]"
                 >
-                  <span>Explore Flats</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <span>{isAr ? "استكشف الشقق" : "Explore Flats"}</span>
+                  <ArrowRight className="w-4 h-4 rtl:rotate-180" />
                 </Link>
 
                 <a
@@ -529,7 +599,7 @@ export function BranchHub({ className }: BranchHubProps) {
                   title="Open this area in Google Maps"
                 >
                   <Navigation className="w-4 h-4 text-[#E5C178]" />
-                  <span>Directions</span>
+                  <span>{isAr ? "الاتجاهات" : "Directions"}</span>
                 </a>
               </div>
 
@@ -544,38 +614,40 @@ export function BranchHub({ className }: BranchHubProps) {
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-mono text-[#E5C178] font-bold">
-                  {currentBranch.code}
+                  {isAr ? ARABIC_BRANCH_OVERLAYS[activeBranchId].code : currentBranch.code}
                 </span>
                 <span className="text-xs font-sans text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 font-medium">
-                  {currentBranch.status}
+                  {isAr ? ARABIC_BRANCH_OVERLAYS[activeBranchId].status : currentBranch.status}
                 </span>
               </div>
               <h4 className="font-heading text-xl font-bold text-[#FAF4EB] tracking-normal">
-                {currentBranch.name}
+                {isAr ? ARABIC_BRANCH_OVERLAYS[activeBranchId].name : currentBranch.name}
               </h4>
               <p className="text-xs sm:text-sm text-[#D4C4B3] flex items-center gap-1.5">
                 <MapPin className="w-3.5 h-3.5 text-[#E5C178] shrink-0" />
-                <span>{currentBranch.verifiedAddress}</span>
+                <span>
+                  {isAr ? ARABIC_BRANCH_OVERLAYS[activeBranchId].verifiedAddress : currentBranch.verifiedAddress}
+                </span>
               </p>
             </div>
 
-            <div className="text-right shrink-0">
+            <div className={cn("shrink-0", isAr ? "text-left" : "text-right")}>
               <span className="text-base sm:text-lg font-bold font-mono text-[#E5C178] block">
-                from {startingPriceLabel(currentBranch)}
+                {isAr ? `من ${startingPriceLabel(currentBranch)}` : `from ${startingPriceLabel(currentBranch)}`}
               </span>
               <span className="text-xs text-[#D4C4B3] block">
-                / night
+                {isAr ? "/ ليلة" : "/ night"}
               </span>
             </div>
           </div>
 
           <div className="flex items-center gap-2.5 pt-1">
             <Link
-              href={`/branches/${currentBranch.slug}`}
+              href={`${localePrefix}/branches/${currentBranch.slug}`}
               className="flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] font-bold text-xs sm:text-sm text-center transition-all flex items-center justify-center gap-1.5 min-h-[44px]"
             >
-              <span>Explore Flats</span>
-              <ArrowRight className="w-4 h-4" />
+              <span>{isAr ? "استكشف الشقق" : "Explore Flats"}</span>
+              <ArrowRight className="w-4 h-4 rtl:rotate-180" />
             </Link>
 
             <a
@@ -585,7 +657,7 @@ export function BranchHub({ className }: BranchHubProps) {
               className="py-2.5 px-3.5 rounded-xl bg-[rgba(22,16,11,0.85)] text-[#FAF4EB] border border-[rgba(212,163,89,0.25)] text-xs sm:text-sm font-semibold transition-colors flex items-center gap-1.5 min-h-[44px]"
             >
               <Navigation className="w-4 h-4 text-[#E5C178]" />
-              <span>Directions</span>
+              <span>{isAr ? "الاتجاهات" : "Directions"}</span>
             </a>
           </div>
         </div>
@@ -596,10 +668,10 @@ export function BranchHub({ className }: BranchHubProps) {
         <div className="space-y-3">
           <div className="flex items-center justify-between text-xs sm:text-sm text-[#D4C4B3]">
             <span className="font-mono text-xs sm:text-sm uppercase tracking-wider text-[#E5C178] font-semibold">
-              Select Branch Location
+              {isAr ? "اختر فرع الإقامة" : "Select Branch Location"}
             </span>
             <span className="text-xs sm:text-sm text-[#D4C4B3]">
-              Tap any location to focus on map
+              {isAr ? "انقر على أي فرع لتحديده على الخريطة" : "Tap any location to focus on map"}
             </span>
           </div>
 
@@ -608,6 +680,14 @@ export function BranchHub({ className }: BranchHubProps) {
               const branch = BRANCHES_MAP_DATA[branchId];
               const isSelected = activeBranchId === branchId;
               const Icon = branchId === "moghal-pura" ? Landmark : Plane;
+              const branchName = isAr ? ARABIC_BRANCH_OVERLAYS[branchId].name : branch.name;
+              const branchSubtitle = isAr
+                ? branchId === "moghal-pura"
+                  ? "بالقرب من تشارمينار"
+                  : "بالقرب من شاندريانجونا"
+                : branchId === "moghal-pura"
+                ? "Near Charminar"
+                : "Near Chandrayangutta";
 
               return (
                 <button
@@ -615,13 +695,14 @@ export function BranchHub({ className }: BranchHubProps) {
                   type="button"
                   onClick={() => handleSelectBranch(branchId)}
                   className={cn(
-                    "p-3.5 sm:p-4 rounded-xl border text-left transition-all duration-200 cursor-pointer shrink-0 min-w-[260px] sm:min-w-[300px] flex items-center justify-between gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E5C178]",
+                    "p-3.5 sm:p-4 rounded-xl border transition-all duration-200 cursor-pointer shrink-0 min-w-[260px] sm:min-w-[300px] flex items-center justify-between gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E5C178]",
+                    isAr ? "text-right" : "text-left",
                     isSelected
                       ? "bg-[rgba(22,16,11,0.9)] border-[#E5C178] ring-1 ring-[#E5C178]/40 shadow-lg"
                       : "bg-[rgba(34,24,16,0.65)] border-[rgba(212,163,89,0.2)] hover:border-[#E5C178]/40 hover:bg-[rgba(45,32,22,0.8)]"
                   )}
                   aria-pressed={isSelected}
-                  aria-label={`Select branch ${branch.name}`}
+                  aria-label={`Select branch ${branchName}`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <div
@@ -638,14 +719,14 @@ export function BranchHub({ className }: BranchHubProps) {
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
                         <h4 className="font-heading text-sm sm:text-base font-bold text-[#FAF4EB] truncate">
-                          {branch.name}
+                          {branchName}
                         </h4>
                         <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20 shrink-0 font-medium">
-                          Active
+                          {isAr ? "متاح" : "Active"}
                         </span>
                       </div>
                       <p className="text-xs sm:text-sm text-[#D4C4B3] truncate mt-0.5">
-                        {branchId === "moghal-pura" ? "Near Charminar" : "Near Chandrayangutta"}
+                        {branchSubtitle}
                       </p>
                     </div>
                   </div>
@@ -656,7 +737,7 @@ export function BranchHub({ className }: BranchHubProps) {
                       isSelected ? "text-[#E5C178]" : "text-[#D4C4B3]"
                     )}
                   >
-                    from {startingPriceLabel(branch)}
+                    {isAr ? `من ${startingPriceLabel(branch)}` : `from ${startingPriceLabel(branch)}`}
                   </span>
                 </button>
               );

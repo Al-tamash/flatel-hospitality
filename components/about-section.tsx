@@ -3,14 +3,21 @@
 import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { MapPin, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getLocaleFromPath } from "@/lib/i18n";
 
 interface AboutSectionProps {
   className?: string;
 }
 
 export function AboutSection({ className }: AboutSectionProps) {
+  const pathname = usePathname();
+  const currentLocale = getLocaleFromPath(pathname);
+  const isAr = currentLocale === "ar";
+  const basePath = isAr ? "/ar" : "";
+
   return (
     <section
       id="about"
@@ -43,7 +50,7 @@ export function AboutSection({ className }: AboutSectionProps) {
         <div className="flex items-center justify-center gap-4 sm:gap-6 mb-10 sm:mb-14">
           <div className="h-[1px] w-12 sm:w-20 md:w-28 bg-gradient-to-r from-transparent to-[#E5C178]/80" />
           <span className="text-xs sm:text-sm font-sans font-semibold tracking-[0.14em] text-[#E5C178] uppercase">
-            ABOUT FLATEL HOSPITALITY
+            {isAr ? "عن ضيافة فلاتيل" : "ABOUT FLATEL HOSPITALITY"}
           </span>
           <div className="h-[1px] w-12 sm:w-20 md:w-28 bg-gradient-to-l from-transparent to-[#E5C178]/80" />
         </div>
@@ -59,7 +66,7 @@ export function AboutSection({ className }: AboutSectionProps) {
             {/* 1. Small Top Category Tagline */}
             <div>
               <span className="text-xs sm:text-sm font-sans font-semibold tracking-[0.14em] text-[#E5C178] uppercase">
-                SERVICED APARTMENTS IN HYDERABAD
+                {isAr ? "شقق فندقية مجهزة في حيدر أباد" : "SERVICED APARTMENTS IN HYDERABAD"}
               </span>
 
               {/* 2. Main Headline in Editorial Cormorant Garamond */}
@@ -67,20 +74,35 @@ export function AboutSection({ className }: AboutSectionProps) {
                 id="about-heading"
                 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-medium tracking-normal text-[#FAF4EB] leading-[1.08] mt-3"
               >
-                The Space of an Apartment.{" "}
-                <span className="font-heading italic text-[#E5C178] block sm:inline lg:block">
-                  The Care of a Hotel.
-                </span>
+                {isAr ? (
+                  <>
+                    رحابة الشقة الخاصة.{" "}
+                    <span className="font-heading italic text-[#E5C178] block sm:inline lg:block">
+                      عناية واهتمام الفندق.
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    The Space of an Apartment.{" "}
+                    <span className="font-heading italic text-[#E5C178] block sm:inline lg:block">
+                      The Care of a Hotel.
+                    </span>
+                  </>
+                )}
               </h2>
             </div>
 
             {/* 3. Two Story Narrative Paragraphs in DM Sans */}
             <div className="space-y-4 text-base sm:text-lg text-[#D4C4B3] font-sans font-normal leading-relaxed">
               <p>
-                We started Flatel to solve a real problem travelers face in Hyderabad: paying high rates for cramped hotel rooms with no kitchen, or dealing with unmanaged rental apartments that lack cleanliness and reliable support.
+                {isAr
+                  ? "انطلقت فلاتيل لتقديم حل عملي وموثوق للمسافرين إلى حيدر أباد: بدلاً من الغرف الفندقية الضيقة بدون مطبخ أو الشقق الإيجارية غير المعتنى بها، نوفر تجربة سكنية تجمع بين الخصوصية المطلقة والنظافة الفائقة."
+                  : "We started Flatel to solve a real problem travelers face in Hyderabad: paying high rates for cramped hotel rooms with no kitchen, or dealing with unmanaged rental apartments that lack cleanliness and reliable support."}
               </p>
               <p>
-                Across our Barkas Salala and Moghal Pura properties, every flat comes fully furnished with a private modular kitchen, regular housekeeping, clean linens, and a local support team on call around the clock.
+                {isAr
+                  ? "في فرعينا في بركاس صلالة ومغل بورا، تم تأثيث كل شقة بالكامل بمطبخ خاص، وخدمة تنظيف غرف دورية، وبياضات نظيفة، وفريق دعم محلي متواجد على مدار الساعة لخدمتكم."
+                  : "Across our Barkas Salala and Moghal Pura properties, every flat comes fully furnished with a private modular kitchen, regular housekeeping, clean linens, and a local support team on call around the clock."}
               </p>
             </div>
 
@@ -88,28 +110,28 @@ export function AboutSection({ className }: AboutSectionProps) {
             <div className="pt-6 border-t border-[rgba(212,163,89,0.18)] grid grid-cols-3 gap-4">
               <div>
                 <div className="font-heading text-4xl sm:text-5xl text-[#FAF4EB] font-medium tracking-normal oldstyle-nums">
-                  100%
+                  {isAr ? "١٠٠٪" : "100%"}
                 </div>
                 <div className="text-xs sm:text-sm font-sans font-bold tracking-[0.12em] uppercase text-[#E5C178] mt-1.5">
-                  Private Kitchens
+                  {isAr ? "مطابخ خاصة" : "Private Kitchens"}
                 </div>
               </div>
 
               <div>
                 <div className="font-heading text-4xl sm:text-5xl text-[#FAF4EB] font-medium tracking-normal oldstyle-nums">
-                  2
+                  {isAr ? "٢" : "2"}
                 </div>
                 <div className="text-xs sm:text-sm font-sans font-bold tracking-[0.12em] uppercase text-[#E5C178] mt-1.5">
-                  Prime Branches
+                  {isAr ? "فروع رئيسية" : "Prime Branches"}
                 </div>
               </div>
 
               <div>
                 <div className="font-heading text-4xl sm:text-5xl text-[#FAF4EB] font-medium tracking-normal oldstyle-nums">
-                  24/7
+                  {isAr ? "٢٤/٧" : "24/7"}
                 </div>
                 <div className="text-xs sm:text-sm font-sans font-bold tracking-[0.12em] uppercase text-[#E5C178] mt-1.5">
-                  Front Desk Care
+                  {isAr ? "مكتب استقبال متواصل" : "Front Desk Care"}
                 </div>
               </div>
             </div>
@@ -117,11 +139,11 @@ export function AboutSection({ className }: AboutSectionProps) {
             {/* 5. Champagne Gold Button: "VIEW ON MAP" / EXPLORE BRANCHES */}
             <div className="pt-2">
               <Link
-                href="/#locations"
+                href={`${basePath}/#locations`}
                 className="inline-flex items-center gap-2.5 px-6 py-3 min-h-[44px] rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] hover:brightness-105 text-[#140E08] font-sans text-xs sm:text-sm uppercase font-bold tracking-[0.12em] transition-all duration-200 shadow-md shadow-[#E5C178]/20 active:scale-[0.98] cursor-pointer"
               >
                 <MapPin className="w-4 h-4 stroke-[2]" />
-                <span>View on Map</span>
+                <span>{isAr ? "عرض المواقع على الخريطة" : "View on Map"}</span>
               </Link>
             </div>
           </div>
@@ -150,7 +172,7 @@ export function AboutSection({ className }: AboutSectionProps) {
 
               {/* Location Tag at Top-Right of Image */}
               <div className="absolute top-4 right-4 z-10 px-3 py-1.5 rounded-md bg-[#16100B]/90 backdrop-blur-md border border-[rgba(212,163,89,0.3)] text-xs font-mono tracking-[0.14em] uppercase text-[#FAF4EB]">
-                BARKAS &amp; MOGHAL PURA, HYDERABAD
+                {isAr ? "بركاس ومغل بورا، حيدر أباد" : "BARKAS & MOGHAL PURA, HYDERABAD"}
               </div>
             </div>
 
@@ -159,16 +181,18 @@ export function AboutSection({ className }: AboutSectionProps) {
               <div className="flex items-center gap-2 text-[#E5C178] mb-1.5">
                 <Star className="w-4 h-4 fill-[#E5C178]" />
                 <span className="text-xs font-sans font-bold tracking-[0.14em] uppercase">
-                  FOUNDER&apos;S PLEDGE
+                  {isAr ? "عهد المؤسس" : "FOUNDER'S PLEDGE"}
                 </span>
               </div>
 
               <p className="font-heading italic text-sm sm:text-base text-[#FAF4EB] leading-snug">
-                &ldquo;Real homes with private kitchens, clean spaces, and genuine care for every guest.&rdquo;
+                {isAr
+                  ? "«بيوت حقيقية بمطابخ خاصة، ومساحات نظيفة، واهتمام صادق بكل ضيف.»"
+                  : "“Real homes with private kitchens, clean spaces, and genuine care for every guest.”"}
               </p>
 
               <div className="mt-2 text-xs font-mono text-[#D4C4B3] uppercase tracking-wider font-semibold">
-                — OSAMA, MANAGING DIRECTOR
+                {isAr ? "— أسامة، المدير العام" : "— OSAMA, MANAGING DIRECTOR"}
               </div>
             </div>
           </div>

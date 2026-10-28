@@ -45,7 +45,9 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
 
   // 4. Merged Flat & Occupancy State
   const [selectedFlatTypes, setSelectedFlatTypes] = React.useState<string>("1bhk");
-  const [flatOccupancySummary, setFlatOccupancySummary] = React.useState<string>("1 BHK · 2 Guests");
+  const [flatOccupancySummary, setFlatOccupancySummary] = React.useState<string>(() =>
+    isAr ? "شقة ١ غرف وصالة · ضيفان" : "1 BHK · 2 Guests"
+  );
   const [flatOccupancyState, setFlatsOccupancyState] = React.useState<Record<string, FlatOccupancyState> | null>(null);
   const [isFlatOccupancyModalOpen, setIsFlatOccupancyModalOpen] = React.useState(false);
 
@@ -162,20 +164,20 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
     checkIn && checkOut ? Math.max(0, differenceInCalendarDays(checkOut, checkIn)) : 0;
 
   const branchDisplay = React.useMemo(() => {
-    if (selectedBranch === "barkas-salala") return "Barkas Salala";
-    if (selectedBranch === "moghal-pura") return "Moghal Pura";
-    return "All Branches";
-  }, [selectedBranch]);
+    if (selectedBranch === "barkas-salala") return isAr ? "فرع باركاس سلالة" : "Barkas Salala";
+    if (selectedBranch === "moghal-pura") return isAr ? "فرع مغل بورا" : "Moghal Pura";
+    return isAr ? "كافة الفروع" : "All Branches";
+  }, [selectedBranch, isAr]);
 
   const dateRangeDisplay = React.useMemo(() => {
     if (checkIn && checkOut) {
       return `${format(checkIn, "d MMM")} – ${format(checkOut, "d MMM")}`;
     }
     if (checkIn) {
-      return `${format(checkIn, "d MMM")} – Check-out`;
+      return `${format(checkIn, "d MMM")} – ${isAr ? "تسجيل المغادرة" : "Check-out"}`;
     }
-    return "Select dates";
-  }, [checkIn, checkOut]);
+    return isAr ? "اختر التواريخ" : "Select dates";
+  }, [checkIn, checkOut, isAr]);
 
 
   // Handlers for Opening Popovers
@@ -225,7 +227,7 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
     e.preventDefault();
 
     if (checkIn && !checkOut) {
-      setErrorMessage("Please select your check-out date.");
+      setErrorMessage(isAr ? "يرجى تحديد تاريخ تسجيل المغادرة." : "Please select your check-out date.");
       setErrorField("checkOut");
       setCalendarTargetField("checkOut");
       setActivePopover("calendar");
@@ -233,7 +235,7 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
     }
 
     if (checkIn && checkOut && differenceInCalendarDays(checkOut, checkIn) < 1) {
-      setErrorMessage("Check-out date must be after check-in.");
+      setErrorMessage(isAr ? "يجب أن يكون تاريخ المغادرة بعد تاريخ الوصول." : "Check-out date must be after check-in.");
       setErrorField("checkOut");
       setCalendarTargetField("checkOut");
       setActivePopover("calendar");

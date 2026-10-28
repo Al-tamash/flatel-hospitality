@@ -19,6 +19,7 @@ import {
 } from "@/lib/constants";
 import { getLocaleFromPath, getDictionary } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
+import { cn } from "@/lib/utils";
 
 /**
  * Official WhatsApp Vector Geometry
@@ -55,7 +56,11 @@ export function SiteFooter() {
   return (
     <footer
       id="site-footer"
-      className="relative w-full bg-[#0E0A07] text-[#FAF4EB] select-none"
+      dir={isAr ? "rtl" : "ltr"}
+      className={cn(
+        "relative w-full bg-[#0E0A07] text-[#FAF4EB] select-none",
+        isAr && "font-arabic"
+      )}
       aria-label="Site Footer"
     >
       {/* ── Luxury Moroccan Inward Arch Border (Mamounia Marrakech Inspired) ── */}
@@ -137,15 +142,17 @@ export function SiteFooter() {
             </p>
 
             <p className="text-sm text-[#D4C4B3] leading-relaxed max-w-md font-sans">
-              Fully furnished 1 to 4 BHK serviced apartments in Hyderabad with private modular kitchens, alternate-day housekeeping, and on-call front desk support across Barkas Salala and Moghal Pura.
+              {isAr
+                ? "شقق فندقية مفروشة بالكامل من غرفة إلى ٤ غرف وصالة في حيدر أباد بمطابخ خاصة مجهزة، خدمة تنظيف دورية مجانية، ومكتب استقبال داعم في باركاس سلالة ومغل بورا."
+                : "Fully furnished 1 to 4 BHK serviced apartments in Hyderabad with private modular kitchens, alternate-day housekeeping, and on-call front desk support across Barkas Salala and Moghal Pura."}
             </p>
 
             <div className="pt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs sm:text-sm font-mono text-[#D4C4B3]">
-              <span>Barkas Salala</span>
+              <span>{isAr ? "باركاس سلالة" : "Barkas Salala"}</span>
               <span>·</span>
-              <span>Moghal Pura</span>
+              <span>{isAr ? "مغل بورا" : "Moghal Pura"}</span>
               <span>·</span>
-              <span>Hyderabad, Telangana</span>
+              <span>{isAr ? "حيدر أباد، تيلانجانا" : "Hyderabad, Telangana"}</span>
             </div>
           </div>
 
@@ -155,7 +162,7 @@ export function SiteFooter() {
             {/* Column 1: Explore */}
             <div className="space-y-3.5">
               <h4 className="text-xs sm:text-sm font-sans font-bold tracking-[0.14em] uppercase text-[#FAF4EB]">
-                Explore
+                {isAr ? "استكشف" : "Explore"}
               </h4>
               <ul className="space-y-2.5 text-sm text-[#D4C4B3] font-sans">
                 <li>
@@ -171,7 +178,7 @@ export function SiteFooter() {
                     href={`${localePrefix}/#amenities`}
                     className="hover:text-[#FAF4EB] transition-colors block py-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs"
                   >
-                    Amenities
+                    {isAr ? "المرافق والخدمات" : "Amenities"}
                   </Link>
                 </li>
                 <li>
@@ -187,7 +194,7 @@ export function SiteFooter() {
                     href={`${localePrefix}/branches/barkas-salala`}
                     className="hover:text-[#FAF4EB] transition-colors block py-1 text-xs sm:text-sm text-[#D4C4B3] hover:text-[#E5C178] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs"
                   >
-                    Barkas Salala
+                    {isAr ? "فرع باركاس سلالة" : "Barkas Salala"}
                   </Link>
                 </li>
                 <li>
@@ -195,7 +202,7 @@ export function SiteFooter() {
                     href={`${localePrefix}/branches/moghal-pura`}
                     className="hover:text-[#FAF4EB] transition-colors block py-1 text-xs sm:text-sm text-[#D4C4B3] hover:text-[#E5C178] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs"
                   >
-                    Moghal Pura
+                    {isAr ? "فرع مغل بورا" : "Moghal Pura"}
                   </Link>
                 </li>
               </ul>
@@ -204,7 +211,7 @@ export function SiteFooter() {
             {/* Column 2: Guest Information */}
             <div className="space-y-3.5">
               <h4 className="text-xs sm:text-sm font-sans font-bold tracking-[0.14em] uppercase text-[#FAF4EB]">
-                Guest Information
+                {isAr ? "معلومات الضيوف" : "Guest Information"}
               </h4>
               <ul className="space-y-2.5 text-sm text-[#D4C4B3] font-sans">
                 <li>
@@ -220,7 +227,7 @@ export function SiteFooter() {
                     href={`${localePrefix}/#how-it-works`}
                     className="hover:text-[#FAF4EB] transition-colors block py-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs"
                   >
-                    Booking Process
+                    {isAr ? "خطوات الحجز" : "Booking Process"}
                   </Link>
                 </li>
                 <li>
@@ -228,7 +235,7 @@ export function SiteFooter() {
                     href={`${localePrefix}/policies#checkin-checkout`}
                     className="hover:text-[#FAF4EB] transition-colors block py-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs"
                   >
-                    House Rules
+                    {isAr ? "قواعد وإرشادات الإقامة" : "House Rules"}
                   </Link>
                 </li>
                 <li>
@@ -253,7 +260,7 @@ export function SiteFooter() {
             {/* Column 3: Contact */}
             <div className="space-y-3.5">
               <h4 className="text-xs sm:text-sm font-sans font-bold tracking-[0.14em] uppercase text-[#FAF4EB]">
-                Contact
+                {isAr ? "اتصل بنا" : "Contact"}
               </h4>
               <ul className="space-y-3 text-sm text-[#D4C4B3] font-sans">
                 <li>
@@ -282,13 +289,13 @@ export function SiteFooter() {
                     className="inline-flex items-center gap-2 text-[#25D366] hover:text-[#34D399] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs group py-1"
                   >
                     <WhatsAppIcon className="w-4 h-4 shrink-0" />
-                    <span>WhatsApp Support</span>
-                    <ArrowUpRight className="w-3.5 h-3.5 text-[#D4C4B3]/70 group-hover:text-[#34D399] transition-colors" />
+                    <span>{isAr ? "خدمة العملاء عبر واتساب" : "WhatsApp Support"}</span>
+                    <ArrowUpRight className={cn("w-3.5 h-3.5 text-[#D4C4B3]/70 group-hover:text-[#34D399] transition-colors", isAr && "rotate-[-90deg]")} />
                   </a>
                 </li>
                 <li className="flex items-center gap-2 text-[#D4C4B3] text-xs sm:text-sm py-1">
                   <Clock className="w-4 h-4 text-[#E5C178] shrink-0" />
-                  <span>24/7 Front Desk &amp; Guest Support</span>
+                  <span>{isAr ? "خدمة استقبال ودعم نزلاء ٢٤/٧" : "24/7 Front Desk & Guest Support"}</span>
                 </li>
               </ul>
             </div>
@@ -305,7 +312,7 @@ export function SiteFooter() {
               href={`${localePrefix}/policies`}
               className="hover:text-[#FAF4EB] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs"
             >
-              Guest Policies &amp; Stay Rules
+              {isAr ? "سياسات وقواعد الإقامة" : "Guest Policies & Stay Rules"}
             </Link>
             <span className="hidden sm:inline">·</span>
             <Link

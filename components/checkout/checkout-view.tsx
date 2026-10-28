@@ -23,6 +23,8 @@ import { useAuth } from "@/context/auth-context";
 import { cn } from "@/lib/utils";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { getLocalizedRoom } from "@/lib/i18n/room-localizer";
+import { ARABIC_ADDONS_TRANSLATION } from "@/components/rooms/booking-sidebar";
+import { ARABIC_BRANCH_OVERLAYS } from "@/components/branch-hub";
 import {
   loadRazorpayScript,
   type RazorpayCheckoutOptions,
@@ -253,18 +255,18 @@ export function CheckoutView({ locale = "en" }: CheckoutViewProps) {
   const validateForm = () => {
     const nextErrors: Record<string, string> = {};
     if (!fullName.trim() || fullName.trim().length < 3) {
-      nextErrors.fullName = "Enter your full name (at least 3 characters).";
+      nextErrors.fullName = locale === "ar" ? "يرجى إدخال الاسم الكامل (٣ أحرف على الأقل)." : "Enter your full name (at least 3 characters).";
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      nextErrors.email = "Enter a valid email address.";
+      nextErrors.email = locale === "ar" ? "يرجى إدخال بريد إلكتروني صحيح." : "Enter a valid email address.";
     }
     const cleanPhone = phone.replace(/[^0-9+]/g, "");
     if (!cleanPhone || cleanPhone.replace(/\D/g, "").length < 8) {
-      nextErrors.phone = "Include your country code and a valid mobile number.";
+      nextErrors.phone = locale === "ar" ? "يرجى كتابة رمز الدولة ورقم جوال صالح." : "Include your country code and a valid mobile number.";
     }
-    if (!agreeTerms) nextErrors.terms = "Please acknowledge the cancellation and payment terms.";
-    if (!areDatesValid) nextErrors.dates = "Choose valid check-in and check-out dates before continuing.";
-    if (!room || adultsParam < 1 || kidsParam < 0) nextErrors.booking = "Review your property and guest selection.";
+    if (!agreeTerms) nextErrors.terms = locale === "ar" ? "يرجى الموافقة على شروط الإلغاء والدفع للمتابعة." : "Please acknowledge the cancellation and payment terms.";
+    if (!areDatesValid) nextErrors.dates = locale === "ar" ? "يرجى اختيار تواريخ وصول ومغادرة صحيحة." : "Choose valid check-in and check-out dates before continuing.";
+    if (!room || adultsParam < 1 || kidsParam < 0) nextErrors.booking = locale === "ar" ? "يرجى التحقق من الشقة وعدد الضيوف المختار." : "Review your property and guest selection.";
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
@@ -437,7 +439,7 @@ export function CheckoutView({ locale = "en" }: CheckoutViewProps) {
         {branch && (
           <p className="mt-2 flex items-start gap-2 text-sm leading-6 text-muted-foreground">
             <MapPin className="mt-1 h-4 w-4 shrink-0 text-primary" />
-            <span>{branch.address}</span>
+            <span>{(locale === "ar" && room.branchSlug && ARABIC_BRANCH_OVERLAYS[room.branchSlug]?.address) || branch.address}</span>
           </p>
         )}
       </div>
@@ -522,17 +524,20 @@ export function CheckoutView({ locale = "en" }: CheckoutViewProps) {
         <div className="mt-4 border-t border-[rgba(212,163,89,0.2)] pt-3">
           <p className="text-xs font-medium text-muted-foreground">{locale === "ar" ? "الخدمات المختارة" : "Selected services"}</p>
           <ul className="mt-2 space-y-2">
-            {selectedAddonList.map((addon) => (
-              <li key={addon.id} className="flex items-center justify-between gap-3 text-sm text-foreground">
-                <span className="min-w-0 truncate">{addon.name}</span>
-                <span className="shrink-0 tabular-nums">
-                  {formatMoney(addon.pricingType === "per_night" ? addon.price * nights : addon.price)}
-                  <button type="button" onClick={() => setActiveAddonIds((current) => current.filter((id) => id !== addon.id))} className="ml-3 min-h-10 px-1 text-xs text-primary underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring" aria-label={`Remove ${addon.name}`}>
-                    {locale === "ar" ? "إلغاء" : "Remove"}
-                  </button>
-                </span>
-              </li>
-            ))}
+            {selectedAddonList.map((addon) => {
+              const displayName = (locale === "ar" && ARABIC_ADDONS_TRANSLATION[addon.id]) || addon.name;
+              return (
+                <li key={addon.id} className="flex items-center justify-between gap-3 text-sm text-foreground">
+                  <span className="min-w-0 truncate">{displayName}</span>
+                  <span className="shrink-0 tabular-nums">
+                    {formatMoney(addon.pricingType === "per_night" ? addon.price * nights : addon.price)}
+                    <button type="button" onClick={() => setActiveAddonIds((current) => current.filter((id) => id !== addon.id))} className="ml-3 min-h-10 px-1 text-xs text-primary underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring" aria-label={`Remove ${displayName}`}>
+                      {locale === "ar" ? "إلغاء" : "Remove"}
+                    </button>
+                  </span>
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}

@@ -1,8 +1,10 @@
 "use client";
 
 import * as React from "react";
+import { usePathname } from "next/navigation";
 import { MapPin, Check, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getLocaleFromPath } from "@/lib/i18n";
 
 export type BranchFilter = "all" | "barkas-salala" | "moghal-pura";
 
@@ -13,7 +15,7 @@ export interface BranchOption {
   locationNote: string;
 }
 
-export const BRANCH_OPTIONS: BranchOption[] = [
+export const BRANCH_OPTIONS_EN: BranchOption[] = [
   {
     id: "all",
     title: "All Branches",
@@ -34,6 +36,29 @@ export const BRANCH_OPTIONS: BranchOption[] = [
   },
 ];
 
+export const BRANCH_OPTIONS_AR: BranchOption[] = [
+  {
+    id: "all",
+    title: "كافة الفروع",
+    subtitle: "بركاس صلالة ومغل بورا",
+    locationNote: "جميع شقق حيدر أباد",
+  },
+  {
+    id: "barkas-salala",
+    title: "بركاس صلالة",
+    subtitle: "بالقرب من شاندريانجونا وطريق المطار",
+    locationNote: "شقق فسيحة ٣ غرف وصالة",
+  },
+  {
+    id: "moghal-pura",
+    title: "مغل بورة",
+    subtitle: "بالقرب من تشارمينار والمدينة القديمة",
+    locationNote: "شقق ١ و٢ و٤ غرف وصالة",
+  },
+];
+
+export const BRANCH_OPTIONS = BRANCH_OPTIONS_EN;
+
 interface BranchSelectorProps {
   selectedBranch: BranchFilter | null;
   onSelectBranch: (branch: BranchFilter | null) => void;
@@ -49,6 +74,11 @@ export function BranchSelector({
   className,
   isMobileModal = false,
 }: BranchSelectorProps) {
+  const pathname = usePathname();
+  const currentLocale = getLocaleFromPath(pathname);
+  const isAr = currentLocale === "ar";
+  const branchOptions = isAr ? BRANCH_OPTIONS_AR : BRANCH_OPTIONS_EN;
+
   return (
     <div
       className={cn(
@@ -61,20 +91,20 @@ export function BranchSelector({
       <div className="flex items-center justify-between pb-3 mb-3 border-b border-[rgba(212,163,89,0.18)]">
         <div>
           <span className="text-[10px] font-sans font-semibold tracking-wider uppercase text-[#E5C178]">
-            Select Location
+            {isAr ? "اختر الموقع" : "Select Location"}
           </span>
           <h3 className="text-sm font-sans font-semibold tracking-wide text-[#FAF4EB]">
-            Our Hyderabad Branches
+            {isAr ? "فروع فلاتيل في حيدر أباد" : "Our Hyderabad Branches"}
           </h3>
         </div>
         <span className="text-[11px] font-mono font-medium text-[#E5C178] px-2 py-0.5 rounded-full bg-[#E5C178]/10 border border-[#E5C178]/25">
-          2 Active Locations
+          {isAr ? "فرعان رئيسيان" : "2 Active Locations"}
         </span>
       </div>
 
       {/* Options List */}
-      <div className="space-y-1.5" role="radiogroup" aria-label="Select FLATEL Branch">
-        {BRANCH_OPTIONS.map((branch) => {
+      <div className="space-y-1.5" role="radiogroup" aria-label={isAr ? "اختر فرع فلاتيل" : "Select FLATEL Branch"}>
+        {branchOptions.map((branch) => {
           const isSelected = selectedBranch === branch.id;
           return (
             <button
@@ -87,7 +117,7 @@ export function BranchSelector({
                 if (onClose) onClose();
               }}
               className={cn(
-                "w-full p-3 rounded-xl text-left flex items-start justify-between gap-3 transition-all duration-150 cursor-pointer",
+                "w-full p-3 rounded-xl text-left rtl:text-right flex items-start justify-between gap-3 transition-all duration-150 cursor-pointer",
                 isSelected
                   ? "bg-[rgba(22,16,11,0.9)] border border-[#E5C178] shadow-xs"
                   : "bg-[rgba(34,24,16,0.5)] hover:bg-[rgba(45,32,22,0.7)] border border-[rgba(212,163,89,0.15)] text-[#B8A692]"
@@ -144,7 +174,7 @@ export function BranchSelector({
             className="inline-flex items-center gap-1.5 text-xs text-[#B8A692] hover:text-[#E5C178] transition-colors py-1 px-2 cursor-pointer"
           >
             <RotateCcw className="w-3 h-3" />
-            <span>Reset branch</span>
+            <span>{isAr ? "إعادة ضبط الفرع" : "Reset branch"}</span>
           </button>
         </div>
       )}

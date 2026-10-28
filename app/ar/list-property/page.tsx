@@ -48,7 +48,7 @@ export default function ArabicListPropertyPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0E0A07] text-[#FAF4EB] flex flex-col selection:bg-[#E5C178]/20 selection:text-[#E5C178] font-arabic">
+    <div className="min-h-screen bg-[#0E0A07] text-[#FAF4EB] flex flex-col selection:bg-[#E5C178]/20 selection:text-[#E5C178] font-arabic" dir="rtl">
       <SiteHeader />
 
       <main className="flex-1 w-full py-14 sm:py-20 px-4 sm:px-6 lg:px-8">
@@ -62,7 +62,7 @@ export default function ArabicListPropertyPage() {
               سجّل عقارك مع ضيافة فلاتيل
             </h1>
             <p className="text-sm sm:text-base text-[#D4C4B3] max-w-xl mx-auto leading-relaxed">
-              حوّل شقتك أو عقارك في حيدr أباد إلى استثمار فندقي مربح ومستمر مع أعلى معايير الصيانة والتشغيل الاحترافي.
+              حوّل شقتك أو عقارك في حيدر أباد إلى استثمار فندقي مربح ومستمر مع أعلى معايير الصيانة والتشغيل الاحترافي.
             </p>
           </div>
 

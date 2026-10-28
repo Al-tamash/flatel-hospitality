@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { usePathname } from "next/navigation";
 import {
   format,
   addMonths,
@@ -42,6 +43,8 @@ export function DateRangePicker({
   className,
   isMobileModal = false,
 }: DateRangePickerProps) {
+  const pathname = usePathname();
+  const isAr = pathname?.startsWith("/ar");
   const [today] = React.useState<Date>(() => startOfToday());
 
   // Active step in the calendar selection: whether picking checkIn or checkOut
@@ -71,7 +74,9 @@ export function DateRangePicker({
     end: calendarEnd,
   });
 
-  const weekDayLabels = ["M", "T", "W", "T", "F", "S", "S"];
+  const weekDayLabels = isAr
+    ? ["إث", "ث", "أر", "خم", "ج", "س", "أح"]
+    : ["M", "T", "W", "T", "F", "S", "S"];
 
   // Navigation handlers
   const prevMonth = () => setCurrentMonth((prev) => subMonths(prev, 1));
@@ -146,11 +151,11 @@ export function DateRangePicker({
               : "text-[#B8A692] hover:text-[#FAF4EB] border border-transparent"
           )}
         >
-          <span className="text-[10px] uppercase tracking-wider text-[#E5C178]">In:</span>
-          <span>{checkIn ? format(checkIn, "d MMM") : "Select date"}</span>
+          <span className="text-[10px] uppercase tracking-wider text-[#E5C178]">{isAr ? "الوصول:" : "In:"}</span>
+          <span>{checkIn ? format(checkIn, "d MMM") : (isAr ? "اختر التاريخ" : "Select date")}</span>
         </button>
 
-        <ArrowRight className="w-3.5 h-3.5 text-[#E5C178]/60 shrink-0" />
+        <ArrowRight className={cn("w-3.5 h-3.5 text-[#E5C178]/60 shrink-0", isAr && "rotate-180")} />
 
         <button
           type="button"
@@ -164,11 +169,11 @@ export function DateRangePicker({
               : "text-[#B8A692] hover:text-[#FAF4EB] border border-transparent"
           )}
         >
-          <span className="text-[10px] uppercase tracking-wider text-[#E5C178]">Out:</span>
-          <span>{checkOut ? format(checkOut, "d MMM") : "Select date"}</span>
+          <span className="text-[10px] uppercase tracking-wider text-[#E5C178]">{isAr ? "المغادرة:" : "Out:"}</span>
+          <span>{checkOut ? format(checkOut, "d MMM") : (isAr ? "اختر التاريخ" : "Select date")}</span>
           {nightsCount > 0 && (
             <span className="text-[10px] font-mono text-[#E5C178] ml-0.5 font-bold">
-              ({nightsCount}N)
+              ({nightsCount}{isAr ? " ليالٍ" : "N"})
             </span>
           )}
         </button>
@@ -286,7 +291,7 @@ export function DateRangePicker({
           className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-sans text-[#B8A692] hover:text-[#FAF4EB] transition-colors rounded-sm focus:outline-none cursor-pointer"
         >
           <RotateCcw className="w-3.5 h-3.5 text-[#B8A692]" />
-          <span>Reset</span>
+          <span>{isAr ? "إعادة ضبط" : "Reset"}</span>
         </button>
 
         <button
@@ -294,7 +299,7 @@ export function DateRangePicker({
           onClick={handleDone}
           className="px-4 py-1.5 min-h-[32px] rounded-lg bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] hover:brightness-105 text-xs font-sans font-bold tracking-wider uppercase transition-all duration-150 focus:outline-none shadow-xs cursor-pointer"
         >
-          Done
+          {isAr ? "تأكيد" : "Done"}
         </button>
       </div>
     </div>

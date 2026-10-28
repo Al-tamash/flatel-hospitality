@@ -26,6 +26,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { getLocalizedRoom } from "@/lib/i18n/room-localizer";
+import { ARABIC_ADDONS_TRANSLATION } from "@/components/rooms/booking-sidebar";
 
 interface BookingConfirmationViewProps {
   bookingId: string;
@@ -379,15 +380,18 @@ export function BookingConfirmationView({ bookingId, locale = "en" }: BookingCon
                     {locale === "ar" ? `الخدمات المختارة المشمولة (${booking.selectedAddons.length})` : `Included Selected Services (${booking.selectedAddons.length})`}
                   </span>
                   <div className="flex flex-wrap gap-1.5">
-                    {booking.selectedAddons.map((addon) => (
-                      <span
-                        key={addon.id}
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#16100B] border border-[rgba(212,163,89,0.2)] text-[11px] text-[#FAF4EB]"
-                      >
-                        <CheckCircle2 className="w-3 h-3 text-[#E5C178]" />
-                        <span>{addon.name}</span>
-                      </span>
-                    ))}
+                    {booking.selectedAddons.map((addon) => {
+                      const displayName = (locale === "ar" && addon.id && ARABIC_ADDONS_TRANSLATION[addon.id]) || addon.name;
+                      return (
+                        <span
+                          key={addon.id}
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#16100B] border border-[rgba(212,163,89,0.2)] text-[11px] text-[#FAF4EB]"
+                        >
+                          <CheckCircle2 className="w-3 h-3 text-[#E5C178]" />
+                          <span>{displayName}</span>
+                        </span>
+                      );
+                    })}
                   </div>
                 </div>
               )}

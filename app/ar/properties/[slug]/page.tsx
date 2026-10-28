@@ -66,7 +66,7 @@ export default async function ArabicPropertyPage({ params }: ArabicPropertyPageP
   const room = getLocalizedRoom(rawRoom, "ar");
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col selection:bg-primary/20 selection:text-primary font-arabic">
+    <div className="min-h-screen bg-background text-foreground flex flex-col selection:bg-primary/20 selection:text-primary font-arabic" dir="rtl">
       <SiteHeader />
       <main className="flex-1 w-full">
         <RoomDetailView room={room} requestedId={slug} />

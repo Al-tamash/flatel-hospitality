@@ -7,6 +7,7 @@ import { BRANCHES, getBranchBySlug } from "@/lib/constants";
 import { InventoryService } from "@/lib/inventory-service";
 import { getRoomsByBranch } from "@/lib/mock-rooms";
 import { getLocalizedRooms } from "@/lib/i18n/room-localizer";
+import { ARABIC_BRANCH_OVERLAYS } from "@/components/branch-hub";
 
 interface ArabicBranchPageProps {
   params: Promise<{ slug: string }>;
@@ -27,9 +28,13 @@ export async function generateMetadata({
     };
   }
 
+  const overlay = ARABIC_BRANCH_OVERLAYS[slug];
+  const name = overlay?.name || branch.name;
+  const address = overlay?.address || branch.address;
+
   return {
-    title: `فرع ${branch.name} | ضيافة فلاتيل حيدر أباد`,
-    description: `استكشف شقق فندقية مفروشة في فرع ضيافة فلاتيل ${branch.name}. ${branch.address}.`,
+    title: `فرع ${name} | ضيافة فلاتيل حيدر أباد`,
+    description: `استكشف شقق فندقية مفروشة في فرع ضيافة فلاتيل ${name}. ${address}.`,
   };
 }
 
@@ -52,7 +57,7 @@ export default async function ArabicBranchPage({ params }: ArabicBranchPageProps
   const properties = getLocalizedRooms(rawProperties, "ar");
 
   return (
-    <div className="min-h-screen bg-[#0E0A07] text-[#FAF4EB] flex flex-col selection:bg-[#E5C178]/20 selection:text-[#E5C178] font-arabic">
+    <div className="min-h-screen bg-[#0E0A07] text-[#FAF4EB] flex flex-col selection:bg-[#E5C178]/20 selection:text-[#E5C178] font-arabic" dir="rtl">
       <SiteHeader />
       <main className="flex-1 w-full">
         <BranchDetailView branch={branch} properties={properties} />
