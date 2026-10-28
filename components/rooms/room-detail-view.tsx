@@ -22,6 +22,8 @@ import { RoomDetail } from "@/lib/mock-rooms";
 import { getBranchBySlug } from "@/lib/constants";
 import { RoomGallery } from "@/components/rooms/room-gallery";
 import { BookingSidebar } from "@/components/rooms/booking-sidebar";
+import { NearbyMap } from "@/components/rooms/nearby-map";
+import { nearbyPlaces } from "@/lib/map/places";
 import { usePathname } from "next/navigation";
 import { getLocaleFromPath, getDictionary } from "@/lib/i18n";
 import { getLocalizedRoom } from "@/lib/i18n/room-localizer";
@@ -292,10 +294,18 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
     ];
   }, [room, isAr]);
 
-  // Dynamic Landmarks
+  // Room landmarks when listed; otherwise the nearest mapped places with straight-line distance
+  const roomLandmarks = room?.landmarks;
+  const roomBranchSlug = room?.branchSlug;
   const landmarks = React.useMemo(() => {
-    return room?.landmarks ?? [];
-  }, [room?.landmarks]);
+    if (roomLandmarks && roomLandmarks.length > 0) return roomLandmarks;
+    if (!roomBranchSlug) return [];
+    return nearbyPlaces(roomBranchSlug, 6).map((place) => ({
+      name: isAr ? place.nameAr : place.name,
+      time: isAr ? `≈${place.km.toFixed(1)} كم` : `${place.km.toFixed(1)} km`,
+      dist: "",
+    }));
+  }, [roomLandmarks, roomBranchSlug, isAr]);
 
   if (!room) {
     return (
@@ -515,7 +525,7 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
               <div className="flex items-baseline justify-between gap-4 flex-wrap">
                 <div>
                   <h2 id="location-heading" className="font-heading text-xl sm:text-2xl font-normal text-[#FAF4EB]">
-                    {isAr ? "الموقع والمعالم القريبة" : "Location & Nearby Places"}
+                    {isAr ? "ما الذي يوجد بالقرب؟" : "What's nearby"}
                   </h2>
                   <p className="text-xs text-[#B8A692] mt-0.5">
                     {isAr
@@ -535,18 +545,18 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
                 )}
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                {landmarks.map((lm) => (
-                  <div
-                    key={lm.name}
-                    className="p-3.5 rounded-xl bg-[rgba(34,24,16,0.65)] border border-[rgba(212,163,89,0.25)] flex items-center justify-between"
-                  >
-                    <span className="text-[#FAF4EB] font-medium truncate pr-2 text-xs">{lm.name}</span>
-                    <span className="font-sans text-xs text-[#E5C178] shrink-0 font-semibold tabular-nums">
-                      {lm.time || lm.dist || ""}
-                    </span>
-                  </div>
-                ))}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+                <ul className="divide-y divide-[rgba(212,163,89,0.14)] rounded-2xl border border-[rgba(212,163,89,0.25)] bg-[rgba(34,24,16,0.65)] text-xs">
+                  {landmarks.map((lm) => (
+                    <li key={lm.name} className="px-4 py-3 flex items-center justify-between gap-3">
+                      <span className="text-[#FAF4EB] font-medium text-xs">{lm.name}</span>
+                      <span className="font-sans text-xs text-[#E5C178] shrink-0 font-semibold tabular-nums">
+                        {lm.time || lm.dist || ""}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+                {branch?.slug && <NearbyMap branchSlug={branch.slug} googleMapsUrl={branch.googleMapsUrl} />}
               </div>
             </section>
 

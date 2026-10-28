@@ -5,7 +5,7 @@
  * Every entry is `verified: false` until the Flatel team confirms it on the ground.
  */
 import { BRANCH_PROFILES } from "@/lib/branch-data";
-import type { LatLng } from "./geo";
+import { distanceKm, type LatLng } from "./geo";
 
 export type PlaceCategory = "hospital" | "heritage";
 
@@ -180,3 +180,12 @@ export const MAP_PLACES: MapPlace[] = [
     source: "Nominatim: Falaknuma Palace, Falaknuma Road",
   },
 ];
+
+/** The places closest to a branch, nearest first, with straight-line distance in km. */
+export function nearbyPlaces(branchSlug: string, limit: number): Array<MapPlace & { km: number }> {
+  const branch = BRANCH_PINS.find((b) => b.slug === branchSlug);
+  if (!branch) return [];
+  return MAP_PLACES.map((place) => ({ ...place, km: distanceKm(branch.coordinates, place.coordinates) }))
+    .sort((a, b) => a.km - b.km)
+    .slice(0, limit);
+}
