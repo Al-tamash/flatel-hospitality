@@ -27,6 +27,7 @@ import { RoomDetail, PURPOSE_PACKAGES, FacilityAddon, ALL_MASTER_ADDONS } from "
 import { WHATSAPP_CONFIG } from "@/lib/constants";
 import { calculateFlatelPrice } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
+import { getPurposeLabel, isPurposeId } from "@/lib/purpose/purpose-services";
 import type { StayPurposeType } from "@/types/booking";
 
 interface BookingSidebarProps {
@@ -184,42 +185,10 @@ export function BookingSidebar({
     [currentLocale]
   );
 
-  const activePurposeLabel = React.useMemo(() => {
-    if (currentLocale === "ar") {
-      switch (selectedPurposeId) {
-        case "medical":
-          return "ميدستاي — رعاية صحية ومستشفيات";
-        case "wedding":
-          return "إقامة حفلات الزفاف والفعاليات";
-        case "family":
-          return "إجازات عائلية وإقامة طويلة";
-        case "tourism":
-          return "سياحة واستكشاف المعالم";
-        case "corporate":
-          return "رحلات عمل وتنفيذيون";
-        case "accommodation_only":
-          return "إقامة سكنية فقط";
-        default:
-          return null;
-      }
-    }
-    switch (selectedPurposeId) {
-      case "medical":
-        return "Medistay — Hospital & Medical";
-      case "wedding":
-        return "Wedding Stay — Guests & Events";
-      case "family":
-        return "Family Vacation — Vacation & Long Stay";
-      case "tourism":
-        return "Wanderer — Heritage & Tourism";
-      case "corporate":
-        return "Corporate — Business & Executive";
-      case "accommodation_only":
-        return "Accommodation only";
-      default:
-        return null;
-    }
-  }, [selectedPurposeId, currentLocale]);
+  const activePurposeLabel =
+    selectedPurposeId && (isPurposeId(selectedPurposeId) || selectedPurposeId === "accommodation_only")
+      ? getPurposeLabel(selectedPurposeId, currentLocale === "ar" ? "ar" : "en")
+      : null;
 
   const allAvailableAddons = React.useMemo(() => ALL_MASTER_ADDONS, []);
   const activeAddons = React.useMemo(() => {

@@ -23,6 +23,7 @@ import { getBranchBySlug } from "@/lib/constants";
 import { RoomGallery } from "@/components/rooms/room-gallery";
 import { BookingSidebar } from "@/components/rooms/booking-sidebar";
 import { NearbyMap } from "@/components/rooms/nearby-map";
+import { PurposeServices } from "@/components/rooms/purpose-services";
 import { nearbyPlaces } from "@/lib/map/places";
 import { usePathname } from "next/navigation";
 import { getLocaleFromPath, getDictionary } from "@/lib/i18n";
@@ -460,6 +461,18 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
                   {cleanInventoryDescription(room.fullDescription)}
                 </p>
               )}
+            </section>
+
+            <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-[rgba(212,163,89,0.22)] to-transparent" aria-hidden="true" />
+
+            {/* ── 2. PURPOSE-FIRST SERVICES ── */}
+            <section aria-label={isAr ? "خدمات حسب الغرض من الإقامة" : "Services for your stay purpose"}>
+              <PurposeServices
+                selectedPurposeId={selectedPurposeId}
+                selectedAddonIds={selectedAddonIds}
+                onSelectPurpose={setSelectedPurposeId}
+                onToggleAddon={handleToggleAddon}
+              />
             </section>
 
             <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-[rgba(212,163,89,0.22)] to-transparent" aria-hidden="true" />
