@@ -8,6 +8,8 @@ import { ArrowRight, MapPin, Building2, CalendarSearch, Loader2, X } from "lucid
 import { cn } from "@/lib/utils";
 import { formatPrice, getBranchBySlug, WHATSAPP_CONFIG } from "@/lib/constants";
 import { type RoomDetail } from "@/lib/mock-rooms";
+import { calculateFlatelPrice } from "@/lib/pricing";
+import { encodeCart, isGroupCart, parseCart, type CartItem } from "@/lib/booking/cart";
 import { usePathname } from "next/navigation";
 import { getLocaleFromPath, getDictionary } from "@/lib/i18n";
 import { getLocalizedRoom } from "@/lib/i18n/room-localizer";
@@ -45,6 +47,7 @@ export function FeaturedFlats({ className }: FeaturedFlatsProps) {
   const [filterType, setFilterType] = React.useState<string>("all");
   const [filterBranch, setFilterBranch] = React.useState<string>("all");
   const [selectedUnits, setSelectedUnits] = React.useState(1);
+  const [cart, setCart] = React.useState<CartItem[]>([]);
   const [availability, setAvailability] = React.useState<Record<string, AvailabilityStatus>>({});
 
   // Search parameters synced from Hero booking bar
@@ -94,6 +97,7 @@ export function FeaturedFlats({ className }: FeaturedFlatsProps) {
       if (branch === "barkas-salala" || branch === "moghal-pura") setFilterBranch(branch);
       if (flatType) setFilterType(flatType);
       setSelectedUnits(unitsParam ? Math.max(1, parseInt(unitsParam, 10) || 1) : 1);
+      setCart(parseCart(sp.get("cart")) ?? []);
 
       let nights = 0;
       if (checkIn && checkOut) {
@@ -122,6 +126,7 @@ export function FeaturedFlats({ className }: FeaturedFlatsProps) {
         adults: number;
         childrenCount: number;
         totalUnits?: number;
+        cart?: CartItem[];
       }>;
       const detail = customEvent.detail;
       if (!detail) return;
@@ -138,6 +143,7 @@ export function FeaturedFlats({ className }: FeaturedFlatsProps) {
         setFilterType("all");
       }
       setSelectedUnits(detail.totalUnits && detail.totalUnits > 0 ? detail.totalUnits : 1);
+      setCart(Array.isArray(detail.cart) ? detail.cart : []);
 
       let nights = 0;
       if (detail.checkIn && detail.checkOut) {
@@ -227,6 +233,58 @@ export function FeaturedFlats({ className }: FeaturedFlatsProps) {
     flatTypes: filterType === "all" ? [] : filterType.split(",").filter(Boolean),
     totalUnits: selectedUnits,
   });
+
+  // Several flats chosen: offer one combined booking (same branch, same dates, one payment)
+  const groupCart = isGroupCart(cart) ? cart : null;
+  const groupRooms = groupCart ? groupCart.map((item) => rooms.find((room) => room.slug === item.slug)) : [];
+  const groupKnown = Boolean(groupCart) && !roomsLoading && groupRooms.every(Boolean);
+  const groupBranchMix = new Set(groupRooms.filter(Boolean).map((room) => room!.branchSlug)).size > 1;
+  const groupUnavailable = groupCart ? groupCart.filter((item) => visibleStatus[item.slug] === "booked") : [];
+  const groupEstimate = (() => {
+    if (!groupCart || !groupKnown || !searchDates.nights) return null;
+    try {
+      return groupCart.reduce(
+        (sum, item, index) => {
+          const room = groupRooms[index]!;
+          const fare = calculateFlatelPrice({
+            nights: searchDates.nights!,
+            basePricePerNight: room.basePricePerNight,
+            baseAdults: room.baseAdults,
+            selectedAdults: item.adults,
+            selectedKids: item.kids,
+            extraPersonFee: room.extraPersonFeePerNight,
+          });
+          return { gross: sum.gross + fare.grossTotal, advance: sum.advance + fare.advancePayable };
+        },
+        { gross: 0, advance: 0 }
+      );
+    } catch {
+      return null;
+    }
+  })();
+  const groupCheckoutHref =
+    groupCart && searchDates.checkIn && searchDates.checkOut
+      ? `${localePrefix}/checkout?${new URLSearchParams({ cart: encodeCart(groupCart), checkIn: searchDates.checkIn, checkOut: searchDates.checkOut }).toString()}`
+      : null;
+  const groupSummary = groupCart
+    ? Array.from(
+        groupCart.reduce((counts, item, index) => {
+          const label = groupRooms[index]?.type ?? item.slug.toUpperCase();
+          return counts.set(label, (counts.get(label) ?? 0) + 1);
+        }, new Map<string, number>())
+      )
+        .map(([label, count]) => (count > 1 ? `${count} × ${label}` : label))
+        .join(" + ")
+    : "";
+  const groupBlockedReason = groupBranchMix
+    ? isAr
+      ? "يجب أن تكون الشقق في فرع واحد. اختر فرعاً واحداً أو احجزها على حدة."
+      : "Flats in one combined booking must be at the same branch. Choose one branch, or book them separately."
+    : groupUnavailable.length > 0
+    ? isAr
+      ? "إحدى الشقق غير متاحة في هذه التواريخ. غيّر التواريخ أو الاختيار."
+      : "One of these flats isn't available for your dates. Change the dates or your selection."
+    : null;
 
   const clearDates = () => {
     setSearchDates({});
@@ -357,8 +415,57 @@ export function FeaturedFlats({ className }: FeaturedFlatsProps) {
           </div>
         )}
 
-        {/* Several flats requested: booking is one flat at a time for now */}
-        {multiFlat && (
+        {/* Several flats chosen: one combined booking */}
+        {groupCart && (
+          <div className="mb-5 rounded-xl border border-[rgba(212,163,89,0.4)] bg-[rgba(22,16,11,0.9)] p-4 sm:p-5 space-y-3">
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <p className="text-sm sm:text-base font-semibold text-[#FAF4EB]">
+                {isAr ? `حجز ${groupCart.length} شقق معاً` : `Book ${groupCart.length} flats together`}
+                <span className="ms-2 font-normal text-[#D4C4B3]">{groupSummary}</span>
+              </p>
+              {groupEstimate && (
+                <p className="text-sm text-[#D4C4B3]">
+                  {isAr ? "الإجمالي التقريبي " : "Estimated total "}
+                  <span className="font-mono font-semibold text-[#E5C178]">{formatPrice(groupEstimate.gross)}</span>
+                  {isAr ? " · العربون " : " · advance "}
+                  <span className="font-mono text-[#FAF4EB]">{formatPrice(groupEstimate.advance)}</span>
+                </p>
+              )}
+            </div>
+            <p className="text-xs text-[#B8A692]">
+              {isAr ? "دفعة واحدة وقسيمة واحدة لجميع الشقق." : "One payment and one voucher for all your flats."}
+            </p>
+            {groupBlockedReason && (
+              <p role="alert" className="text-sm text-[#F2B8A0]">{groupBlockedReason}</p>
+            )}
+            <div className="flex flex-wrap items-center gap-3">
+              {groupCheckoutHref && !groupBlockedReason && groupKnown ? (
+                <Link
+                  href={groupCheckoutHref}
+                  className="inline-flex items-center gap-2 px-5 min-h-[44px] rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] font-bold text-sm shadow-md shadow-[#E5C178]/25 hover:brightness-105"
+                >
+                  {isAr ? "احجز الشقق معاً" : "Book these flats"}
+                  <ArrowRight className="w-4 h-4 rtl:rotate-180" />
+                </Link>
+              ) : !groupCheckoutHref ? (
+                <button
+                  type="button"
+                  onClick={editSearch}
+                  className="inline-flex items-center gap-2 px-5 min-h-[44px] rounded-xl border border-[rgba(212,163,89,0.5)] text-[#E5C178] font-semibold text-sm hover:border-[#E5C178] cursor-pointer"
+                >
+                  <CalendarSearch className="w-4 h-4" />
+                  {isAr ? "اختر التواريخ للحجز معاً" : "Choose dates to book together"}
+                </button>
+              ) : null}
+              <a href={multiFlatWhatsApp} target="_blank" rel="noopener noreferrer" className="text-sm text-[#E5C178] font-semibold hover:underline">
+                {isAr ? "أو راسلنا عبر واتساب" : "or WhatsApp us"}
+              </a>
+            </div>
+          </div>
+        )}
+
+        {/* Several units requested without a flat-by-flat selection (old links): one at a time */}
+        {!groupCart && multiFlat && (
           <p className="mb-5 px-4 py-3 rounded-xl border border-[rgba(212,163,89,0.3)] bg-[rgba(22,16,11,0.85)] text-sm text-[#D4C4B3]">
             {isAr ? "تحجز أكثر من شقة؟ احجز كل شقة على حدة، أو " : "Booking multiple flats? Book them one by one, or "}
             <a href={multiFlatWhatsApp} target="_blank" rel="noopener noreferrer" className="text-[#E5C178] font-semibold hover:underline">

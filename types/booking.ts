@@ -68,6 +68,8 @@ export type BookingPricing = FareCalculationResult;
 export interface BookingRecord {
   id: string;
   bookingCode: string; // e.g. FLT-84920
+  /** Set on every flat of a multi-flat booking: the code of its first flat, shared by the group. */
+  groupCode?: string;
   unitId: string;
   guest: BookingGuest;
   stayPurpose: StayPurposeType;

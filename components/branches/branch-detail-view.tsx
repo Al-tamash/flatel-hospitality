@@ -522,7 +522,7 @@ export function BranchDetailView({ branch, properties }: BranchDetailViewProps) 
                             {isAr ? "الأطفال" : "Children"}
                           </span>
                           <span className="text-[10px] text-emerald-400">
-                            {isAr ? "٠–١٢ سنة (إقامة مجانية)" : "0–12 yrs (Stay free)"}
+                            {isAr ? "٠–١٢ سنة (الإضافي ₹٣٠٠ لليلة)" : "0–12 yrs (extra ₹300/night)"}
                           </span>
                         </div>
                         <div className="flex items-center gap-2">

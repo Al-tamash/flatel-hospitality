@@ -393,6 +393,23 @@
 /* ==========================================================================
    Two-Line Marquee Animations for Amenities Showcase (Left & Right)
    ========================================================================== */
+/* Membership card light sweep */
+@keyframes card-sheen {
+  0%,
+  55%,
+  100% {
+    transform: translateX(0) skewX(-12deg);
+    opacity: 0;
+  }
+  65% {
+    opacity: 1;
+  }
+  90% {
+    transform: translateX(420%) skewX(-12deg);
+    opacity: 0;
+  }
+}
+
 @keyframes marquee-scroll-left {
   0% {
     transform: translateX(0);

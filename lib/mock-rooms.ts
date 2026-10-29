@@ -482,7 +482,7 @@ export function getMasterAddonById(id: string): FacilityAddon | undefined {
  * 4 BHK: 1 Unit, ₹4,000 / night, 8 Base Adults, up to 4 Extra Persons
  * 5 BHK: Admin-created, custom pricing & occupancy
  * Extra adult fee: ₹500 / night
- * Kids 0-12: Free
+ * Children: included up to the base allowance (1 BHK 1, 2 BHK 2, 3 BHK 3, 4 BHK 4); extra children ₹300 / night
  */
 export const MOCK_ROOMS: RoomDetail[] = [
   {
@@ -503,7 +503,7 @@ export const MOCK_ROOMS: RoomDetail[] = [
     extraPersonFeePerNight: 500,
     totalUnits: 1,
     branchSlug: "moghal-pura",
-    capacityLabel: "2 Base Adults (+2 Extra Allowed) · Kids 0–12 free",
+    capacityLabel: "2 Base Adults (+2 Extra Allowed) · 1 child included, extra ₹300/night",
     specs: {
       guests: "2 Base Adults (+2 Extra Allowed)",
       bedrooms: "1 Master Bedroom",
@@ -545,7 +545,7 @@ export const MOCK_ROOMS: RoomDetail[] = [
     extraPersonFeePerNight: 500,
     totalUnits: 1,
     branchSlug: "moghal-pura",
-    capacityLabel: "4 Base Adults (+2 Extra Allowed) · Kids 0–12 free",
+    capacityLabel: "4 Base Adults (+2 Extra Allowed) · 2 children included, extra ₹300/night",
     specs: {
       guests: "4 Base Adults (+2 Extra Allowed)",
       bedrooms: "2 Private Bedrooms",
@@ -587,7 +587,7 @@ export const MOCK_ROOMS: RoomDetail[] = [
     extraPersonFeePerNight: 500,
     totalUnits: 2, // 2 Units at Barkas
     branchSlug: "barkas-salala",
-    capacityLabel: "6 Base Adults (+3 Extra Allowed) · Kids 0–12 free",
+    capacityLabel: "6 Base Adults (+3 Extra Allowed) · 3 children included, extra ₹300/night",
     specs: {
       guests: "6 Base Adults (+3 Extra Allowed)",
       bedrooms: "3 Private Bedrooms",
@@ -629,7 +629,7 @@ export const MOCK_ROOMS: RoomDetail[] = [
     extraPersonFeePerNight: 500,
     totalUnits: 1,
     branchSlug: "moghal-pura",
-    capacityLabel: "8 Base Adults (+4 Extra Allowed) · Kids 0–12 free",
+    capacityLabel: "8 Base Adults (+4 Extra Allowed) · 4 children included, extra ₹300/night",
     specs: {
       guests: "8 Base Adults (+4 Extra Allowed)",
       bedrooms: "4 Grand Bedrooms",

@@ -26,6 +26,7 @@ export interface Dictionary {
     properties: string;
     hospitals: string;
     about: string;
+    membership: string;
     branches: string;
     policies: string;
     listProperty: string;

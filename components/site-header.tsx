@@ -200,7 +200,7 @@ function SiteHeaderContent() {
           {/* Branches (Dropdown), Stays, Amenities, Reviews, About, FAQs */}
           {/* Actions: Hotline, WhatsApp, Admin Login                   */}
           {/* ========================================================= */}
-          <div className="hidden lg:flex items-center gap-5 xl:gap-7">
+          <div className="hidden lg:flex items-center gap-3 xl:gap-7">
             {/* Core Navigation Links */}
             <nav
               className="flex items-center gap-2 xl:gap-3"
@@ -210,7 +210,7 @@ function SiteHeaderContent() {
               <Link
                 href={`${localePrefix}/properties`}
                 className={cn(
-                  "relative px-3 py-2 min-h-[40px] inline-flex items-center text-sm xl:text-[15px] font-sans font-semibold tracking-normal transition-colors duration-150 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-md",
+                  "relative px-2 xl:px-3 py-2 min-h-[40px] inline-flex items-center whitespace-nowrap text-sm xl:text-[15px] font-sans font-semibold tracking-normal transition-colors duration-150 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-md",
                   pathname.startsWith(`${localePrefix}/properties`)
                     ? "text-[#E5C178]"
                     : "text-[#D4C4B3] hover:text-[#E5C178]"
@@ -223,7 +223,7 @@ function SiteHeaderContent() {
               <Link
                 href={`${localePrefix}/hospitals`}
                 className={cn(
-                  "relative px-3 py-2 min-h-[40px] inline-flex items-center text-sm xl:text-[15px] font-sans font-semibold tracking-normal transition-colors duration-150 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-md",
+                  "relative px-2 xl:px-3 py-2 min-h-[40px] inline-flex items-center whitespace-nowrap text-sm xl:text-[15px] font-sans font-semibold tracking-normal transition-colors duration-150 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-md",
                   pathname === `${localePrefix}/hospitals`
                     ? "text-[#E5C178]"
                     : "text-[#D4C4B3] hover:text-[#E5C178]"
@@ -236,13 +236,26 @@ function SiteHeaderContent() {
               <Link
                 href={`${localePrefix}/about`}
                 className={cn(
-                  "relative px-3 py-2 min-h-[40px] inline-flex items-center text-sm xl:text-[15px] font-sans font-semibold tracking-normal transition-colors duration-150 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-md",
+                  "relative px-2 xl:px-3 py-2 min-h-[40px] inline-flex items-center whitespace-nowrap text-sm xl:text-[15px] font-sans font-semibold tracking-normal transition-colors duration-150 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-md",
                   pathname === `${localePrefix}/about`
                     ? "text-[#E5C178]"
                     : "text-[#D4C4B3] hover:text-[#E5C178]"
                 )}
               >
                 <span>{dict.nav.about}</span>
+              </Link>
+
+              {/* 3b. Membership */}
+              <Link
+                href={`${localePrefix}/membership`}
+                className={cn(
+                  "relative px-2 xl:px-3 py-2 min-h-[40px] inline-flex items-center whitespace-nowrap text-sm xl:text-[15px] font-sans font-semibold tracking-normal transition-colors duration-150 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-md",
+                  pathname === `${localePrefix}/membership`
+                    ? "text-[#E5C178]"
+                    : "text-[#D4C4B3] hover:text-[#E5C178]"
+                )}
+              >
+                <span>{dict.nav.membership}</span>
               </Link>
 
               {/* 4. Branches (Dropdown) */}
@@ -350,7 +363,7 @@ function SiteHeaderContent() {
               <Link
                 href={`${localePrefix}/policies`}
                 className={cn(
-                  "relative px-3 py-2 min-h-[40px] inline-flex items-center text-sm xl:text-[15px] font-sans font-semibold tracking-normal transition-colors duration-150 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-md",
+                  "relative px-2 xl:px-3 py-2 min-h-[40px] inline-flex items-center whitespace-nowrap text-sm xl:text-[15px] font-sans font-semibold tracking-normal transition-colors duration-150 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-md",
                   pathname === `${localePrefix}/policies`
                     ? "text-[#E5C178]"
                     : "text-[#D4C4B3] hover:text-[#E5C178]"
@@ -363,7 +376,7 @@ function SiteHeaderContent() {
               <Link
                 href={`${localePrefix}/list-property`}
                 className={cn(
-                  "relative px-3 py-2 min-h-[40px] inline-flex items-center text-sm xl:text-[15px] font-sans font-semibold tracking-normal transition-colors duration-150 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-md",
+                  "relative px-2 xl:px-3 py-2 min-h-[40px] inline-flex items-center whitespace-nowrap text-sm xl:text-[15px] font-sans font-semibold tracking-normal transition-colors duration-150 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-md",
                   pathname === `${localePrefix}/list-property`
                     ? "text-[#E5C178]"
                     : "text-[#D4C4B3] hover:text-[#E5C178]"
@@ -608,6 +621,18 @@ function SiteHeaderContent() {
                 >
                   <span className="font-sans text-[15px] font-medium tracking-wide">
                     {dict.nav.about}
+                  </span>
+                  <ChevronRight className={cn("h-4 w-4 text-[#B8A692]/50 group-hover:text-[#E5C178] group-hover:translate-x-0.5 transition-all", isAr && "rotate-180 group-hover:-translate-x-0.5")} />
+                </Link>
+
+                {/* 3b. Membership */}
+                <Link
+                  href={`${localePrefix}/membership`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-between min-h-[46px] px-3.5 py-2.5 rounded-xl text-[#FAF4EB] hover:text-[#E5C178] hover:bg-[rgba(34,24,16,0.6)] active:bg-[#16100B] transition-colors group"
+                >
+                  <span className="font-sans text-[15px] font-medium tracking-wide">
+                    {dict.nav.membership}
                   </span>
                   <ChevronRight className={cn("h-4 w-4 text-[#B8A692]/50 group-hover:text-[#E5C178] group-hover:translate-x-0.5 transition-all", isAr && "rotate-180 group-hover:-translate-x-0.5")} />
                 </Link>

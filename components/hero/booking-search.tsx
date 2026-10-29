@@ -13,6 +13,8 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLiveFlats } from "@/hooks/use-live-flats";
+import { encodeCart, type CartItem } from "@/lib/booking/cart";
 import { BranchSelector, type BranchFilter } from "./branch-selector";
 import { DateRangePicker } from "./date-range-picker";
 import {
@@ -51,6 +53,8 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
   );
   const [flatOccupancyState, setFlatsOccupancyState] = React.useState<Record<string, FlatOccupancyState> | null>(null);
   const [isFlatOccupancyModalOpen, setIsFlatOccupancyModalOpen] = React.useState(false);
+  const [cart, setCart] = React.useState<CartItem[]>([]);
+  const { flats, status: flatsStatus, retry: retryFlats } = useLiveFlats();
 
   // 5. Popover Control for Branch & Calendar: 'branch' | 'calendar' | null
   const [activePopover, setActivePopover] = React.useState<"branch" | "calendar" | null>(null);
@@ -209,6 +213,7 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
     setFlatsOccupancyState(result.flats);
     setSelectedFlatTypes(result.flatTypesQuery);
     setSelectedUnits(result.totalUnits);
+    setCart(result.cart);
     setFlatOccupancySummary(result.summaryLabel);
     setAdults(result.totalAdults);
     setChildrenCount(result.totalKids);
@@ -264,6 +269,7 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
     if (selectedBranch && selectedBranch !== "all") params.set("branch", selectedBranch);
     if (selectedFlatTypes && selectedFlatTypes !== "all") params.set("flatType", selectedFlatTypes);
     if (selectedUnits > 1) params.set("units", selectedUnits.toString());
+    if (cart.length > 0) params.set("cart", encodeCart(cart));
     if (checkIn) params.set("checkIn", format(checkIn, "yyyy-MM-dd"));
     if (checkOut) params.set("checkOut", format(checkOut, "yyyy-MM-dd"));
     if (hasSelectedGuests || adults !== 2 || childrenCount !== 0) {
@@ -286,6 +292,7 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
             adults,
             childrenCount,
             totalUnits: selectedUnits,
+            cart,
           },
         })
       );
@@ -584,6 +591,9 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
         onClose={() => setIsFlatOccupancyModalOpen(false)}
         onApply={handleApplyFlatOccupancy}
         initialSelection={flatOccupancyState}
+        flats={flats}
+        flatsStatus={flatsStatus}
+        onRetryFlats={retryFlats}
       />
     </>
   );

@@ -1,5 +1,17 @@
 import type { NextConfig } from "next";
 
+/** A custom R2 domain (instead of *.r2.dev) must also be allowed for next/image. */
+function customR2Host(): string | null {
+  try {
+    const host = new URL(process.env.NEXT_PUBLIC_R2_PUBLIC_URL || "").hostname;
+    return host && !host.endsWith(".r2.dev") ? host : null;
+  } catch {
+    return null;
+  }
+}
+
+const r2Host = customR2Host();
+
 const nextConfig: NextConfig = {
   cacheComponents: true,
   images: {
@@ -13,6 +25,7 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "**.r2.dev",
       },
+      ...(r2Host ? [{ protocol: "https" as const, hostname: r2Host }] : []),
     ],
   },
   async redirects() {

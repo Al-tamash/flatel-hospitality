@@ -90,9 +90,9 @@ const GUEST_POLICIES: PolicyCard[] = [
     title: "Children & Extra Guest Policy",
     badge: "Occupancy Guidelines",
     summary:
-      "Children aged 0–12 stay completely free. Extra adult guests beyond base flat capacity are ₹500 per person per night.",
+      "Each flat includes a base number of children; every additional child is ₹300 per night. Extra adult guests beyond base flat capacity are ₹500 per person per night.",
     details: [
-      "Children (0–12 years): 100% FREE stay with complimentary baby cot on request",
+      "Children (0–12 years): included up to the flat's base allowance (1 BHK 1, 2 BHK 2, 3 BHK 3, 4 BHK 4); additional children ₹300 per child per night. Complimentary baby cot on request",
       "Base occupancy: 1 BHK (2 Adults), 2 BHK (4 Adults), 3 BHK (6 Adults), 4 BHK (8 Adults)",
       "Extra person fee: ₹500 per adult per night beyond base capacity",
       "Extra plush floor mattress, sanitized pillow, and blanket provided for extra guests",

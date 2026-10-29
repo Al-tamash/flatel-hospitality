@@ -15,75 +15,10 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getLocaleFromPath } from "@/lib/i18n";
-import { MOCK_ROOMS } from "@/lib/mock-rooms";
-import { getUnitCapsByFlatType } from "@/lib/inventory-stats";
+import type { FlatDefinition } from "@/lib/booking/flat-definitions";
+import { MAX_CART_FLATS, buildCartItems, type CartItem } from "@/lib/booking/cart";
 
-export interface FlatDefinition {
-  id: string; // "1bhk", "2bhk", "3bhk", "4bhk"
-  title: string;
-  pricePerNight: number;
-  availableUnits: number;
-  baseAdults: number;
-  baseKids: number;
-  maxExtraAdults: number;
-  maxExtraKids: number;
-  extraAdultFee: number;
-  extraKidFee: number;
-}
-
-// Unit caps come from inventory, never hard-coded
-const UNIT_CAPS = getUnitCapsByFlatType(MOCK_ROOMS);
-
-export const FLAT_DEFINITIONS: FlatDefinition[] = [
-  {
-    id: "1bhk",
-    title: "1 BHK",
-    pricePerNight: 2000,
-    availableUnits: UNIT_CAPS["1bhk"] ?? 1,
-    baseAdults: 2,
-    baseKids: 1,
-    maxExtraAdults: 2,
-    maxExtraKids: 1,
-    extraAdultFee: 500,
-    extraKidFee: 300,
-  },
-  {
-    id: "2bhk",
-    title: "2 BHK",
-    pricePerNight: 2500,
-    availableUnits: UNIT_CAPS["2bhk"] ?? 1,
-    baseAdults: 4,
-    baseKids: 2,
-    maxExtraAdults: 2,
-    maxExtraKids: 2,
-    extraAdultFee: 500,
-    extraKidFee: 300,
-  },
-  {
-    id: "3bhk",
-    title: "3 BHK",
-    pricePerNight: 3000,
-    availableUnits: UNIT_CAPS["3bhk"] ?? 1,
-    baseAdults: 6,
-    baseKids: 3,
-    maxExtraAdults: 3,
-    maxExtraKids: 3,
-    extraAdultFee: 500,
-    extraKidFee: 300,
-  },
-  {
-    id: "4bhk",
-    title: "4 BHK",
-    pricePerNight: 4000,
-    availableUnits: UNIT_CAPS["4bhk"] ?? 1,
-    baseAdults: 8,
-    baseKids: 4,
-    maxExtraAdults: 4,
-    maxExtraKids: 4,
-    extraAdultFee: 500,
-    extraKidFee: 300,
-  },
-];
+export type { FlatDefinition };
 
 export interface FlatOccupancyState {
   units: number;
@@ -104,6 +39,8 @@ export interface MergedSelectionResult {
   summaryLabel: string;
   flatTypesQuery: string; // "1bhk" or "1bhk,2bhk" or "all"
   primaryFlatType: string | null;
+  /** One entry per physical flat, with the guests assigned to it. */
+  cart: CartItem[];
 }
 
 interface FlatOccupancyModalProps {
@@ -111,6 +48,10 @@ interface FlatOccupancyModalProps {
   onClose: () => void;
   onApply: (result: MergedSelectionResult) => void;
   initialSelection?: Record<string, FlatOccupancyState> | null;
+  /** Live flat types from inventory; null until loaded. */
+  flats: FlatDefinition[] | null;
+  flatsStatus: "loading" | "ready" | "error";
+  onRetryFlats: () => void;
 }
 
 export function FlatOccupancyModal({
@@ -118,44 +59,19 @@ export function FlatOccupancyModal({
   onClose,
   onApply,
   initialSelection,
+  flats,
+  flatsStatus,
+  onRetryFlats,
 }: FlatOccupancyModalProps) {
   const pathname = usePathname();
   const currentLocale = getLocaleFromPath(pathname);
   const isAr = currentLocale === "ar";
 
-  // Default selection: 1 unit of 1 BHK with 2 Adults, 0 Children
-  const createDefaultState = React.useCallback((): Record<string, FlatOccupancyState> => {
-    const state: Record<string, FlatOccupancyState> = {};
-    FLAT_DEFINITIONS.forEach((flat) => {
-      if (flat.id === "1bhk") {
-        state[flat.id] = {
-          units: 1,
-          baseAdults: flat.baseAdults,
-          baseKids: 0,
-          extraAdults: 0,
-          extraKids: 0,
-          isAdditionalOpen: false,
-        };
-      } else {
-        state[flat.id] = {
-          units: 0,
-          baseAdults: flat.baseAdults,
-          baseKids: 0,
-          extraAdults: 0,
-          extraKids: 0,
-          isAdditionalOpen: false,
-        };
-      }
-    });
-    return state;
-  }, []);
+  const definitions = React.useMemo(() => flats ?? [], [flats]);
 
-  const [flatsState, setFlatsState] = React.useState<Record<string, FlatOccupancyState>>(() => {
-    if (initialSelection && Object.keys(initialSelection).length > 0) {
-      return initialSelection;
-    }
-    return createDefaultState();
-  });
+  const [flatsState, setFlatsState] = React.useState<Record<string, FlatOccupancyState>>(() =>
+    initialSelection && Object.keys(initialSelection).length > 0 ? initialSelection : {}
+  );
 
   // Adjust state during render when initialSelection prop changes (standard React pattern)
   const [prevSelection, setPrevSelection] = React.useState(initialSelection);
@@ -189,135 +105,99 @@ export function FlatOccupancyModal({
     }
   }, [isOpen]);
 
-  // State mutators for each flat
-  const updateFlatUnits = (flatId: string, delta: number) => {
-    setFlatsState((prev) => {
-      const flat = FLAT_DEFINITIONS.find((f) => f.id === flatId);
-      if (!flat) return prev;
-      const current = prev[flatId] || {
-        units: 0,
-        baseAdults: flat.baseAdults,
-        baseKids: 0,
-        extraAdults: 0,
-        extraKids: 0,
-        isAdditionalOpen: false,
-      };
+  const emptyState = (flat: FlatDefinition, units: number): FlatOccupancyState => ({
+    units,
+    baseAdults: flat.baseAdults,
+    baseKids: 0,
+    extraAdults: 0,
+    extraKids: 0,
+    isAdditionalOpen: false,
+  });
 
-      const newUnits = Math.max(0, Math.min(flat.availableUnits, current.units + delta));
+  /** Until the guest touches anything, the first flat type is pre-selected with one unit. */
+  const stateFor = (flat: FlatDefinition, index: number): FlatOccupancyState =>
+    flatsState[flat.id] ?? emptyState(flat, Object.keys(flatsState).length === 0 && index === 0 ? 1 : 0);
+
+  const patchFlat = (
+    flatId: string,
+    change: (current: FlatOccupancyState, flat: FlatDefinition) => FlatOccupancyState
+  ) => {
+    setFlatsState((prev) => {
+      const flat = definitions.find((f) => f.id === flatId);
+      if (!flat) return prev;
+      const untouched = Object.keys(prev).length === 0;
+      const full: Record<string, FlatOccupancyState> = {};
+      definitions.forEach((def, index) => {
+        full[def.id] = prev[def.id] ?? emptyState(def, untouched && index === 0 ? 1 : 0);
+      });
+      return { ...full, [flatId]: change(full[flatId], flat) };
+    });
+  };
+
+  const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
+
+  const updateFlatUnits = (flatId: string, delta: number) =>
+    patchFlat(flatId, (current, flat) => {
+      const newUnits = clamp(current.units + delta, 0, flat.availableUnits);
       const isNewlyActivated = current.units === 0 && newUnits > 0;
-
       return {
-        ...prev,
-        [flatId]: {
-          ...current,
-          units: newUnits,
-          // When newly activated, default to base adults
-          baseAdults: isNewlyActivated ? flat.baseAdults : Math.min(current.baseAdults, flat.baseAdults * Math.max(1, newUnits)),
-          baseKids: Math.min(current.baseKids, flat.baseKids * Math.max(1, newUnits)),
-          extraAdults: newUnits === 0 ? 0 : current.extraAdults,
-          extraKids: newUnits === 0 ? 0 : current.extraKids,
-          isAdditionalOpen: isNewlyActivated ? false : current.isAdditionalOpen,
-        },
+        ...current,
+        units: newUnits,
+        // Every unit needs at least one adult, and guests can't exceed what the units hold
+        baseAdults:
+          newUnits === 0
+            ? flat.baseAdults
+            : clamp(isNewlyActivated ? flat.baseAdults : current.baseAdults, newUnits, flat.baseAdults * newUnits),
+        baseKids: newUnits === 0 ? 0 : Math.min(current.baseKids, flat.baseKids * newUnits),
+        extraAdults: newUnits === 0 ? 0 : Math.min(current.extraAdults, flat.maxExtraAdults * newUnits),
+        extraKids: newUnits === 0 ? 0 : Math.min(current.extraKids, flat.maxExtraKids * newUnits),
+        isAdditionalOpen: isNewlyActivated ? false : current.isAdditionalOpen,
       };
     });
-  };
 
-  const updateBaseAdults = (flatId: string, delta: number) => {
-    setFlatsState((prev) => {
-      const flat = FLAT_DEFINITIONS.find((f) => f.id === flatId);
-      if (!flat) return prev;
-      const current = prev[flatId];
-      if (!current || current.units === 0) return prev;
+  const updateBaseAdults = (flatId: string, delta: number) =>
+    patchFlat(flatId, (current, flat) =>
+      current.units === 0
+        ? current
+        : (() => {
+            const baseAdults = clamp(current.baseAdults + delta, current.units, flat.baseAdults * current.units);
+            return { ...current, baseAdults, extraAdults: baseAdults < flat.baseAdults * current.units ? 0 : current.extraAdults };
+          })()
+    );
 
-      const maxLimit = flat.baseAdults * current.units;
-      const newAdults = Math.max(1, Math.min(maxLimit, current.baseAdults + delta));
+  const updateBaseKids = (flatId: string, delta: number) =>
+    patchFlat(flatId, (current, flat) =>
+      current.units === 0
+        ? current
+        : (() => {
+            const baseKids = clamp(current.baseKids + delta, 0, flat.baseKids * current.units);
+            return { ...current, baseKids, extraKids: baseKids < flat.baseKids * current.units ? 0 : current.extraKids };
+          })()
+    );
 
-      return {
-        ...prev,
-        [flatId]: {
-          ...current,
-          baseAdults: newAdults,
-        },
-      };
-    });
-  };
+  const updateExtraAdults = (flatId: string, delta: number) =>
+    patchFlat(flatId, (current, flat) =>
+      current.units === 0
+        ? current
+        : current.baseAdults < flat.baseAdults * current.units
+        ? current
+        : { ...current, extraAdults: clamp(current.extraAdults + delta, 0, flat.maxExtraAdults * current.units) }
+    );
 
-  const updateBaseKids = (flatId: string, delta: number) => {
-    setFlatsState((prev) => {
-      const flat = FLAT_DEFINITIONS.find((f) => f.id === flatId);
-      if (!flat) return prev;
-      const current = prev[flatId];
-      if (!current || current.units === 0) return prev;
+  const updateExtraKids = (flatId: string, delta: number) =>
+    patchFlat(flatId, (current, flat) =>
+      current.units === 0
+        ? current
+        : current.baseKids < flat.baseKids * current.units
+        ? current
+        : { ...current, extraKids: clamp(current.extraKids + delta, 0, flat.maxExtraKids * current.units) }
+    );
 
-      const maxLimit = flat.baseKids * current.units;
-      const newKids = Math.max(0, Math.min(maxLimit, current.baseKids + delta));
-
-      return {
-        ...prev,
-        [flatId]: {
-          ...current,
-          baseKids: newKids,
-        },
-      };
-    });
-  };
-
-  const updateExtraAdults = (flatId: string, delta: number) => {
-    setFlatsState((prev) => {
-      const flat = FLAT_DEFINITIONS.find((f) => f.id === flatId);
-      if (!flat) return prev;
-      const current = prev[flatId];
-      if (!current || current.units === 0) return prev;
-
-      const maxLimit = flat.maxExtraAdults * current.units;
-      const newExtras = Math.max(0, Math.min(maxLimit, current.extraAdults + delta));
-
-      return {
-        ...prev,
-        [flatId]: {
-          ...current,
-          extraAdults: newExtras,
-        },
-      };
-    });
-  };
-
-  const updateExtraKids = (flatId: string, delta: number) => {
-    setFlatsState((prev) => {
-      const flat = FLAT_DEFINITIONS.find((f) => f.id === flatId);
-      if (!flat) return prev;
-      const current = prev[flatId];
-      if (!current || current.units === 0) return prev;
-
-      const maxLimit = flat.maxExtraKids * current.units;
-      const newExtras = Math.max(0, Math.min(maxLimit, current.extraKids + delta));
-
-      return {
-        ...prev,
-        [flatId]: {
-          ...current,
-          extraKids: newExtras,
-        },
-      };
-    });
-  };
-
-  const toggleAdditionalAccordion = (flatId: string) => {
-    setFlatsState((prev) => {
-      const current = prev[flatId];
-      if (!current) return prev;
-      return {
-        ...prev,
-        [flatId]: {
-          ...current,
-          isAdditionalOpen: !current.isAdditionalOpen,
-        },
-      };
-    });
-  };
+  const toggleAdditionalAccordion = (flatId: string) =>
+    patchFlat(flatId, (current) => ({ ...current, isAdditionalOpen: !current.isAdditionalOpen }));
 
   const handleReset = () => {
-    setFlatsState(createDefaultState());
+    setFlatsState({});
   };
 
   // Live Aggregate Computations
@@ -327,10 +207,11 @@ export function FlatOccupancyModal({
     let totalKids = 0;
     let estimatedPricePerNight = 0;
     const activeFlats: { id: string; title: string; units: number }[] = [];
+    const cart: CartItem[] = [];
 
-    FLAT_DEFINITIONS.forEach((flat) => {
-      const state = flatsState[flat.id];
-      if (state && state.units > 0) {
+    definitions.forEach((flat, index) => {
+      const state = stateFor(flat, index);
+      if (state.units > 0) {
         totalUnits += state.units;
         totalAdults += state.baseAdults + state.extraAdults;
         totalKids += state.baseKids + state.extraKids;
@@ -345,6 +226,9 @@ export function FlatOccupancyModal({
           title: flat.title,
           units: state.units,
         });
+        cart.push(
+          ...buildCartItems(flat.id, state.units, state.baseAdults + state.extraAdults, state.baseKids + state.extraKids)
+        );
       }
     });
 
@@ -394,12 +278,19 @@ export function FlatOccupancyModal({
       confirmedBadgeLabel,
       flatTypesQuery,
       primaryFlatType,
+      cart,
+      tooManyFlats: totalUnits > MAX_CART_FLATS,
     };
-  }, [flatsState, isAr]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- stateFor reads flatsState, which is listed
+  }, [flatsState, definitions, isAr]);
 
   const handleApply = () => {
+    const fullState: Record<string, FlatOccupancyState> = {};
+    definitions.forEach((def, index) => {
+      fullState[def.id] = stateFor(def, index);
+    });
     onApply({
-      flats: flatsState,
+      flats: fullState,
       totalUnits: aggregate.totalUnits,
       totalAdults: aggregate.totalAdults,
       totalKids: aggregate.totalKids,
@@ -408,6 +299,7 @@ export function FlatOccupancyModal({
       summaryLabel: aggregate.summaryLabel,
       flatTypesQuery: aggregate.flatTypesQuery,
       primaryFlatType: aggregate.primaryFlatType,
+      cart: aggregate.cart,
     });
     onClose();
   };
@@ -423,7 +315,7 @@ export function FlatOccupancyModal({
     >
       {/* Dark Ambient Backdrop */}
       <div
-        className="fixed inset-0 bg-black/80 backdrop-blur-md transition-opacity"
+        className="fixed inset-0 bg-[#0B0805]/85 backdrop-blur-md transition-opacity"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -446,63 +338,62 @@ export function FlatOccupancyModal({
 
         {/* Modal Header */}
         <div className="relative px-5 sm:px-7 pt-5 sm:pt-6 pb-4 border-b border-[rgba(212,163,89,0.18)] bg-[rgba(22,16,11,0.95)] backdrop-blur-md shrink-0">
-          <div className="flex items-center justify-between mb-2">
-            {/* Brand Logo & Tagline */}
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-[#E5C178]/15 border border-[#E5C178]/35 flex items-center justify-center text-[#E5C178]">
-                <Home className="w-4 h-4 stroke-[2.2]" />
-              </div>
-              <div className="flex flex-col">
-                <span className="font-serif tracking-wider text-xs uppercase text-[#E5C178] font-semibold leading-tight">
-                  {isAr ? "ضيافة فلاتيل" : "Flatel Hospitality"}
-                </span>
-                <span className="text-[10px] uppercase tracking-widest text-[#B8A692] leading-none">
-                  {isAr ? "شقق فندقية مجهزة · حيدر أباد" : "Serviced Apartments · Hyderabad"}
-                </span>
-              </div>
-            </div>
-
-            {/* Close Button */}
-            <button
-              type="button"
-              onClick={onClose}
-              className="w-8 h-8 rounded-full border border-[rgba(212,163,89,0.25)] bg-[rgba(22,16,11,0.7)] text-[#D4C4B3] hover:text-[#FAF4EB] hover:border-[#E5C178] flex items-center justify-center transition-colors cursor-pointer"
-              aria-label={isAr ? "إغلاق نافذة اختيار الشقة" : "Close flat type selector"}
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-
-          {/* Section Main Title */}
-          <div className="flex items-baseline justify-between mt-3">
+          <div className="flex items-center justify-between gap-3">
             <h2
               id="select-flat-type-title"
               className="text-xl sm:text-2xl font-serif font-semibold text-[#FAF4EB] tracking-normal"
             >
               {isAr ? "اختر نوع الشقة" : "Select Flat Type"}
             </h2>
-            <button
-              type="button"
-              onClick={handleReset}
-              className="text-xs text-[#E5C178] hover:text-[#FAF4EB] flex items-center gap-1 cursor-pointer transition-colors"
-            >
-              <RotateCcw className="w-3 h-3" />
-              <span>{isAr ? "إعادة ضبط" : "Reset"}</span>
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={handleReset}
+                className="text-xs text-[#E5C178] hover:text-[#FAF4EB] flex items-center gap-1 cursor-pointer transition-colors"
+              >
+                <RotateCcw className="w-3 h-3" />
+                <span>{isAr ? "إعادة ضبط" : "Reset"}</span>
+              </button>
+              <button
+                type="button"
+                onClick={onClose}
+                className="w-8 h-8 rounded-full border border-[rgba(212,163,89,0.25)] bg-[rgba(22,16,11,0.7)] text-[#D4C4B3] hover:text-[#FAF4EB] hover:border-[#E5C178] flex items-center justify-center transition-colors cursor-pointer"
+                aria-label={isAr ? "إغلاق نافذة اختيار الشقة" : "Close flat type selector"}
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
           </div>
+          <p className="mt-1 text-xs text-[#B8A692]">
+            {isAr
+              ? "يمكنك اختيار أكثر من نوع شقة — اضغط + على كل نوع تريده."
+              : "Need more space? Tap + on more than one flat type to combine them."}
+          </p>
         </div>
 
         {/* Scrollable Flat Cards Container */}
         <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 space-y-3.5 sm:space-y-4 overscroll-contain">
-          {FLAT_DEFINITIONS.map((flat) => {
-            const state = flatsState[flat.id] || {
-              units: 0,
-              baseAdults: flat.baseAdults,
-              baseKids: 0,
-              extraAdults: 0,
-              extraKids: 0,
-              isAdditionalOpen: false,
-            };
+          {flatsStatus === "loading" && !flats && (
+            <p role="status" className="py-10 text-center text-sm text-[#D4C4B3]">
+              {isAr ? "جارٍ تحميل الشقق…" : "Loading current flats…"}
+            </p>
+          )}
+          {flatsStatus === "error" && !flats && (
+            <div role="alert" className="py-10 text-center space-y-3">
+              <p className="text-sm text-[#D4C4B3]">
+                {isAr ? "تعذر تحميل الشقق الآن." : "We couldn't load the flats right now."}
+              </p>
+              <button
+                type="button"
+                onClick={onRetryFlats}
+                className="px-4 min-h-[40px] rounded-lg border border-[rgba(212,163,89,0.4)] text-sm font-semibold text-[#E5C178] hover:border-[#E5C178] cursor-pointer"
+              >
+                {isAr ? "حاول مرة أخرى" : "Try again"}
+              </button>
+            </div>
+          )}
+          {definitions.map((flat, index) => {
+            const state = stateFor(flat, index);
 
             const isSelected = state.units > 0;
             const maxBaseAdultsForUnits = flat.baseAdults * Math.max(1, state.units);
@@ -596,8 +487,10 @@ export function FlatOccupancyModal({
 
                       <span className="text-[10px] text-[#B8A692] mt-1 font-mono">
                         {isAr
-                          ? `متبقي ${flat.availableUnits} شقق`
-                          : `${flat.availableUnits} ${flat.availableUnits === 1 ? "unit left" : "units left"}`}
+                          ? `متاح ${flat.availableUnits} شقق`
+                          : flat.availableUnits === 1
+                            ? "Only 1 available"
+                            : `${flat.availableUnits} available`}
                       </span>
                     </div>
                   </div>
@@ -710,14 +603,20 @@ export function FlatOccupancyModal({
                         </button>
 
                         {state.isAdditionalOpen && (
-                          <div className="p-3 pt-1 border-t border-[rgba(212,163,89,0.15)] space-y-2.5 animate-in fade-in duration-150">
+                          <div className="p-2.5 border-t border-[rgba(212,163,89,0.15)] grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 animate-in fade-in duration-150">
+                            <p className="sm:col-span-2 text-[11px] text-[#B8A692]">
+                              {isAr
+                                ? "تُضاف رسوم النزلاء الإضافيين بعد اكتمال النزلاء المشمولين أعلاه."
+                                : "Extra guests are charged once the included guests above are full."}
+                            </p>
                             {/* Extra Adults */}
-                            <div className="flex items-center justify-between">
+                            <div className="p-2 sm:p-2.5 rounded-xl bg-[rgba(22,16,11,0.7)] border border-[rgba(212,163,89,0.2)] flex items-center justify-between gap-2">
                               <div className="flex flex-col">
                                 <span className="text-xs font-medium text-[#FAF4EB]">
-                                  {isAr
-                                    ? `بالغون إضافيون (+${maxExtraAdultsForUnits} متاحين)`
-                                    : `Additional Adults (+${maxExtraAdultsForUnits} extra)`}
+                                  {isAr ? "بالغون إضافيون" : "Extra Adults"}
+                                  <span className="text-[10px] text-[#B8A692] font-normal">
+                                    {isAr ? ` · حد أقصى ${maxExtraAdultsForUnits}` : ` · Max ${maxExtraAdultsForUnits}`}
+                                  </span>
                                 </span>
                                 <span className="text-[10px] text-[#E5C178] font-mono">
                                   {isAr ? `₹${flat.extraAdultFee} / ليلة لكل بالغ` : `₹${flat.extraAdultFee} / night per adult`}
@@ -739,7 +638,7 @@ export function FlatOccupancyModal({
                                 <button
                                   type="button"
                                   onClick={() => updateExtraAdults(flat.id, 1)}
-                                  disabled={state.extraAdults >= maxExtraAdultsForUnits}
+                                  disabled={state.extraAdults >= maxExtraAdultsForUnits || state.baseAdults < maxBaseAdultsForUnits}
                                   className="w-7 h-7 rounded-md border border-[rgba(212,163,89,0.2)] text-[#FAF4EB] flex items-center justify-center hover:border-[#E5C178] cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                                   aria-label="Increase extra adults"
                                 >
@@ -749,10 +648,13 @@ export function FlatOccupancyModal({
                             </div>
 
                             {/* Extra Children */}
-                            <div className="flex items-center justify-between pt-1 border-t border-[rgba(212,163,89,0.1)]">
+                            <div className="p-2 sm:p-2.5 rounded-xl bg-[rgba(22,16,11,0.7)] border border-[rgba(212,163,89,0.2)] flex items-center justify-between gap-2">
                               <div className="flex flex-col">
                                 <span className="text-xs font-medium text-[#FAF4EB]">
-                                  {isAr ? "أطفال إضافيون لكل ليلة" : "Additional Children per night"}
+                                  {isAr ? "أطفال إضافيون" : "Extra Children"}
+                                  <span className="text-[10px] text-[#B8A692] font-normal">
+                                    {isAr ? ` · حد أقصى ${maxExtraKidsForUnits}` : ` · Max ${maxExtraKidsForUnits}`}
+                                  </span>
                                 </span>
                                 <span className="text-[10px] text-[#E5C178] font-mono">
                                   {isAr ? `₹${flat.extraKidFee} / ليلة لكل طفل` : `₹${flat.extraKidFee} / night per child`}
@@ -774,7 +676,7 @@ export function FlatOccupancyModal({
                                 <button
                                   type="button"
                                   onClick={() => updateExtraKids(flat.id, 1)}
-                                  disabled={state.extraKids >= maxExtraKidsForUnits}
+                                  disabled={state.extraKids >= maxExtraKidsForUnits || state.baseKids < maxBaseKidsForUnits}
                                   className="w-7 h-7 rounded-md border border-[rgba(212,163,89,0.2)] text-[#FAF4EB] flex items-center justify-center hover:border-[#E5C178] cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                                   aria-label="Increase extra children"
                                 >
@@ -795,6 +697,11 @@ export function FlatOccupancyModal({
 
         {/* Modal Footer / Floating Action Bar (Exact Client WhatsApp Aesthetic) */}
         <div className="p-4 sm:p-5 border-t border-[rgba(212,163,89,0.2)] bg-[rgba(20,14,10,0.98)] backdrop-blur-md shrink-0">
+          {aggregate.tooManyFlats && (
+            <p role="alert" className="mb-3 text-xs text-[#F2B8A0]">
+              {isAr ? `يمكنك حجز ${MAX_CART_FLATS} شقق كحد أقصى في حجز واحد.` : `You can book up to ${MAX_CART_FLATS} flats in one booking.`}
+            </p>
+          )}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
             {/* Left / Center Summary Badge */}
             <div className="flex items-center justify-between w-full sm:w-auto gap-3">
@@ -841,12 +748,12 @@ export function FlatOccupancyModal({
               <button
                 type="button"
                 onClick={handleApply}
-                disabled={aggregate.totalUnits === 0}
+                disabled={aggregate.totalUnits === 0 || aggregate.tooManyFlats}
                 className={cn(
                   "flex-1 sm:flex-initial min-h-[46px] sm:min-h-[48px] px-6 sm:px-7 rounded-xl font-sans font-bold text-sm tracking-wide transition-all cursor-pointer",
                   "bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] shadow-md shadow-[#E5C178]/25 hover:brightness-105 active:scale-95",
                   "flex items-center justify-center gap-2",
-                  aggregate.totalUnits === 0 && "opacity-40 cursor-not-allowed hover:brightness-100 active:scale-100"
+                  (aggregate.totalUnits === 0 || aggregate.tooManyFlats) && "opacity-40 cursor-not-allowed hover:brightness-100 active:scale-100"
                 )}
               >
                 <Check className="w-4 h-4 stroke-[2.5]" />

@@ -26,6 +26,7 @@ export const enDictionary: Dictionary = {
     properties: "Properties",
     hospitals: "Hospitals",
     about: "About",
+    membership: "Membership",
     branches: "Branches",
     policies: "Policies",
     listProperty: "List Property",

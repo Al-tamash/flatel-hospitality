@@ -35,7 +35,8 @@ interface BookingConfirmationViewProps {
 
 export function BookingConfirmationView({ bookingId, locale = "en" }: BookingConfirmationViewProps) {
   const dict = getDictionary(locale);
-  const [booking, setBooking] = React.useState<BookingRecord | null>(null);
+  const [loadedBooking, setBooking] = React.useState<BookingRecord | null>(null);
+  const [group, setGroup] = React.useState<BookingRecord[] | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [isDownloadingPdf, setIsDownloadingPdf] = React.useState(false);
@@ -49,6 +50,7 @@ export function BookingConfirmationView({ bookingId, locale = "en" }: BookingCon
           throw new Error(data.error || "Booking record not found.");
         }
         setBooking(data.booking);
+        setGroup(Array.isArray(data.group) && data.group.length > 1 ? data.group : null);
       } catch (err: unknown) {
         setError(err instanceof Error ? err.message : "Failed to load booking details.");
       } finally {
@@ -57,6 +59,29 @@ export function BookingConfirmationView({ bookingId, locale = "en" }: BookingCon
     }
     loadBooking();
   }, [bookingId]);
+
+  // A multi-flat booking is shown as one: money and guests are summed across its flats
+  const booking = React.useMemo(() => {
+    if (!loadedBooking || !group) return loadedBooking;
+    const sum = (pick: (b: BookingRecord) => number) => group.reduce((total, b) => total + pick(b), 0);
+    return {
+      ...loadedBooking,
+      adultsCount: sum((b) => b.adultsCount),
+      kidsCount: sum((b) => b.kidsCount),
+      extraGuestsCount: sum((b) => b.extraGuestsCount),
+      pricing: {
+        ...loadedBooking.pricing,
+        standardBaseRent: sum((b) => b.pricing.standardBaseRent),
+        baseRentDiscount: sum((b) => b.pricing.baseRentDiscount),
+        baseRent: sum((b) => b.pricing.baseRent),
+        extraGuestsTotal: sum((b) => b.pricing.extraGuestsTotal),
+        addonsTotal: sum((b) => b.pricing.addonsTotal),
+        grossTotal: sum((b) => b.pricing.grossTotal),
+        advancePayable: sum((b) => b.pricing.advancePayable),
+        balanceDueOnArrival: sum((b) => b.pricing.balanceDueOnArrival),
+      },
+    };
+  }, [loadedBooking, group]);
 
   const handleDownloadPdf = async () => {
     if (!booking) return;
@@ -278,19 +303,43 @@ export function BookingConfirmationView({ bookingId, locale = "en" }: BookingCon
               <div>
                 <div className="flex items-center gap-2">
                   <span className="text-[11px] font-sans font-medium tracking-[0.18em] uppercase text-[#E5C178] px-2.5 py-0.5 rounded-full bg-[rgba(229,193,120,0.1)] border border-[rgba(212,163,89,0.3)]">
-                    {room ? room.type : (locale === "ar" ? "شقة فندقية" : "Residence")}
+                    {group ? (locale === "ar" ? "حجز مشترك" : "Combined booking") : room ? room.type : (locale === "ar" ? "شقة فندقية" : "Residence")}
                   </span>
                   <span className="text-sm text-[#E5C178]/90 font-medium">
                     {locale === "ar" ? `فرع ${branchName}` : `${branchName} Branch`}
                   </span>
                 </div>
                 <h3 className="font-heading text-2xl font-normal text-[#FAF4EB] mt-1.5 leading-snug">
-                  {room ? room.title : booking.unitId.toUpperCase()}
+                  {group
+                    ? (locale === "ar" ? `${group.length} شقق في حجز واحد` : `${group.length} flats booked together`)
+                    : room ? room.title : booking.unitId.toUpperCase()}
                 </h3>
                 <p className="text-sm text-[#B8A692] flex items-start gap-1.5 mt-2">
                   <MapPin className="w-3.5 h-3.5 text-[#E5C178] shrink-0 mt-0.5" />
                   <span>{branchAddress}</span>
                 </p>
+                {group && (
+                  <ul className="mt-4 divide-y divide-[rgba(212,163,89,0.18)] rounded-xl border border-[rgba(212,163,89,0.25)]">
+                    {group.map((flat) => {
+                      const flatRoom = getRoomById(flat.unitId);
+                      return (
+                        <li key={flat.id} className="flex items-center justify-between gap-3 px-4 py-3 text-sm">
+                          <span>
+                            <span className="font-medium text-[#FAF4EB]">{flatRoom ? flatRoom.type : flat.unitId.toUpperCase()}</span>
+                            <span className="block text-xs text-[#B8A692]">
+                              {locale === "ar"
+                                ? `${flat.adultsCount} بالغين${flat.kidsCount > 0 ? ` · ${flat.kidsCount} أطفال` : ""}`
+                                : `${flat.adultsCount} adults${flat.kidsCount > 0 ? ` · ${flat.kidsCount} kids` : ""}`}
+                              {" · "}
+                              <span className="font-mono">{flat.bookingCode}</span>
+                            </span>
+                          </span>
+                          <span className="font-serif oldstyle-nums text-[#FAF4EB]">₹{flat.pricing.grossTotal.toLocaleString("en-IN")}</span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
               </div>
 
               {/* Housekeeping Badge */}
@@ -419,8 +468,8 @@ export function BookingConfirmationView({ bookingId, locale = "en" }: BookingCon
                 <li>
                   <strong className="text-[#FAF4EB]">{locale === "ar" ? "إقامة الأطفال:" : "Children:"}</strong>{" "}
                   {locale === "ar"
-                    ? "الأطفال من سن ٠ إلى ١٢ عاماً يقيمون مجاناً بدون رسوم إقامة إضافية."
-                    : "Children aged 0–12 stay free of accommodation charge and count toward safety capacity."}
+                    ? "تشمل كل شقة عدداً من الأطفال ضمن السعر الأساسي، ويُحتسب على كل طفل إضافي ٣٠٠ روبية في الليلة."
+                    : "Each flat includes children up to its base allowance; additional children are ₹300 per child per night. All guests count toward safety capacity."}
                 </li>
                 <li>
                   <strong className="text-[#FAF4EB]">{locale === "ar" ? "سياسة الإلغاء:" : "Cancellation Policy:"}</strong>{" "}
@@ -444,6 +493,8 @@ export function BookingConfirmationView({ bookingId, locale = "en" }: BookingCon
                   <span>
                     {locale === "ar"
                       ? `قيمة الإقامة (${booking.totalNights} ليال)`
+                      : group
+                      ? `Base Rent (${booking.totalNights}N · ${group.length} flats)`
                       : `Base Rent (${booking.totalNights}N @ ₹${rawRoom?.basePricePerNight.toLocaleString("en-IN")})`}
                   </span>
                   <span className="text-[#FAF4EB] font-serif oldstyle-nums">
@@ -464,8 +515,8 @@ export function BookingConfirmationView({ bookingId, locale = "en" }: BookingCon
                   <div className="flex justify-between gap-4 text-[#B8A692]">
                     <span>
                       {locale === "ar"
-                        ? `رسوم ضيوف إضافيين (${booking.extraGuestsCount} بالغين)`
-                        : `Extra Adult Fee (${booking.extraGuestsCount} adults @ ₹500/night)`}
+                        ? "رسوم النزلاء الإضافيين (بالغون وأطفال)"
+                        : "Extra Guest Charges (adults & children)"}
                     </span>
                     <span className="text-[#FAF4EB] font-serif oldstyle-nums">
                       ₹{booking.pricing.extraGuestsTotal.toLocaleString("en-IN")}

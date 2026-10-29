@@ -1,6 +1,45 @@
 import { NextRequest, NextResponse } from "next/server";
 import { InventoryService } from "@/lib/inventory-service";
 import { verifyAdminRequest } from "@/lib/auth-guard";
+import { isSupportedImageSource } from "@/lib/r2/upload";
+
+/** Mirrors the create-time rules for whichever fields an edit actually sends. */
+function validateUnitUpdates(updates: Record<string, unknown>): string | null {
+  const isCount = (value: unknown, min: number) => typeof value === "number" && Number.isSafeInteger(value) && value >= min;
+
+  if (updates.title !== undefined && (typeof updates.title !== "string" || !updates.title.trim() || updates.title.length > 100)) {
+    return "Enter a title up to 100 characters.";
+  }
+  if (updates.category !== undefined && !["1BHK", "2BHK", "3BHK", "4BHK", "5BHK"].includes(updates.category as string)) {
+    return "Choose a valid flat category.";
+  }
+  if (updates.basePricePerNight !== undefined && !isCount(updates.basePricePerNight, 1)) return "Enter a valid nightly price.";
+  if (updates.baseAdults !== undefined && !isCount(updates.baseAdults, 1)) return "Enter a valid base adult count.";
+  if (updates.maxAdults !== undefined && !isCount(updates.maxAdults, 1)) return "Enter a valid maximum adult count.";
+  if (
+    typeof updates.baseAdults === "number" &&
+    typeof updates.maxAdults === "number" &&
+    updates.maxAdults < updates.baseAdults
+  ) {
+    return "Maximum adults cannot be below the base adults.";
+  }
+  if (updates.maxKids !== undefined && !isCount(updates.maxKids, 0)) return "Enter a valid child capacity.";
+  if (updates.extraPersonFeePerNight !== undefined && !isCount(updates.extraPersonFeePerNight, 0)) return "Enter a valid extra-person fee.";
+  if (updates.totalUnits !== undefined && !isCount(updates.totalUnits, 1)) return "Enter a valid unit count.";
+
+  if (updates.images !== undefined) {
+    const images = updates.images;
+    if (
+      !Array.isArray(images) ||
+      images.length === 0 ||
+      images.length > 12 ||
+      !images.every((image) => typeof image === "string" && isSupportedImageSource(image.trim()))
+    ) {
+      return "Add between 1 and 12 photos hosted on the photo storage or this site.";
+    }
+  }
+  return null;
+}
 
 export async function GET(req: NextRequest) {
   try {
@@ -65,15 +104,6 @@ export async function POST(req: NextRequest) {
     const cleanImages = Array.isArray(images)
       ? images.filter((image): image is string => typeof image === "string" && image.trim().length > 0).map((image) => image.trim())
       : [];
-    const isSupportedImageSource = (source: string) => {
-      if (source.startsWith("/") && !source.startsWith("//") && !source.startsWith("/\\")) return true;
-      try {
-        const url = new URL(source);
-        return url.protocol === "https:" && (url.hostname === "pub-f471c3e24db144a6a94c290eececee02.r2.dev" || url.hostname.endsWith(".r2.dev"));
-      } catch {
-        return false;
-      }
-    };
     const allowedAmenityNames = [
       "Split Air Conditioning",
       "High-Speed Fiber Wi-Fi",
@@ -151,6 +181,11 @@ export async function PATCH(req: NextRequest) {
 
     if (!slug) {
       return NextResponse.json({ success: false, error: "Missing unit slug." }, { status: 400 });
+    }
+
+    const invalid = validateUnitUpdates(updates);
+    if (invalid) {
+      return NextResponse.json({ success: false, error: invalid }, { status: 400 });
     }
 
     const updated = await InventoryService.updateUnit(slug, updates);

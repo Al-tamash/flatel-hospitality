@@ -83,9 +83,9 @@ const FAQS: FAQItem[] = [
     question: "Are children allowed, and what is the policy for kids?",
     questionAr: "هل يُسمح باصطحاب الأطفال، وما هي سياستهم؟",
     answer:
-      "Children aged 0–12 years stay completely FREE! They are counted toward unit safety capacity but incur ₹0 extra guest fees. For extra adults beyond the base bedroom capacity, an extra person fee of ₹500 per person per night applies. Complimentary infant baby cots are available upon request.",
+      "Each flat includes children up to its base allowance (1 BHK 1, 2 BHK 2, 3 BHK 3, 4 BHK 4). Every additional child (aged 0–12) is ₹300 per child per night, and extra adults beyond the base bedroom capacity are ₹500 per person per night. All guests count toward the unit's safety capacity. Complimentary infant baby cots are available upon request.",
     answerAr:
-      "الأطفال من سن ٠ إلى ١٢ سنة يقيمون مجاناً بالكامل دون أي رسوم إضافية! يُحتسب الأطفال ضمن الطاقة الاستيعابية لأمان الشقة. وللبالغين الإضافيين بعد سعة الغرف الأساسية، تطبق رسوم ٥٠٠ روبية لكل شخص في الليلة. كما تتوفر أسرّة مخصصة للأطفال الرضع مجاناً عند الطلب.",
+      "تشمل كل شقة عدداً من الأطفال ضمن السعر الأساسي (غرفة وصالة: طفل، غرفتان: طفلان، ٣ غرف: ٣ أطفال، ٤ غرف: ٤ أطفال). ويُحتسب على كل طفل إضافي (٠–١٢ سنة) ٣٠٠ روبية في الليلة، وعلى كل بالغ إضافي بعد السعة الأساسية ٥٠٠ روبية في الليلة. ويُحتسب جميع النزلاء ضمن الطاقة الاستيعابية لأمان الشقة. كما تتوفر أسرّة مخصصة للأطفال الرضع مجاناً عند الطلب.",
   },
   {
     id: "medistay-support",

@@ -24,13 +24,13 @@ export const FLAT_TYPE_OPTIONS: FlatTypeOption[] = [
     id: "1bhk",
     title: "1 BHK",
     priceNote: "₹2,000 / night",
-    capacityNote: "2 Base Adults (+2 extra) · Kids 0–12 free",
+    capacityNote: "2 Base Adults (+2 extra) · 1 child included",
   },
   {
     id: "2bhk",
     title: "2 BHK",
     priceNote: "₹2,500 / night",
-    capacityNote: "4 Base Adults (+2 extra) · Kids 0–12 free",
+    capacityNote: "4 Base Adults (+2 extra) · 2 children included",
   },
   {
     id: "3bhk",

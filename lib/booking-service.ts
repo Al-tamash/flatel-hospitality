@@ -9,6 +9,10 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { InventoryService } from "@/lib/inventory-service";
 import { CalendarService } from "@/lib/calendar-service";
 import { getMasterAddonById } from "@/lib/mock-rooms";
+import { MembershipService } from "@/lib/membership/membership-service";
+import { MEMBERSHIP } from "@/lib/membership/membership-content";
+import { MAX_CART_FLATS, type CartItem } from "@/lib/booking/cart";
+import { notifyBookingConfirmed } from "@/lib/notifications/dispatch";
 
 export interface CreateBookingData {
   unitId: string; // e.g. "1bhk", "2bhk", "3bhk", "4bhk", "5bhk"
@@ -18,6 +22,8 @@ export interface CreateBookingData {
   kidsCount: number;
   stayPurpose: StayPurposeType;
   selectedAddons?: SelectedPaidAddon[];
+  /** Flatel Member ID (e.g. FL-AB12CD). Verified server-side against the guest's email or phone. */
+  memberCode?: string;
   guest: {
     fullName: string;
     email: string;
@@ -25,6 +31,16 @@ export interface CreateBookingData {
     specialRequests?: string;
     isInternational?: boolean;
   };
+}
+
+export interface CreateGroupBookingData {
+  /** One entry per physical flat, with the guests assigned to it. */
+  items: CartItem[];
+  checkInDate: string;
+  checkOutDate: string;
+  stayPurpose: StayPurposeType;
+  memberCode?: string;
+  guest: CreateBookingData["guest"];
 }
 
 export interface PaymentVerificationData {
@@ -78,6 +94,7 @@ function mapDbRowToBookingRecord(row: Record<string, unknown>): BookingRecord {
       nights: Number(row.total_nights || 1),
       standardBaseRent: Number(row.base_rent_total || 0),
       discountRate: 0,
+      discountSource: null,
       baseRentDiscount: 0,
       baseRent: Number(row.base_rent_total || 0),
       extraAdults: Number(row.extra_guests_count || 0),
@@ -92,6 +109,7 @@ function mapDbRowToBookingRecord(row: Record<string, unknown>): BookingRecord {
     bookingStatus: (row.booking_status || "pending") as BookingRecord["bookingStatus"],
     balanceCollected: Boolean(row.balance_collected),
     gatewayPaymentId: row.gateway_payment_id ? String(row.gateway_payment_id) : undefined,
+    groupCode: row.group_code ? String(row.group_code) : undefined,
     createdAt: String(row.created_at || new Date().toISOString()),
   };
 }
@@ -265,6 +283,20 @@ export class BookingService {
       throw new Error(availability.reason || "Property is unavailable for the selected dates.");
     }
 
+    // Member rate: only applied after the Member ID is verified against this guest's contact details.
+    let verifiedMember: Awaited<ReturnType<typeof MembershipService.findForBooking>> = null;
+    if (data.memberCode?.trim()) {
+      verifiedMember = await MembershipService.findForBooking({
+        code: data.memberCode,
+        email: data.guest.email,
+        phone: data.guest.phone,
+        stayStart: data.checkInDate,
+      });
+      if (!verifiedMember) {
+        throw new Error("That Member ID could not be verified for this email or phone number, or it has expired. Remove it to continue without the member rate.");
+      }
+    }
+
     // 4. Server-Side Trusted Price Recalculation using authoritative master catalog
     const verifiedAddons: SelectedPaidAddon[] = [];
     const allAddons: SelectedPaidAddon[] = [];
@@ -300,6 +332,7 @@ export class BookingService {
       selectedKids: data.kidsCount,
       extraPersonFee: room.extraPersonFeePerNight,
       selectedPaidAddons: verifiedAddons,
+      memberDiscountRate: verifiedMember ? MEMBERSHIP.stayDiscountPercent / 100 : undefined,
     });
 
     const bookingId = crypto.randomUUID();
@@ -369,6 +402,17 @@ export class BookingService {
           },
         });
         if (error) throw new Error(`Could not save reservation details: ${error.message}`);
+
+        if (verifiedMember) {
+          const { error: memberLinkError } = await supabase
+            .from("bookings")
+            .update({
+              membership_id: verifiedMember.id,
+              member_discount_amount: fareResult.discountSource === "member" ? fareResult.baseRentDiscount : 0,
+            })
+            .eq("id", bookingRecord.id);
+          if (memberLinkError) console.error("Could not record member usage for booking", bookingRecord.bookingCode);
+        }
     }
     globalBookingsMap.set(bookingId, bookingRecord);
 
@@ -501,6 +545,8 @@ export class BookingService {
     Object.assign(booking, confirmedPayment, { notificationStatus: "pending" as const });
     globalBookingsMap.set(booking.id, booking);
 
+    if (!booking.groupCode) await notifyBookingConfirmed([booking]);
+
     return booking;
   }
 
@@ -537,6 +583,143 @@ export class BookingService {
     }
 
     return booking;
+  }
+
+
+  /**
+   * Books several flats for the same guest and dates as one group: one payment, one voucher.
+   * Every flat is checked and held in turn; if any flat cannot be held, the ones already held
+   * are released and nothing is charged.
+   */
+  static async createGroupIntent(data: CreateGroupBookingData): Promise<{
+    groupCode: string;
+    bookings: BookingRecord[];
+    totals: { grossTotal: number; advancePayable: number; balanceDueOnArrival: number };
+    advancePayablePaise: number;
+  }> {
+    const items = data.items;
+    if (!Array.isArray(items) || items.length < 2 || items.length > MAX_CART_FLATS) {
+      throw new Error(`Choose between 2 and ${MAX_CART_FLATS} flats for a combined booking.`);
+    }
+
+    // Same branch rule
+    const branchSlugs = new Set<string>();
+    for (const slug of new Set(items.map((item) => item.slug))) {
+      const unit = await InventoryService.getAuthoritativeUnitBySlug(slug);
+      branchSlugs.add(unit.branchSlug || "moghal-pura");
+    }
+    if (branchSlugs.size > 1) {
+      throw new Error("Flats in one combined booking must be at the same branch. Choose one branch or book them separately.");
+    }
+
+    const held: BookingRecord[] = [];
+    const releaseHeld = async (reason: string) => {
+      for (const booking of held) {
+        await this.markPaymentFailed(booking.id, reason).catch(() => undefined);
+      }
+    };
+
+    try {
+      for (const item of items) {
+        const { booking } = await this.createBookingIntent({
+          unitId: item.slug,
+          checkInDate: data.checkInDate,
+          checkOutDate: data.checkOutDate,
+          adultsCount: item.adults,
+          kidsCount: item.kids,
+          stayPurpose: data.stayPurpose,
+          memberCode: data.memberCode,
+          guest: data.guest,
+        });
+        held.push(booking);
+      }
+    } catch (error: unknown) {
+      await releaseHeld("Combined booking could not be completed; no payment was attempted.");
+      const reason = error instanceof Error ? error.message : "A flat could not be held.";
+      throw new Error(`${reason} Nothing was charged.`);
+    }
+
+    // The first flat's code names the whole group
+    const groupCode = held[0].bookingCode;
+    const { error } = await createAdminClient()
+      .from("bookings")
+      .update({ group_code: groupCode })
+      .in("id", held.map((booking) => booking.id));
+    if (error) {
+      await releaseHeld("Combined booking could not be saved; no payment was attempted.");
+      throw new Error("Combined booking is not available yet. Please book the flats one at a time, or message us on WhatsApp.");
+    }
+    held.forEach((booking) => {
+      booking.groupCode = groupCode;
+      globalBookingsMap.set(booking.id, booking);
+    });
+
+    const totals = held.reduce(
+      (sum, booking) => ({
+        grossTotal: sum.grossTotal + booking.pricing.grossTotal,
+        advancePayable: sum.advancePayable + booking.pricing.advancePayable,
+        balanceDueOnArrival: sum.balanceDueOnArrival + booking.pricing.balanceDueOnArrival,
+      }),
+      { grossTotal: 0, advancePayable: 0, balanceDueOnArrival: 0 }
+    );
+
+    return { groupCode, bookings: held, totals, advancePayablePaise: totals.advancePayable * 100 };
+  }
+
+  /** Reads a group fresh from the database (never the per-instance cache), first flat first. */
+  static async getBookingsByGroup(groupCode: string): Promise<BookingRecord[]> {
+    const { data, error } = await createAdminClient()
+      .from("bookings")
+      .select("*")
+      .eq("group_code", groupCode.trim().toUpperCase())
+      .order("created_at", { ascending: true });
+    if (error || !data) return [];
+    const records = data.map((row) => mapDbRowToBookingRecord(row));
+    records.forEach((record) => globalBookingsMap.set(record.id, record));
+    return records.sort((a, b) => (a.bookingCode === groupCode ? -1 : b.bookingCode === groupCode ? 1 : 0));
+  }
+
+  /** Confirms the single payment for a whole group; safe to call again (callback plus webhook). */
+  static async confirmGroupPayment(
+    data: { groupCode: string; orderId: string; paymentId: string; signature?: string },
+    trustedWebhook = false
+  ): Promise<BookingRecord[]> {
+    const bookings = await this.getBookingsByGroup(data.groupCode);
+    if (bookings.length === 0) throw new Error("Combined booking not found.");
+
+    const pending = bookings.filter((b) => !(b.paymentStatus === "advance_paid" && b.bookingStatus === "confirmed"));
+    if (pending.length === 0) return bookings;
+    if (pending.some((b) => b.bookingStatus === "cancelled" || b.paymentStatus === "failed")) {
+      throw new Error("This combined booking was cancelled before payment. Contact support before retrying.");
+    }
+
+    if (!trustedWebhook) {
+      const keySecret = process.env.RAZORPAY_KEY_SECRET;
+      if (!keySecret || !data.orderId || !data.paymentId || !data.signature) {
+        throw new Error("Payment could not be verified. Please contact support before retrying.");
+      }
+      const expected = crypto.createHmac("sha256", keySecret).update(`${data.orderId}|${data.paymentId}`).digest();
+      const received = /^[a-f0-9]{64}$/i.test(data.signature) ? Buffer.from(data.signature, "hex") : Buffer.alloc(0);
+      if (expected.length !== received.length || !crypto.timingSafeEqual(expected, received)) {
+        throw new Error("Invalid payment signature verification failed.");
+      }
+    }
+
+    for (const booking of pending) {
+      await this.confirmPayment({ bookingId: booking.id, orderId: data.orderId, paymentId: data.paymentId }, true);
+    }
+    const confirmed = await this.getBookingsByGroup(data.groupCode);
+    await notifyBookingConfirmed(confirmed);
+    return confirmed;
+  }
+
+  /** Releases every unpaid flat of a group (payment cancelled or failed). */
+  static async markGroupFailed(groupCode: string, reason?: string): Promise<void> {
+    const bookings = await this.getBookingsByGroup(groupCode);
+    for (const booking of bookings) {
+      if (booking.paymentStatus === "advance_paid") continue;
+      await this.markPaymentFailed(booking.id, reason).catch(() => undefined);
+    }
   }
 
   /**

@@ -9,6 +9,7 @@ import {
   CalendarCheck,
   Sparkles,
   CalendarX,
+  BadgeCheck,
   ExternalLink,
   LogOut,
   ChevronRight,
@@ -47,6 +48,11 @@ const NAV_ITEMS = [
     label: "Calendar Blackouts",
     href: "/admin/calendar",
     icon: CalendarX,
+  },
+  {
+    label: "Flatel Members",
+    href: "/admin/members",
+    icon: BadgeCheck,
   },
 ];
 

@@ -116,7 +116,7 @@ export function GuestSelector({
               Children
             </div>
             <div className="text-[11px] font-sans text-[#E5C178]">
-              Ages 0–12 · Stay Free
+              Ages 0–12 · Extra children ₹300/night
             </div>
           </div>
 
@@ -158,7 +158,7 @@ export function GuestSelector({
       <div className="mt-4 p-2.5 rounded-lg bg-[rgba(22,16,11,0.7)] border border-[rgba(212,163,89,0.2)] flex items-start gap-2">
         <Info className="w-3.5 h-3.5 text-[#E5C178] shrink-0 mt-0.5" />
         <p className="text-[10.5px] font-sans text-[#B8A692] leading-relaxed">
-          1 BHK (2 base, max 4) • 2 BHK (4 base, max 6) • 3 BHK (6 base, max 9) • 4 BHK (8 base, max 12). Children 0–12 stay free. Specific child safety limits awaiting owner confirmation.
+          1 BHK (2 base, max 4) • 2 BHK (4 base, max 6) • 3 BHK (6 base, max 9) • 4 BHK (8 base, max 12). Each flat includes children up to its base allowance (1 BHK 1, 2 BHK 2, 3 BHK 3, 4 BHK 4); extra children are ₹300 per night. Specific child safety limits awaiting owner confirmation.
         </p>
       </div>
 

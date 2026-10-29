@@ -16,21 +16,30 @@ export interface CalculateFareInput {
   baseAdults: number;
   selectedAdults: number;
   selectedKids?: number; // children count
-  baseKids?: number; // included in base price (default based on BHK, e.g. 1 for 1BHK)
+  baseKids?: number; // children included in the base price; default: one per two base adults (1 BHK 1, 2 BHK 2, 3 BHK 3, 4 BHK 4)
   extraPersonFee?: number; // default ₹500
-  extraKidFee?: number; // default ₹300 per night as per client rule
+  extraKidFee?: number; // default ₹300 per child per night (client rule)
   selectedPaidAddons?: SelectedPaidAddon[];
+  /**
+   * Verified Flatel member discount on the base rent (e.g. 0.10). It is a floor, not an
+   * extra: the guest gets whichever is higher of this and the duration discount.
+   */
+  memberDiscountRate?: number;
 }
 
 export interface FareCalculationResult {
   nights: number;
   standardBaseRent: number;
   discountRate: number; // 0, 0.10, 0.15, or 0.25
+  /** What set `discountRate`: the stay length, the member rate, or nothing. */
+  discountSource: "duration" | "member" | null;
   baseRentDiscount: number;
   baseRent: number; // discounted base rent
   extraAdults: number;
+  /** Extra adult and extra child charges together. */
   extraGuestsTotal: number;
   extraKids?: number;
+  /** The children part of `extraGuestsTotal`, for display only; never add it on top. */
   extraKidsTotal?: number;
   addonsTotal: number;
   grossTotal: number;
@@ -41,7 +50,8 @@ export interface FareCalculationResult {
 /**
  * Calculates Flatel reservation pricing including:
  * 1. Automatic duration-based discounts on base rent (10% for 7-14N, 15% for 15-27N, 25% for 28+N)
- * 2. Extra adult fees (₹500/night for adults above base occupancy; kids 0-12 are free)
+ * 2. Extra guest fees: ₹500/night per adult above base occupancy, and ₹300/night per child
+ *    above the children included with the flat
  * 3. Paid add-on services (flat or per-night)
  * 4. 20% online advance deposit and 80% remaining balance payable on arrival
  */
@@ -82,19 +92,28 @@ export function calculateFlatelPrice(input: CalculateFareInput): FareCalculation
     discountRate = 0.10; // 10% discount for weekly stays (7-14 nights)
   }
 
+  let discountSource: FareCalculationResult["discountSource"] = discountRate > 0 ? "duration" : null;
+  const memberRate = Math.min(Math.max(input.memberDiscountRate ?? 0, 0), 0.5);
+  if (memberRate > discountRate) {
+    discountRate = memberRate;
+    discountSource = "member";
+  }
+
   const baseRentDiscount = Math.round(standardBaseRent * discountRate);
   const discountedBaseRent = standardBaseRent - baseRentDiscount;
 
   // 2. Extra Person Fee (Adults exceeding base capacity; extra children exceeding baseKids charged extraKidFee)
   const extraAdults = Math.max(0, selectedAdults - baseAdults);
-  const extraGuestsTotal = extraAdults * extraPersonFee * nights;
+  const extraAdultsTotal = extraAdults * extraPersonFee * nights;
 
-  // Extra Kids Fee calculation (if baseKids defined or extraKidFee provided)
-  const baseKids = input.baseKids ?? 0;
+  // Extra children: every child above the flat's included allowance pays the per-night child fee
+  const baseKids = input.baseKids ?? Math.ceil(baseAdults / 2);
   const extraKidFee = input.extraKidFee ?? 300;
-  const hasExtraKidRule = input.extraKidFee !== undefined || input.baseKids !== undefined;
-  const extraKids = hasExtraKidRule ? Math.max(0, selectedKids - baseKids) : 0;
+  const extraKids = Math.max(0, selectedKids - baseKids);
   const extraKidsTotal = extraKids * extraKidFee * nights;
+
+  // Stored and shown as one "extra guest charges" line (adults and children together)
+  const extraGuestsTotal = extraAdultsTotal + extraKidsTotal;
 
   // 3. Paid Add-ons Total (flat/per_booking vs per_night vs per_person)
   const addonsTotal = selectedPaidAddons.reduce((sum, addon) => {
@@ -111,7 +130,7 @@ export function calculateFlatelPrice(input: CalculateFareInput): FareCalculation
   }, 0);
 
   // 4. Gross Total & 20% Deposit Split
-  const grossTotal = Math.round(discountedBaseRent + extraGuestsTotal + extraKidsTotal + addonsTotal);
+  const grossTotal = Math.round(discountedBaseRent + extraGuestsTotal + addonsTotal);
   const advancePayable = Math.round(grossTotal * 0.20);
   const balanceDueOnArrival = grossTotal - advancePayable;
 
@@ -119,6 +138,7 @@ export function calculateFlatelPrice(input: CalculateFareInput): FareCalculation
     nights,
     standardBaseRent,
     discountRate,
+    discountSource,
     baseRentDiscount,
     baseRent: discountedBaseRent,
     extraAdults,

@@ -454,11 +454,11 @@ export function BookingSidebar({
             <span className="text-xs text-[#E5C178] font-sans font-medium">
               {currentLocale === "ar"
                 ? (room.maxChildren !== null
-                    ? `حتى ${room.maxAdults} بالغين · إقامة مجانية لـ ${room.maxChildren} أطفال`
-                    : `حتى ${room.maxAdults} بالغين · إقامة مجانية للأطفال`)
+                    ? `حتى ${room.maxAdults} بالغين · حتى ${room.maxChildren} أطفال، والإضافي ₹٣٠٠ لليلة`
+                    : `حتى ${room.maxAdults} بالغين · الطفل الإضافي ₹٣٠٠ لليلة`)
                 : (room.maxChildren !== null
-                    ? `Up to ${room.maxAdults} adults · ${room.maxChildren} kids stay free`
-                    : `Up to ${room.maxAdults} adults · Kids stay free`)}
+                    ? `Up to ${room.maxAdults} adults · up to ${room.maxChildren} kids, extra ₹300/night`
+                    : `Up to ${room.maxAdults} adults · extra children ₹300/night`)}
             </span>
           </PopoverTrigger>
           <PopoverContent
@@ -473,13 +473,13 @@ export function BookingSidebar({
                 {currentLocale === "ar"
                   ? `تتسع ${room.title} لما يصل إلى ${room.maxAdults} بالغين (${room.baseAdults} أساسي + ${room.maxExtraGuests} إضافي). ${
                       room.maxChildren !== null
-                        ? `سعة سلامة الأطفال: حتى ${room.maxChildren} أطفال. يقيم الأطفال حتى عمر ١٢ سنة مجاناً ولكن يُحتسبون ضمن معايير السعة.`
-                        : "يقيم الأطفال حتى عمر ١٢ سنة مجاناً ولكن يُحتسبون ضمن معايير السعة والسلامة."
+                        ? `سعة سلامة الأطفال: حتى ${room.maxChildren} أطفال. يشمل السعر الأساسي عدداً من الأطفال، ويُحتسب على كل طفل إضافي ₹٣٠٠ لليلة، ويُحتسبون ضمن معايير السعة.`
+                        : "يشمل السعر الأساسي عدداً من الأطفال، ويُحتسب على كل طفل إضافي ₹٣٠٠ لليلة، ويُحتسبون ضمن معايير السعة والسلامة."
                     }`
                   : `${room.title} accommodates up to ${room.maxAdults} adults (${room.baseAdults} base + ${room.maxExtraGuests} extra). ${
                       room.maxChildren !== null
-                        ? `Child safety capacity: up to ${room.maxChildren} children. Children aged 0–12 stay free but count toward safety capacity.`
-                        : "Children aged 0–12 stay free but count toward safety capacity (exact child limit subject to unit size)."
+                        ? `Child safety capacity: up to ${room.maxChildren} children. The base price includes some children; each extra child is ₹300 per night. All guests count toward safety capacity.`
+                        : "The base price includes some children; each extra child is ₹300 per night. All guests count toward safety capacity (exact child limit subject to unit size)."
                     }`}
               </p>
             </div>
@@ -528,11 +528,11 @@ export function BookingSidebar({
                 <p className="text-[10px] text-[#B8A692]">
                   {currentLocale === "ar"
                     ? (room.maxChildren !== null
-                        ? `الحد الأقصى ${room.maxChildren} · إقامة مجانية للأطفال`
-                        : "إقامة مجانية للأطفال")
+                        ? `الحد الأقصى ${room.maxChildren} · الطفل الإضافي ₹٣٠٠ لليلة`
+                        : "الطفل الإضافي ₹٣٠٠ لليلة")
                     : (room.maxChildren !== null
-                        ? `Max ${room.maxChildren} · Stay free (safety capacity)`
-                        : "Stay free · Counts toward safety capacity")}
+                        ? `Max ${room.maxChildren} · Extra child ₹300/night`
+                        : "Extra child ₹300/night · Counts toward safety capacity")}
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -669,7 +669,7 @@ export function BookingSidebar({
             </div>
           )}
 
-          {/* Extra Adult Fees (Adults exceeding base capacity: ₹500/night each) */}
+          {/* Extra guest fees: adults above base capacity (₹500/night each) and children above the included allowance (₹300/night each) */}
           {fareResult.extraAdults > 0 && (
             <div className="flex justify-between text-[#B8A692]">
               <span>
@@ -678,7 +678,19 @@ export function BookingSidebar({
                   : `Extra Adults (${fareResult.extraAdults} × ₹500 × ${totalNights}n)`}
               </span>
               <span className="font-serif text-sm font-medium text-[#FAF4EB] tabular-nums">
-                ₹{fareResult.extraGuestsTotal.toLocaleString("en-IN")}
+                ₹{(fareResult.extraGuestsTotal - (fareResult.extraKidsTotal ?? 0)).toLocaleString("en-IN")}
+              </span>
+            </div>
+          )}
+          {(fareResult.extraKids ?? 0) > 0 && (
+            <div className="flex justify-between text-[#B8A692]">
+              <span>
+                {currentLocale === "ar"
+                  ? `أطفال إضافيون (${fareResult.extraKids} × ₹300 × ${totalNights} ليالٍ)`
+                  : `Extra Children (${fareResult.extraKids} × ₹300 × ${totalNights}n)`}
+              </span>
+              <span className="font-serif text-sm font-medium text-[#FAF4EB] tabular-nums">
+                ₹{(fareResult.extraKidsTotal ?? 0).toLocaleString("en-IN")}
               </span>
             </div>
           )}
@@ -932,7 +944,7 @@ export function BookingSidebar({
                     {currentLocale === "ar" ? "الأطفال (٠–١٢ سنة)" : "Children (0–12 yrs)"}
                   </span>
                   <span className="text-[10px] text-[#B8A692]">
-                    {currentLocale === "ar" ? "إقامة مجانية للأطفال" : "Free accommodation"}
+                    {currentLocale === "ar" ? "الأطفال الإضافيون ₹٣٠٠ لليلة" : "Extra children ₹300/night"}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -1003,7 +1015,7 @@ export function BookingSidebar({
               </div>
               {fareResult.extraGuestsTotal > 0 && (
                 <div className="flex justify-between text-[#B8A692]">
-                  <span>{currentLocale === "ar" ? "رسوم البالغين الإضافيين" : "Extra Adults Fee"}</span>
+                  <span>{currentLocale === "ar" ? "رسوم النزلاء الإضافيين" : "Extra Guest Charges"}</span>
                   <span className="font-serif text-sm font-medium text-[#FAF4EB] tabular-nums">₹{fareResult.extraGuestsTotal.toLocaleString("en-IN")}</span>
                 </div>
               )}

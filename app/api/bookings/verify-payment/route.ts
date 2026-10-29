@@ -4,7 +4,31 @@ import { BookingService } from "@/lib/booking-service";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { bookingId, orderId, paymentId, signature, paymentFailed, reason } = body;
+    const { bookingId, groupCode, orderId, paymentId, signature, paymentFailed, reason } = body;
+
+    // Multi-flat booking: one payment confirms every flat in the group
+    if (typeof groupCode === "string" && groupCode) {
+      if (paymentFailed) {
+        await BookingService.markGroupFailed(groupCode, reason || "Payment was declined or cancelled.");
+        return NextResponse.json(
+          { success: false, error: "Payment declined or failed. The booking has NOT been confirmed." },
+          { status: 400 }
+        );
+      }
+      if (!orderId || !paymentId) {
+        return NextResponse.json({ success: false, error: "Missing payment transaction reference." }, { status: 400 });
+      }
+      const group = await BookingService.confirmGroupPayment({ groupCode, orderId, paymentId, signature });
+      return NextResponse.json({
+        success: true,
+        bookingCode: groupCode,
+        bookingId: group[0]?.id,
+        paymentStatus: group[0]?.paymentStatus,
+        bookingStatus: group[0]?.bookingStatus,
+        flats: group.length,
+        redirectUrl: `/booking-confirmation/${groupCode}`,
+      });
+    }
 
     if (!bookingId) {
       return NextResponse.json(

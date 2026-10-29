@@ -26,6 +26,7 @@ export const arDictionary: Dictionary = {
     properties: "الشقق والإقامات",
     hospitals: "دليل المستشفيات",
     about: "عن فلاتيل",
+    membership: "العضوية",
     branches: "الفروع والمواقع",
     policies: "السياسات والشروط",
     listProperty: "سجّل عقارك",

@@ -23,6 +23,15 @@ import {
 import { formatPrice } from "@/lib/constants";
 import { RoomDetail, Amenity } from "@/lib/mock-rooms";
 import { cn } from "@/lib/utils";
+import { ImageUploader } from "@/components/admin/image-uploader";
+
+/** Photo URLs are stored as one string per line in form state. */
+function splitImageLines(value: string): string[] {
+  return value
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
 
 const MASTER_AMENITIES_OPTIONS = [
   "Split Air Conditioning",
@@ -798,49 +807,16 @@ export default function AdminInventoryPage() {
 
               {/* TAB 4: GALLERY PHOTOS */}
               {activeTab === "photos" && (
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">
-                      Gallery Photo URLs (One URL per line &bull; Local path or HTTPS link)
-                    </label>
-                    <textarea
-                      rows={5}
-                      value={editModalRoom.imageUrls}
-                      onChange={(e) =>
-                        setEditModalRoom({ ...editModalRoom, imageUrls: e.target.value })
-                      }
-                      className="w-full bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] font-mono text-xs focus:border-[#E5C178] focus:outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <span className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-2">
-                      Live Preview of Photo Gallery:
-                    </span>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                      {editModalRoom.imageUrls
-                        .split("\n")
-                        .map((u) => u.trim())
-                        .filter(Boolean)
-                        .map((url, i) => (
-                          <div
-                            key={url + i}
-                            className="relative aspect-video rounded-xl overflow-hidden bg-[#140E08] border border-[rgba(212,163,89,0.2)]"
-                          >
-                            <Image
-                              src={url}
-                              alt={`Preview ${i + 1}`}
-                              fill
-                              sizes="160px"
-                              className="object-cover"
-                            />
-                            <span className="absolute bottom-1 right-1 bg-[#0E0A07]/80 text-[#FAF4EB] px-1.5 py-0.5 rounded text-[9px] font-mono">
-                              #{i + 1}
-                            </span>
-                          </div>
-                        ))}
-                    </div>
-                  </div>
+                <div className="space-y-2">
+                  <span className="text-[11px] uppercase tracking-wider text-[#B8A692] block">
+                    Gallery Photos <span className="normal-case tracking-normal">(first photo is the cover)</span>
+                  </span>
+                  <ImageUploader
+                    folder={editModalRoom.slug}
+                    urls={splitImageLines(editModalRoom.imageUrls)}
+                    onChange={(urls) => setEditModalRoom({ ...editModalRoom, imageUrls: urls.join("\n") })}
+                    disabled={isSaving}
+                  />
                 </div>
               )}
 
@@ -1182,17 +1158,14 @@ export default function AdminInventoryPage() {
               </div>
 
               <div>
-                <label htmlFor="new-residence-images" className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">
-                  Photo URLs <span className="normal-case tracking-normal">(one per line)</span>
-                </label>
-                <textarea
-                  id="new-residence-images"
-                  required
-                  rows={3}
-                  placeholder="Add verified residence image URLs, one per line"
-                  value={newUnitForm.imageUrls}
-                  onChange={(e) => setNewUnitForm({ ...newUnitForm, imageUrls: e.target.value })}
-                  className="w-full bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] font-mono text-xs focus:border-[#E5C178] focus:outline-none"
+                <span className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">
+                  Photos <span className="normal-case tracking-normal">(first photo is the cover)</span>
+                </span>
+                <ImageUploader
+                  folder={newUnitForm.slug.trim() || "new-residence"}
+                  urls={splitImageLines(newUnitForm.imageUrls)}
+                  onChange={(urls) => setNewUnitForm({ ...newUnitForm, imageUrls: urls.join("\n") })}
+                  disabled={isSaving}
                 />
               </div>
 

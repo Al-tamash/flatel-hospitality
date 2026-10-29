@@ -31,11 +31,15 @@ import {
   type RazorpaySuccessResponse,
   type RazorpayFailureResponse,
 } from "@/lib/razorpay/load-script";
+import { MEMBER_ID_STORAGE_KEY } from "@/components/membership/join-form";
+import { GroupCheckoutView } from "@/components/checkout/group-checkout-view";
+import { isGroupCart, parseCart } from "@/lib/booking/cart";
 
 const EMPTY_FARE: FareCalculationResult = {
   nights: 0,
   standardBaseRent: 0,
   discountRate: 0,
+  discountSource: null,
   baseRentDiscount: 0,
   baseRent: 0,
   extraAdults: 0,
@@ -82,7 +86,7 @@ interface CheckoutViewProps {
   locale?: Locale;
 }
 
-export function CheckoutView({ locale = "en" }: CheckoutViewProps) {
+function SingleCheckoutView({ locale = "en" }: CheckoutViewProps) {
   const dict = getDictionary(locale);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -147,6 +151,9 @@ export function CheckoutView({ locale = "en" }: CheckoutViewProps) {
   const [isInternational, setIsInternational] = React.useState(false);
   const [agreeTerms, setAgreeTerms] = React.useState(false);
   const [formRestored, setFormRestored] = React.useState(false);
+  const [memberCode, setMemberCode] = React.useState("");
+  const [memberCheck, setMemberCheck] = React.useState<{ status: "idle" | "checking" | "error"; message?: string }>({ status: "idle" });
+  const [appliedMember, setAppliedMember] = React.useState<{ code: string; name: string; percent: number; email: string; phone: string } | null>(null);
   const draftRef = React.useRef<CheckoutDraft>({});
   const formStorageKey = `flatel-checkout:guest-details:${propertySlug || "missing-property"}`;
 
@@ -183,6 +190,19 @@ export function CheckoutView({ locale = "en" }: CheckoutViewProps) {
     }, 0);
     return () => window.clearTimeout(timer);
   }, [formStorageKey]);
+
+  // A member who just joined has their ID saved on this device: offer it here.
+  React.useEffect(() => {
+    const timer = window.setTimeout(() => {
+      try {
+        const saved = window.localStorage.getItem(MEMBER_ID_STORAGE_KEY);
+        if (saved) setMemberCode(saved);
+      } catch {
+        // Storage unavailable; the guest can type the ID.
+      }
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   React.useEffect(() => {
     if (!formRestored || !user) return;
@@ -235,6 +255,10 @@ export function CheckoutView({ locale = "en" }: CheckoutViewProps) {
     [activeAddonIds]
   );
 
+  // The member rate only holds for the exact contact details it was verified against.
+  const activeMember =
+    appliedMember && appliedMember.email === email.trim().toLowerCase() && appliedMember.phone === phone.trim() ? appliedMember : null;
+
   const fareResult = React.useMemo(() => {
     if (!room || !areDatesValid || adultsParam < 1 || kidsParam < 0) return EMPTY_FARE;
     try {
@@ -246,11 +270,45 @@ export function CheckoutView({ locale = "en" }: CheckoutViewProps) {
         selectedKids: kidsParam,
         extraPersonFee: room.extraPersonFeePerNight,
         selectedPaidAddons: selectedAddonList.filter((addon) => addon.price > 0),
+        memberDiscountRate: activeMember ? activeMember.percent / 100 : undefined,
       });
     } catch {
       return EMPTY_FARE;
     }
-  }, [room, areDatesValid, nights, adultsParam, kidsParam, selectedAddonList]);
+  }, [room, areDatesValid, nights, adultsParam, kidsParam, selectedAddonList, activeMember]);
+
+  const handleApplyMember = async () => {
+    const code = memberCode.trim();
+    if (!code || memberCheck.status === "checking") return;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) || phone.replace(/\D/g, "").length < 8) {
+      setMemberCheck({
+        status: "error",
+        message: locale === "ar" ? "أدخل بريدك الإلكتروني ورقم جوالك أولاً للتحقق من العضوية." : "Enter your email and mobile number first so we can match your membership.",
+      });
+      return;
+    }
+    setMemberCheck({ status: "checking" });
+    try {
+      const response = await fetch("/api/membership/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, email, phone, stayStart: checkInParam }),
+      });
+      const data = await response.json().catch(() => null);
+      if (!response.ok || !data?.success) {
+        setAppliedMember(null);
+        setMemberCheck({
+          status: "error",
+          message: locale === "ar" ? "رقم العضوية غير صالح لهذا البريد أو الجوال." : "That Member ID is not valid for this email or mobile number.",
+        });
+        return;
+      }
+      setAppliedMember({ code: code.toUpperCase().replace(/\s+/g, ""), name: data.memberName, percent: data.discountPercent, email: email.trim().toLowerCase(), phone: phone.trim() });
+      setMemberCheck({ status: "idle" });
+    } catch {
+      setMemberCheck({ status: "error", message: locale === "ar" ? "تعذر التحقق الآن. حاول مرة أخرى." : "We could not check the Member ID right now. Please try again." });
+    }
+  };
 
   const validateForm = () => {
     const nextErrors: Record<string, string> = {};
@@ -339,6 +397,7 @@ export function CheckoutView({ locale = "en" }: CheckoutViewProps) {
           kidsCount: kidsParam,
           stayPurpose: purposeParam,
           selectedAddons: selectedAddonList,
+          memberCode: activeMember?.code,
           guest: { fullName, email, phone, specialRequests, isInternational },
         }),
       });
@@ -488,13 +547,17 @@ export function CheckoutView({ locale = "en" }: CheckoutViewProps) {
             </div>
             {fareResult.baseRentDiscount > 0 && (
               <div className="flex justify-between gap-3 text-primary">
-                <span>{locale === "ar" ? `خصم المدة (${Math.round(fareResult.discountRate * 100)}%)` : `Stay discount (${Math.round(fareResult.discountRate * 100)}%)`}</span>
+                <span>
+                  {fareResult.discountSource === "member"
+                    ? (locale === "ar" ? `سعر العضو (${Math.round(fareResult.discountRate * 100)}%)` : `Member rate (${Math.round(fareResult.discountRate * 100)}%)`)
+                    : (locale === "ar" ? `خصم المدة (${Math.round(fareResult.discountRate * 100)}%)` : `Stay discount (${Math.round(fareResult.discountRate * 100)}%)`)}
+                </span>
                 <span className="tabular-nums">−{formatMoney(fareResult.baseRentDiscount)}</span>
               </div>
             )}
             {fareResult.extraGuestsTotal > 0 && (
               <div className="flex justify-between gap-3 text-muted-foreground">
-                <span>{locale === "ar" ? "رسوم ضيوف إضافيين" : "Additional adult charge"}</span>
+                <span>{locale === "ar" ? "رسوم النزلاء الإضافيين (بالغون وأطفال)" : "Extra guest charges (adults & children)"}</span>
                 <span className="tabular-nums text-foreground">{formatMoney(fareResult.extraGuestsTotal)}</span>
               </div>
             )}
@@ -729,6 +792,40 @@ export function CheckoutView({ locale = "en" }: CheckoutViewProps) {
                   </span>
                 </label>
 
+                <div className="rounded-lg border border-[rgba(212,163,89,0.18)] p-3">
+                  <label htmlFor="memberCode" className="text-sm font-medium text-foreground">
+                    {locale === "ar" ? "رقم عضوية فلاتيل (اختياري)" : "Flatel Member ID (optional)"}
+                  </label>
+                  <div className="mt-2 flex gap-2">
+                    <input
+                      id="memberCode"
+                      name="memberCode"
+                      dir="ltr"
+                      autoComplete="off"
+                      value={memberCode}
+                      onChange={(event) => { setMemberCode(event.target.value.toUpperCase()); setMemberCheck({ status: "idle" }); }}
+                      placeholder="FL-AB12CD"
+                      className={cn(fieldClass("memberCode"), "font-mono uppercase tracking-wider")}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleApplyMember}
+                      disabled={!memberCode.trim() || memberCheck.status === "checking" || isBusy}
+                      className="min-h-12 shrink-0 rounded-lg border border-[rgba(212,163,89,0.4)] px-4 text-sm font-semibold text-primary hover:border-primary disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                    >
+                      {memberCheck.status === "checking" ? (locale === "ar" ? "جارٍ التحقق…" : "Checking…") : (locale === "ar" ? "تطبيق" : "Apply")}
+                    </button>
+                  </div>
+                  {activeMember && (
+                    <p role="status" className="mt-2 text-sm text-primary">
+                      {locale === "ar"
+                        ? `مرحباً ${activeMember.name} — تم تطبيق سعر العضو (${activeMember.percent}%).`
+                        : `Welcome back, ${activeMember.name} — member rate (${activeMember.percent}%) applied.`}
+                    </p>
+                  )}
+                  {memberCheck.status === "error" && <p role="alert" className="mt-2 text-sm text-rose-300">{memberCheck.message}</p>}
+                </div>
+
                 <div>
                   <label htmlFor="specialRequests" className="text-sm font-medium text-foreground">
                     {dict.checkout.specialRequests}
@@ -814,4 +911,13 @@ export function CheckoutView({ locale = "en" }: CheckoutViewProps) {
       </main>
     </div>
   );
+}
+
+/** Several flats in the cart go to the combined checkout; everything else is the single-flat checkout. */
+export function CheckoutView({ locale = "en" }: CheckoutViewProps) {
+  const searchParams = useSearchParams();
+  if (isGroupCart(parseCart(searchParams.get("cart")))) {
+    return <GroupCheckoutView locale={locale} />;
+  }
+  return <SingleCheckoutView locale={locale} />;
 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { BookingService } from "@/lib/booking-service";
+import { MembershipService } from "@/lib/membership/membership-service";
 
 /**
  * Razorpay Webhook Handler
@@ -33,6 +34,41 @@ export async function POST(req: NextRequest) {
       paymentEntity?.notes?.bookingId || orderEntity?.notes?.bookingId;
     const paymentId = paymentEntity?.id;
     const orderId = paymentEntity?.order_id || orderEntity?.id;
+
+    const groupCode = paymentEntity?.notes?.groupCode || orderEntity?.notes?.groupCode;
+    if (groupCode && !bookingId) {
+      if (event === "payment.captured" || event === "order.paid") {
+        if (!paymentId || !orderId) {
+          return NextResponse.json({ success: false, error: "Captured payment reference is missing." }, { status: 400 });
+        }
+        const group = await BookingService.confirmGroupPayment({ groupCode, orderId, paymentId }, true);
+        return NextResponse.json({ received: true, event, flats: group.length });
+      }
+      if (event === "payment.failed") {
+        await BookingService.markGroupFailed(groupCode, paymentEntity?.error_description || "Payment failed via gateway.");
+        return NextResponse.json({ received: true, event });
+      }
+      return NextResponse.json({ received: true, event });
+    }
+
+    const membershipId = paymentEntity?.notes?.membershipId || orderEntity?.notes?.membershipId;
+    if (membershipId && !bookingId) {
+      if (event === "payment.captured" || event === "order.paid") {
+        if (!paymentId || !orderId) {
+          return NextResponse.json({ success: false, error: "Captured payment reference is missing." }, { status: 400 });
+        }
+        const member = await MembershipService.activate(
+          { membershipId, orderId, paymentId, paidAmountPaise: paymentEntity?.amount },
+          true
+        );
+        return NextResponse.json({ received: true, event, membershipStatus: member.status });
+      }
+      if (event === "payment.failed") {
+        await MembershipService.markFailed(membershipId);
+        return NextResponse.json({ received: true, event });
+      }
+      return NextResponse.json({ received: true, event });
+    }
 
     if (!bookingId) {
       // Event without booking ID notes (e.g. external transaction)
