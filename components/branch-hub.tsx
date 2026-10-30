@@ -344,7 +344,7 @@ export function BranchHub({ className }: BranchHubProps) {
 
   const priceSuffix = (id: BranchId) =>
     branchStartingPrices[id] ? (
-      <span className="text-xs font-normal text-[#B8A692]">{isAr ? " / ليلة" : " / night"}</span>
+      <span className="text-xs font-normal text-fg-muted">{isAr ? " / ليلة" : " / night"}</span>
     ) : null;
 
   const branchActions = (id: BranchId, compact = false) => (
@@ -354,18 +354,18 @@ export function BranchHub({ className }: BranchHubProps) {
         target="_blank"
         rel="noopener noreferrer"
         className={cn(
-          "flex-1 rounded-lg border border-[rgba(212,163,89,0.3)] bg-[#0E0A07] hover:border-[#E5C178] text-[#FAF4EB] font-semibold inline-flex items-center justify-center gap-1.5 transition-colors min-h-[40px]",
-          compact ? "px-2.5 text-[11px]" : "px-3 text-xs"
+          "flex-1 rounded-lg border border-line bg-canvas hover:border-gold text-fg font-semibold inline-flex items-center justify-center gap-1.5 transition-colors min-h-[40px]",
+          compact ? "px-2.5 text-xs" : "px-3 text-xs"
         )}
       >
-        <Navigation className="w-3.5 h-3.5 text-[#E5C178]" />
+        <Navigation className="w-3.5 h-3.5 text-gold" />
         <span>{isAr ? "الاتجاهات" : "Directions"}</span>
       </a>
       <Link
         href={`${localePrefix}/branches/${id}`}
         className={cn(
-          "flex-1 rounded-lg bg-gradient-to-r from-[#E5C178] to-[#C69344] hover:brightness-105 text-[#140E08] font-bold inline-flex items-center justify-center gap-1.5 transition-all min-h-[40px]",
-          compact ? "px-2.5 text-[11px]" : "px-3 text-xs"
+          "flex-1 rounded-lg bg-gradient-to-r from-gold to-gold-deep hover:brightness-105 text-ink font-bold inline-flex items-center justify-center gap-1.5 transition-all min-h-[40px]",
+          compact ? "px-2.5 text-xs" : "px-3 text-xs"
         )}
       >
         <span>{isAr ? "استكشف الشقق" : "Explore Flats"}</span>
@@ -375,12 +375,12 @@ export function BranchHub({ className }: BranchHubProps) {
   );
 
   const iconButton =
-    "h-7 w-7 rounded-full bg-[rgba(14,10,7,0.85)] border border-[rgba(212,163,89,0.35)] text-[#FAF4EB] flex items-center justify-center cursor-pointer";
+    "h-7 w-7 rounded-full bg-canvas/85 border border-line text-fg flex items-center justify-center cursor-pointer";
 
   return (
     <section
       id="locations"
-      className={cn("relative w-full bg-[#0E0A07] py-16 sm:py-20 lg:py-24 select-none overflow-hidden", className)}
+      className={cn("relative w-full bg-canvas py-16 sm:py-20 lg:py-24 select-none overflow-hidden", className)}
       aria-labelledby="branch-hub-heading"
     >
       {/* Anchor alias for #branches navigation */}
@@ -391,31 +391,31 @@ export function BranchHub({ className }: BranchHubProps) {
         aria-hidden="true"
       />
 
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10 relative z-10 space-y-8 sm:space-y-10">
+      <div className="container-page relative z-10 space-y-8 sm:space-y-10">
         {/* 1. Heading + stats */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-2">
           <div className="max-w-2xl space-y-3 text-start">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#E5C178]/10 border border-[#E5C178]/30 text-xs sm:text-sm font-sans font-semibold tracking-[0.14em] text-[#E5C178] uppercase">
-              <Compass className="w-4 h-4 text-[#E5C178]" />
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gold/10 border border-gold/30 text-xs sm:text-sm font-sans font-semibold tracking-[0.14em] text-gold uppercase">
+              <Compass className="w-4 h-4 text-gold" />
               <span>{isAr ? "أصالة حيدر أباد" : "ROOTED IN HYDERABAD"}</span>
             </div>
 
             <h2
               id="branch-hub-heading"
-              className="font-heading text-3xl sm:text-4xl lg:text-[46px] font-normal tracking-normal text-[#FAF4EB] leading-[1.08]"
+              className="font-heading text-fg heading-section"
             >
               {isAr ? (
                 <>
-                  اعثر على <span className="font-heading italic text-[#E5C178]">أقرب فرع لفلاتيل</span>
+                  اعثر على <span className="font-heading italic text-gold">أقرب فرع لفلاتيل</span>
                 </>
               ) : (
                 <>
-                  Find Your <span className="font-heading italic text-[#E5C178]">Nearest Flatel</span>
+                  Find Your <span className="font-heading italic text-gold">Nearest Flatel</span>
                 </>
               )}
             </h2>
 
-            <p className="text-sm sm:text-base md:text-lg text-[#D4C4B3] font-sans leading-relaxed">
+            <p className="text-sm sm:text-base md:text-lg text-fg-soft font-sans leading-relaxed">
               {isAr
                 ? "استكشف فروع فلاتيل في حيدر أباد واعثر على شقق مريحة للإقامة بالقرب من وجهاتك الهامة."
                 : "Explore FLATEL locations across Hyderabad and discover comfortable flats to stay near the places that matter to you."}
@@ -430,12 +430,12 @@ export function BranchHub({ className }: BranchHubProps) {
             ].map((stat) => (
               <div
                 key={stat.label}
-                className="p-3 sm:p-5 rounded-2xl bg-[rgba(34,24,16,0.65)] backdrop-blur-md border border-[rgba(212,163,89,0.28)] text-center min-w-0 sm:min-w-[120px] space-y-1 shadow-md"
+                className="text-center min-w-0 sm:min-w-[120px] space-y-1 px-2 sm:px-4"
               >
-                <span className="font-heading text-2xl sm:text-4xl font-medium text-[#E5C178] oldstyle-nums block">
+                <span className="font-heading text-2xl sm:text-4xl font-medium text-gold oldstyle-nums block">
                   {stat.value}
                 </span>
-                <span className="text-xs sm:text-sm font-sans font-bold tracking-[0.14em] text-[#D4C4B3] uppercase block truncate">
+                <span className="text-xs sm:text-sm font-sans font-bold tracking-[0.14em] text-fg-soft uppercase block truncate">
                   {stat.label}
                 </span>
               </div>
@@ -444,18 +444,18 @@ export function BranchHub({ className }: BranchHubProps) {
         </div>
 
         {/* 2. Branch list + map */}
-        <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-4 lg:gap-0 rounded-2xl lg:rounded-3xl lg:border lg:border-[rgba(212,163,89,0.28)] lg:bg-[#16100B] lg:overflow-hidden lg:shadow-2xl">
+        <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-4 lg:gap-0 rounded-2xl lg:rounded-3xl lg:border lg:border-line lg:bg-surface lg:overflow-hidden lg:shadow-2xl">
           {/* Desktop branch list */}
-          <div className="hidden lg:flex flex-col border-e border-[rgba(212,163,89,0.2)]">
-            <div className="px-5 py-4 border-b border-[rgba(212,163,89,0.18)]">
-              <span className="text-[11px] font-semibold tracking-[0.16em] uppercase text-[#E5C178]">
+          <div className="hidden lg:flex flex-col border-e border-line-soft">
+            <div className="px-5 py-4 border-b border-line-soft">
+              <span className="text-xs font-semibold tracking-[0.14em] uppercase text-gold">
                 {isAr ? "شبكة فروع حيدر أباد" : "Hyderabad Network"}
               </span>
-              <p className="font-heading text-lg text-[#FAF4EB] mt-0.5">
+              <p className="font-heading text-lg text-fg mt-0.5">
                 {isAr ? `${BRANCHES.length} فروع لفلاتيل` : `${BRANCHES.length} Flatel Branches`}
               </p>
             </div>
-            <ul className="flex-1 divide-y divide-[rgba(212,163,89,0.14)]">
+            <ul className="flex-1 divide-y divide-line-soft">
               {BRANCH_ORDER.map((id) => {
                 const selected = id === activeBranchId;
                 return (
@@ -463,32 +463,32 @@ export function BranchHub({ className }: BranchHubProps) {
                     <div
                       className={cn(
                         "p-4 space-y-3 transition-colors",
-                        selected ? "bg-[rgba(229,193,120,0.08)]" : "hover:bg-[rgba(229,193,120,0.04)]"
+                        selected ? "bg-gold/8" : "hover:bg-gold/4"
                       )}
                     >
                       <button
                         type="button"
                         onClick={() => handleSelectBranch(id)}
                         aria-pressed={selected}
-                        className="w-full flex items-center gap-3 text-start cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E5C178] rounded-lg"
+                        className="w-full flex items-center gap-3 text-start cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold rounded-lg"
                       >
                         <div
                           className={cn(
                             "relative w-16 h-16 rounded-lg overflow-hidden shrink-0 border",
-                            selected ? "border-[#E5C178]" : "border-[rgba(212,163,89,0.25)]"
+                            selected ? "border-gold" : "border-line"
                           )}
                         >
                           <Image src={BRANCH_PROFILES[id].heroImage} alt="" fill sizes="64px" className="object-cover" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <span className="block font-heading text-lg font-semibold text-[#FAF4EB] leading-tight">
+                          <span className="block font-heading text-lg font-semibold text-fg leading-tight">
                             {branchName(id)}
                           </span>
-                          <span className="flex items-start gap-1 text-xs text-[#B8A692] mt-0.5">
-                            <MapPin className="w-3.5 h-3.5 text-[#E5C178] shrink-0 mt-px" />
+                          <span className="flex items-start gap-1 text-xs text-fg-muted mt-0.5">
+                            <MapPin className="w-3.5 h-3.5 text-gold shrink-0 mt-px" />
                             <span className="line-clamp-2">{branchArea(id)}</span>
                           </span>
-                          <span className="block text-sm font-semibold text-[#E5C178] mt-1 tabular-nums">
+                          <span className="block text-sm font-semibold text-gold mt-1 tabular-nums">
                             {startingPriceLabel(id)}
                             {priceSuffix(id)}
                           </span>
@@ -503,10 +503,10 @@ export function BranchHub({ className }: BranchHubProps) {
           </div>
 
           {/* Map */}
-          <div className="relative rounded-2xl lg:rounded-none border border-[rgba(212,163,89,0.28)] lg:border-0 overflow-hidden bg-[#0E0A07]">
+          <div className="relative rounded-2xl lg:rounded-none border border-line lg:border-0 overflow-hidden bg-canvas">
             <div
               ref={mapContainerRef}
-              className="w-full h-[320px] sm:h-[420px] lg:h-[560px] bg-[#0E0A07] z-0"
+              className="w-full h-[320px] sm:h-[420px] lg:h-[560px] bg-canvas z-0"
               aria-label={isAr ? "خريطة فروع فلاتيل في حيدر أباد" : "Interactive map of Flatel branches in Hyderabad"}
             />
 
@@ -523,8 +523,8 @@ export function BranchHub({ className }: BranchHubProps) {
                     className={cn(
                       "inline-flex items-center gap-1.5 px-3 min-h-[36px] rounded-full text-xs font-semibold border backdrop-blur-md transition-colors cursor-pointer",
                       on
-                        ? "bg-[#E5C178] text-[#140E08] border-[#E5C178]"
-                        : "bg-[rgba(14,10,7,0.85)] text-[#FAF4EB] border-[rgba(212,163,89,0.35)] hover:border-[#E5C178]"
+                        ? "bg-gold text-ink border-gold"
+                        : "bg-canvas/85 text-fg border-line hover:border-gold"
                     )}
                   >
                     <Icon className="w-3.5 h-3.5" />
@@ -535,10 +535,10 @@ export function BranchHub({ className }: BranchHubProps) {
             </div>
 
             {(tilesLoading || !map) && !tileError && (
-              <div className="absolute inset-0 bg-[#0E0A07]/70 flex items-center justify-center pointer-events-none z-10">
-                <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[rgba(34,24,16,0.95)] border border-[rgba(212,163,89,0.28)] text-xs">
-                  <Loader2 className="w-4 h-4 animate-spin text-[#E5C178]" />
-                  <span className="text-[#FAF4EB] font-medium">
+              <div className="absolute inset-0 bg-canvas/70 flex items-center justify-center pointer-events-none z-10">
+                <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-raised/95 border border-line text-xs">
+                  <Loader2 className="w-4 h-4 animate-spin text-gold" />
+                  <span className="text-fg font-medium">
                     {isAr ? "جارٍ تحميل خريطة حيدر أباد…" : "Loading Hyderabad map…"}
                   </span>
                 </div>
@@ -547,8 +547,8 @@ export function BranchHub({ className }: BranchHubProps) {
 
             {tileError && (
               <div className="absolute bottom-4 inset-x-4 z-20 flex justify-center">
-                <div className="max-w-md p-3 rounded-xl bg-[rgba(22,16,11,0.95)] border border-[rgba(212,163,89,0.4)] text-[11px] leading-snug text-[#D4C4B3] flex items-center gap-2.5 shadow-xl">
-                  <AlertCircle className="w-4 h-4 text-[#E5C178] shrink-0" />
+                <div className="max-w-md p-3 rounded-xl bg-surface/95 border border-line-strong text-xs leading-snug text-fg-soft flex items-center gap-2.5 shadow-xl">
+                  <AlertCircle className="w-4 h-4 text-gold shrink-0" />
                   <p>
                     {isAr
                       ? "تعذّر تحميل الخريطة حالياً. تفاصيل الفروع وروابط الاتجاهات عبر خرائط Google تعمل بشكل طبيعي."
@@ -563,10 +563,10 @@ export function BranchHub({ className }: BranchHubProps) {
               <div
                 role="dialog"
                 aria-label={branchName(popupBranchId)}
-                className="absolute z-30 w-[260px] -translate-x-1/2 -translate-y-full rounded-xl bg-[#16100B] border border-[rgba(212,163,89,0.35)] shadow-2xl overflow-hidden text-start"
+                className="absolute z-30 w-[260px] -translate-x-1/2 -translate-y-full rounded-xl bg-surface border border-line shadow-2xl overflow-hidden text-start"
                 style={{ left: popupPoint.x, top: popupPoint.y - 54 }}
               >
-                <div className="relative h-32 bg-[#0E0A07]">
+                <div className="relative h-32 bg-canvas">
                   {popupGallery[popupPhoto] && (
                     <Image
                       src={popupGallery[popupPhoto].src}
@@ -607,11 +607,11 @@ export function BranchHub({ className }: BranchHubProps) {
                 </div>
                 <div className="p-3 space-y-2.5">
                   <div>
-                    <p className="font-heading text-lg font-semibold text-[#FAF4EB] leading-tight">
+                    <p className="font-heading text-lg font-semibold text-fg leading-tight">
                       {branchName(popupBranchId)}
                     </p>
-                    <p className="text-[11px] text-[#B8A692] mt-0.5">{branchArea(popupBranchId)}</p>
-                    <p className="text-sm font-semibold text-[#E5C178] mt-1 tabular-nums">
+                    <p className="text-xs text-fg-muted mt-0.5">{branchArea(popupBranchId)}</p>
+                    <p className="text-sm font-semibold text-gold mt-1 tabular-nums">
                       {startingPriceLabel(popupBranchId)}
                       {priceSuffix(popupBranchId)}
                     </p>
@@ -630,8 +630,8 @@ export function BranchHub({ className }: BranchHubProps) {
                 <div
                   key={id}
                   className={cn(
-                    "snap-start shrink-0 w-[85%] sm:w-[340px] p-3.5 rounded-2xl border space-y-3 bg-[rgba(22,16,11,0.92)]",
-                    selected ? "border-[#E5C178]" : "border-[rgba(212,163,89,0.25)]"
+                    "snap-start shrink-0 w-[85%] sm:w-[340px] p-3.5 rounded-2xl border space-y-3 bg-surface/92",
+                    selected ? "border-gold" : "border-line"
                   )}
                 >
                   <button
@@ -640,15 +640,15 @@ export function BranchHub({ className }: BranchHubProps) {
                     aria-pressed={selected}
                     className="w-full flex items-center gap-3 text-start cursor-pointer"
                   >
-                    <div className="relative w-14 h-14 rounded-lg overflow-hidden shrink-0 border border-[rgba(212,163,89,0.25)]">
+                    <div className="relative w-14 h-14 rounded-lg overflow-hidden shrink-0 border border-line">
                       <Image src={BRANCH_PROFILES[id].heroImage} alt="" fill sizes="56px" className="object-cover" />
                     </div>
                     <div className="min-w-0">
-                      <span className="block font-heading text-lg font-semibold text-[#FAF4EB] leading-tight">
+                      <span className="block font-heading text-lg font-semibold text-fg leading-tight">
                         {branchName(id)}
                       </span>
-                      <span className="block text-xs text-[#B8A692] line-clamp-1">{branchArea(id)}</span>
-                      <span className="block text-sm font-semibold text-[#E5C178] tabular-nums">
+                      <span className="block text-xs text-fg-muted line-clamp-1">{branchArea(id)}</span>
+                      <span className="block text-sm font-semibold text-gold tabular-nums">
                         {startingPriceLabel(id)}
                       </span>
                     </div>

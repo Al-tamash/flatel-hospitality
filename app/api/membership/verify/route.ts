@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { MEMBERSHIP } from "@/lib/membership/membership-content";
+import { getMembershipTier } from "@/lib/membership/membership-content";
 import { MembershipService } from "@/lib/membership/membership-service";
 
 /**
@@ -26,7 +26,8 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({
     success: true,
     memberName: member.fullName,
-    discountPercent: MEMBERSHIP.stayDiscountPercent,
+    tier: member.tier,
+    discountPercent: getMembershipTier(member.tier).discountPercent,
     validUntil: member.validUntil,
   });
 }

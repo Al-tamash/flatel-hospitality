@@ -58,30 +58,30 @@ export default function ListPropertyPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#0E0A07] text-[#FAF4EB] flex flex-col font-sans selection:bg-[#E5C178]/20 selection:text-[#E5C178]">
+    <div className="min-h-screen bg-canvas text-fg flex flex-col font-sans selection:bg-gold/20 selection:text-gold">
       <SiteHeader />
 
-      <main className="flex-1 w-full">
+      <main id="main-content" tabIndex={-1} className="flex-1 w-full">
         {/* ========================================================= */}
         {/* HERO SECTION                                              */}
         {/* ========================================================= */}
-        <section className="relative pt-16 pb-14 sm:pt-20 sm:pb-16 bg-[#120D08]/90 overflow-hidden">
+        <section className="relative pt-16 pb-14 sm:pt-20 sm:pb-16 bg-surface/90 overflow-hidden">
           <div
-            className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[850px] h-[450px] bg-[radial-gradient(ellipse_at_center,rgba(229,193,120,0.09),transparent_70%)] -z-10"
+            className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[850px] h-[450px] bg-[radial-gradient(ellipse_at_center,color-mix(in_srgb,var(--gold)_9%,transparent),transparent_70%)] -z-10"
             aria-hidden="true"
           />
 
-          <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10 text-center">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#16100B] border border-[rgba(212,163,89,0.3)] text-[#E5C178] text-[11px] font-sans font-medium uppercase tracking-[0.18em] mb-4">
-              <Building2 className="w-3.5 h-3.5 text-[#E5C178]" />
+          <div className="container-page text-center">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-surface border border-line text-gold text-xs font-sans font-medium uppercase tracking-[0.18em] mb-4">
+              <Building2 className="w-3.5 h-3.5 text-gold" />
               <span>Property Owner Partnership</span>
             </div>
 
-            <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-normal tracking-tight text-[#FAF4EB]">
-              List Your Property with <span className="text-[#E5C178]">Flatel</span>
+            <h1 className="font-heading text-fg heading-page">
+              List Your Property with <span className="text-gold">Flatel</span>
             </h1>
 
-            <p className="mt-3 text-sm sm:text-base text-[#B8A692] max-w-2xl mx-auto leading-relaxed">
+            <p className="mt-3 text-sm sm:text-base text-fg-muted max-w-2xl mx-auto leading-relaxed">
               Partner with Flatel to host short and extended stay guests. We manage guest arrivals, regular cleaning, and daily property maintenance.
             </p>
           </div>
@@ -90,53 +90,53 @@ export default function ListPropertyPage() {
         {/* ========================================================= */}
         {/* VALUE PILLARS & OWNER BENEFITS                            */}
         {/* ========================================================= */}
-        <section className="py-12 sm:py-16 bg-[#120D08]/60">
-          <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10">
+        <section className="py-12 sm:py-16 bg-surface/60">
+          <div className="container-page">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="p-6 rounded-2xl bg-[rgba(34,24,16,0.75)] border border-[rgba(212,163,89,0.25)] hover:border-[rgba(212,163,89,0.5)] backdrop-blur-md transition-colors">
-                <div className="w-10 h-10 rounded-xl bg-[#16100B] border border-[rgba(212,163,89,0.25)] text-[#E5C178] flex items-center justify-center mb-4">
+              <div className="border-t border-line pt-6">
+                <div className="w-10 h-10 rounded-xl bg-surface border border-line text-gold flex items-center justify-center mb-4">
                   <TrendingUp className="w-5 h-5" />
                 </div>
-                <h3 className="font-serif text-base font-normal text-[#FAF4EB]">
+                <h2 className="font-heading text-base font-medium text-fg">
                   Consistent Bookings
-                </h3>
-                <p className="mt-2 text-xs text-[#B8A692] leading-relaxed">
+                </h2>
+                <p className="mt-2 text-xs text-fg-muted leading-relaxed">
                   We host medical attendants, vacationing families, and business professionals seeking quality serviced apartments in Hyderabad.
                 </p>
               </div>
 
-              <div className="p-6 rounded-2xl bg-[rgba(34,24,16,0.75)] border border-[rgba(212,163,89,0.25)] hover:border-[rgba(212,163,89,0.5)] backdrop-blur-md transition-colors">
-                <div className="w-10 h-10 rounded-xl bg-[#16100B] border border-[rgba(212,163,89,0.25)] text-[#E5C178] flex items-center justify-center mb-4">
+              <div className="border-t border-line pt-6">
+                <div className="w-10 h-10 rounded-xl bg-surface border border-line text-gold flex items-center justify-center mb-4">
                   <Sparkles className="w-5 h-5" />
                 </div>
-                <h3 className="font-serif text-base font-normal text-[#FAF4EB]">
+                <h2 className="font-heading text-base font-medium text-fg">
                   Regular Cleaning & Care
-                </h3>
-                <p className="mt-2 text-xs text-[#B8A692] leading-relaxed">
+                </h2>
+                <p className="mt-2 text-xs text-fg-muted leading-relaxed">
                   Our professional housekeeping team cleans and inspects the apartment between stays to keep your asset in good order.
                 </p>
               </div>
 
-              <div className="p-6 rounded-2xl bg-[rgba(34,24,16,0.75)] border border-[rgba(212,163,89,0.25)] hover:border-[rgba(212,163,89,0.5)] backdrop-blur-md transition-colors">
-                <div className="w-10 h-10 rounded-xl bg-[#16100B] border border-[rgba(212,163,89,0.25)] text-[#E5C178] flex items-center justify-center mb-4">
+              <div className="border-t border-line pt-6">
+                <div className="w-10 h-10 rounded-xl bg-surface border border-line text-gold flex items-center justify-center mb-4">
                   <ShieldCheck className="w-5 h-5" />
                 </div>
-                <h3 className="font-serif text-base font-normal text-[#FAF4EB]">
+                <h2 className="font-heading text-base font-medium text-fg">
                   Verified Guests Only
-                </h3>
-                <p className="mt-2 text-xs text-[#B8A692] leading-relaxed">
+                </h2>
+                <p className="mt-2 text-xs text-fg-muted leading-relaxed">
                   Every adult guest must present a valid government-issued photo ID or passport before check-in.
                 </p>
               </div>
 
-              <div className="p-6 rounded-2xl bg-[rgba(34,24,16,0.75)] border border-[rgba(212,163,89,0.25)] hover:border-[rgba(212,163,89,0.5)] backdrop-blur-md transition-colors">
-                <div className="w-10 h-10 rounded-xl bg-[#16100B] border border-[rgba(212,163,89,0.25)] text-[#E5C178] flex items-center justify-center mb-4">
+              <div className="border-t border-line pt-6">
+                <div className="w-10 h-10 rounded-xl bg-surface border border-line text-gold flex items-center justify-center mb-4">
                   <Key className="w-5 h-5" />
                 </div>
-                <h3 className="font-serif text-base font-normal text-[#FAF4EB]">
+                <h2 className="font-heading text-base font-medium text-fg">
                   Operations Handled
-                </h3>
-                <p className="mt-2 text-xs text-[#B8A692] leading-relaxed">
+                </h2>
+                <p className="mt-2 text-xs text-fg-muted leading-relaxed">
                   We manage key handovers, guest communications, payment collection, and routine inquiries from check-in to departure.
                 </p>
               </div>
@@ -148,35 +148,35 @@ export default function ListPropertyPage() {
         {/* SUBMISSION FORM & DIRECT CONTACT                          */}
         {/* ========================================================= */}
         <section className="py-14 sm:py-20">
-          <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10">
-            <div className="max-w-3xl mx-auto rounded-3xl bg-[rgba(34,24,16,0.85)] border border-[rgba(212,163,89,0.3)] p-6 sm:p-10 shadow-2xl backdrop-blur-md">
+          <div className="container-page">
+            <div className="max-w-3xl mx-auto rounded-3xl bg-raised/85 border border-line p-6 sm:p-10 shadow-2xl backdrop-blur-md">
               <div className="max-w-xl mx-auto text-center mb-8">
-                <span className="text-[11px] font-sans font-medium tracking-[0.18em] text-[#E5C178] uppercase">
+                <span className="text-xs font-sans font-medium tracking-[0.18em] text-gold uppercase">
                   Free Property Evaluation
                 </span>
-                <h2 className="mt-1 font-serif text-2xl sm:text-3xl font-normal text-[#FAF4EB]">
+                <h2 className="mt-1 font-heading text-fg heading-section">
                   Submit Property Details
                 </h2>
-                <p className="mt-2 text-xs sm:text-sm text-[#B8A692]">
+                <p className="mt-2 text-xs sm:text-sm text-fg-muted">
                   Fill out the form below. Our property acquisition team will review your apartment and reach out within 24 hours.
                 </p>
               </div>
 
               {isSubmitted ? (
-                <div className="p-8 rounded-2xl bg-[rgba(34,24,16,0.9)] border border-[rgba(212,163,89,0.35)] text-center space-y-4 animate-in fade-in">
-                  <div className="w-14 h-14 rounded-full bg-[#E5C178]/15 text-[#E5C178] flex items-center justify-center mx-auto border border-[rgba(212,163,89,0.4)]">
+                <div className="p-8 rounded-2xl bg-raised/90 border border-line text-center space-y-4 animate-in fade-in">
+                  <div className="w-14 h-14 rounded-full bg-gold/15 text-gold flex items-center justify-center mx-auto border border-line-strong">
                     <BadgeCheck className="w-8 h-8" />
                   </div>
-                  <h3 className="font-serif text-xl sm:text-2xl font-normal text-[#FAF4EB]">
+                  <h3 className="font-serif text-xl sm:text-2xl font-normal text-fg">
                     Thank You! Your Inquiry Has Been Received.
                   </h3>
-                  <p className="text-xs sm:text-sm text-[#B8A692] max-w-md mx-auto">
+                  <p className="text-xs sm:text-sm text-fg-muted max-w-md mx-auto">
                     We have received your listing request and opened WhatsApp chat with our team. Our property team will review your apartment specifications.
                   </p>
                   <button
                     type="button"
                     onClick={() => setIsSubmitted(false)}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[rgba(212,163,89,0.35)] text-[#E5C178] bg-[#16100B] hover:bg-[#221810] text-xs font-semibold transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-line text-gold bg-surface hover:bg-raised text-xs font-semibold transition-colors cursor-pointer"
                   >
                     Submit Another Property
                   </button>
@@ -185,7 +185,7 @@ export default function ListPropertyPage() {
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label htmlFor="owner-full-name" className="block text-xs font-medium uppercase tracking-wider text-[#B8A692] mb-1.5">
+                      <label htmlFor="owner-full-name" className="block text-xs font-medium uppercase tracking-wider text-fg-muted mb-1.5">
                         Your Full Name *
                       </label>
                       <input
@@ -197,12 +197,12 @@ export default function ListPropertyPage() {
                           setFormData({ ...formData, fullName: e.target.value })
                         }
                         placeholder="e.g. Mohammed Farhan"
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#16100B]/90 border border-[rgba(212,163,89,0.25)] text-[#FAF4EB] text-xs sm:text-sm placeholder-[#8C7E72] focus:border-[#E5C178] focus:ring-1 focus:ring-[#E5C178] focus:outline-none transition-colors"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-surface/90 border border-line text-fg text-xs sm:text-sm placeholder-fg-faint focus:border-gold focus:ring-1 focus:ring-gold focus:outline-none transition-colors"
                       />
                     </div>
 
                     <div>
-                      <label htmlFor="owner-phone" className="block text-xs font-medium uppercase tracking-wider text-[#B8A692] mb-1.5">
+                      <label htmlFor="owner-phone" className="block text-xs font-medium uppercase tracking-wider text-fg-muted mb-1.5">
                         Contact Phone / WhatsApp *
                       </label>
                       <input
@@ -214,14 +214,14 @@ export default function ListPropertyPage() {
                           setFormData({ ...formData, phone: e.target.value })
                         }
                         placeholder="+91 93464 13282"
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#16100B]/90 border border-[rgba(212,163,89,0.25)] text-[#FAF4EB] text-xs sm:text-sm placeholder-[#8C7E72] focus:border-[#E5C178] focus:ring-1 focus:ring-[#E5C178] focus:outline-none transition-colors"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-surface/90 border border-line text-fg text-xs sm:text-sm placeholder-fg-faint focus:border-gold focus:ring-1 focus:ring-gold focus:outline-none transition-colors"
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label htmlFor="owner-email" className="block text-xs font-medium uppercase tracking-wider text-[#B8A692] mb-1.5">
+                      <label htmlFor="owner-email" className="block text-xs font-medium uppercase tracking-wider text-fg-muted mb-1.5">
                         Email Address (Optional)
                       </label>
                       <input
@@ -232,12 +232,12 @@ export default function ListPropertyPage() {
                           setFormData({ ...formData, email: e.target.value })
                         }
                         placeholder="owner@example.com"
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#16100B]/90 border border-[rgba(212,163,89,0.25)] text-[#FAF4EB] text-xs sm:text-sm placeholder-[#8C7E72] focus:border-[#E5C178] focus:ring-1 focus:ring-[#E5C178] focus:outline-none transition-colors"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-surface/90 border border-line text-fg text-xs sm:text-sm placeholder-fg-faint focus:border-gold focus:ring-1 focus:ring-gold focus:outline-none transition-colors"
                       />
                     </div>
 
                     <div>
-                      <label htmlFor="property-location" className="block text-xs font-medium uppercase tracking-wider text-[#B8A692] mb-1.5">
+                      <label htmlFor="property-location" className="block text-xs font-medium uppercase tracking-wider text-fg-muted mb-1.5">
                         Property Location in Hyderabad *
                       </label>
                       <input
@@ -249,14 +249,14 @@ export default function ListPropertyPage() {
                           setFormData({ ...formData, location: e.target.value })
                         }
                         placeholder="e.g. Barkas / Moghal Pura / Chandrayangutta"
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#16100B]/90 border border-[rgba(212,163,89,0.25)] text-[#FAF4EB] text-xs sm:text-sm placeholder-[#8C7E72] focus:border-[#E5C178] focus:ring-1 focus:ring-[#E5C178] focus:outline-none transition-colors"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-surface/90 border border-line text-fg text-xs sm:text-sm placeholder-fg-faint focus:border-gold focus:ring-1 focus:ring-gold focus:outline-none transition-colors"
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label htmlFor="property-size" className="block text-xs font-medium uppercase tracking-wider text-[#B8A692] mb-1.5">
+                      <label htmlFor="property-size" className="block text-xs font-medium uppercase tracking-wider text-fg-muted mb-1.5">
                         Apartment Size / Configuration *
                       </label>
                       <select
@@ -265,18 +265,18 @@ export default function ListPropertyPage() {
                         onChange={(e) =>
                           setFormData({ ...formData, flatType: e.target.value })
                         }
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#16100B]/90 border border-[rgba(212,163,89,0.25)] text-[#FAF4EB] text-xs sm:text-sm focus:border-[#E5C178] focus:outline-none transition-colors"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-surface/90 border border-line text-fg text-xs sm:text-sm focus:border-gold focus:outline-none transition-colors"
                       >
-                        <option value="1bhk" className="bg-[#16100B] text-[#FAF4EB]">1 BHK Furnished Flat</option>
-                        <option value="2bhk" className="bg-[#16100B] text-[#FAF4EB]">2 BHK Furnished Flat</option>
-                        <option value="3bhk" className="bg-[#16100B] text-[#FAF4EB]">3 BHK Furnished Flat</option>
-                        <option value="4bhk" className="bg-[#16100B] text-[#FAF4EB]">4 BHK Furnished Flat</option>
-                        <option value="building" className="bg-[#16100B] text-[#FAF4EB]">Full Apartment Building / Multiple Units</option>
+                        <option value="1bhk" className="bg-surface text-fg">1 BHK Furnished Flat</option>
+                        <option value="2bhk" className="bg-surface text-fg">2 BHK Furnished Flat</option>
+                        <option value="3bhk" className="bg-surface text-fg">3 BHK Furnished Flat</option>
+                        <option value="4bhk" className="bg-surface text-fg">4 BHK Furnished Flat</option>
+                        <option value="building" className="bg-surface text-fg">Full Apartment Building / Multiple Units</option>
                       </select>
                     </div>
 
                     <div>
-                      <label htmlFor="property-furnishing" className="block text-xs font-medium uppercase tracking-wider text-[#B8A692] mb-1.5">
+                      <label htmlFor="property-furnishing" className="block text-xs font-medium uppercase tracking-wider text-fg-muted mb-1.5">
                         Furnishing Status *
                       </label>
                       <select
@@ -288,17 +288,17 @@ export default function ListPropertyPage() {
                             furnishingStatus: e.target.value,
                           })
                         }
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#16100B]/90 border border-[rgba(212,163,89,0.25)] text-[#FAF4EB] text-xs sm:text-sm focus:border-[#E5C178] focus:outline-none transition-colors"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-surface/90 border border-line text-fg text-xs sm:text-sm focus:border-gold focus:outline-none transition-colors"
                       >
-                        <option value="fully-furnished" className="bg-[#16100B] text-[#FAF4EB]">Fully Furnished (AC, Beds, Kitchen)</option>
-                        <option value="semi-furnished" className="bg-[#16100B] text-[#FAF4EB]">Semi-Furnished</option>
-                        <option value="unfurnished" className="bg-[#16100B] text-[#FAF4EB]">Unfurnished (Fit-out needed)</option>
+                        <option value="fully-furnished" className="bg-surface text-fg">Fully Furnished (AC, Beds, Kitchen)</option>
+                        <option value="semi-furnished" className="bg-surface text-fg">Semi-Furnished</option>
+                        <option value="unfurnished" className="bg-surface text-fg">Unfurnished (Fit-out needed)</option>
                       </select>
                     </div>
                   </div>
 
                   <div>
-                    <label htmlFor="property-details" className="block text-xs font-medium uppercase tracking-wider text-[#B8A692] mb-1.5">
+                    <label htmlFor="property-details" className="block text-xs font-medium uppercase tracking-wider text-fg-muted mb-1.5">
                       Additional Details / Expected Rental Terms
                     </label>
                     <textarea
@@ -309,7 +309,7 @@ export default function ListPropertyPage() {
                         setFormData({ ...formData, message: e.target.value })
                       }
                       placeholder="Floor number, parking availability, elevator, expected rental range, etc."
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#16100B]/90 border border-[rgba(212,163,89,0.25)] text-[#FAF4EB] text-xs sm:text-sm placeholder-[#8C7E72] focus:border-[#E5C178] focus:ring-1 focus:ring-[#E5C178] focus:outline-none transition-colors"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-surface/90 border border-line text-fg text-xs sm:text-sm placeholder-fg-faint focus:border-gold focus:ring-1 focus:ring-gold focus:outline-none transition-colors"
                     />
                   </div>
 
@@ -317,7 +317,7 @@ export default function ListPropertyPage() {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] hover:brightness-110 text-[#140E08] font-bold text-xs sm:text-sm transition-all shadow-md shadow-[#E5C178]/15 cursor-pointer disabled:opacity-50"
+                      className="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-gold to-gold-deep hover:brightness-110 text-ink font-bold text-xs sm:text-sm transition-all shadow-md shadow-gold/15 cursor-pointer disabled:opacity-50"
                     >
                       <Send className="w-4 h-4" />
                       <span>{isSubmitting ? "Submitting..." : "Submit Property & Connect on WhatsApp"}</span>
@@ -327,7 +327,7 @@ export default function ListPropertyPage() {
                       href={partnerWhatsappUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-[rgba(212,163,89,0.35)] hover:border-[#E5C178] text-[#E5C178] bg-[#16100B] hover:bg-[#221810] text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
+                      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-line hover:border-gold text-gold bg-surface hover:bg-raised text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
                     >
                       <span>Direct WhatsApp</span>
                       <ArrowRight className="w-4 h-4" />

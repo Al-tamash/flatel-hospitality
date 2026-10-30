@@ -42,14 +42,14 @@ export default function ArabicBranchesIndexPage() {
     <div className="min-h-screen bg-background text-foreground flex flex-col selection:bg-primary/20 selection:text-primary font-arabic" dir="rtl">
       <SiteHeader />
 
-      <main className="flex-1 w-full py-12 sm:py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10">
+      <main id="main-content" tabIndex={-1} className="flex-1 w-full py-12 sm:py-16">
+        <div className="container-page">
           {/* Header */}
           <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
-            <span className="text-[11px] font-semibold tracking-wider uppercase text-primary block mb-2">
+            <span className="text-xs font-semibold tracking-wider uppercase text-primary block mb-2">
               مواقعنا الفندقية
             </span>
-            <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl text-foreground font-normal tracking-tight">
+            <h1 className="font-heading text-foreground heading-page">
               فروع ضيافة فلاتيل
             </h1>
             <p className="mt-3 text-sm sm:text-base text-muted-foreground leading-relaxed">
@@ -74,9 +74,9 @@ export default function ArabicBranchesIndexPage() {
                     sizes="(max-width: 768px) 100vw, 50vw"
                     className="object-cover object-center"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0E0A07]/60 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-canvas/60 via-transparent to-transparent" />
                   <div className="absolute top-4 right-4">
-                    <span className="px-3 py-1 rounded-full bg-[#0E0A07]/60 backdrop-blur-md text-[11px] font-medium text-foreground border border-white/10">
+                    <span className="px-3 py-1 rounded-full bg-canvas/60 backdrop-blur-md text-xs font-medium text-foreground border border-white/10">
                       {b.unitsSummary}
                     </span>
                   </div>
@@ -90,7 +90,7 @@ export default function ArabicBranchesIndexPage() {
                       <span>{b.location}</span>
                     </div>
 
-                    <h2 className="font-heading text-2xl font-normal text-foreground">
+                    <h2 className="font-heading text-foreground heading-sub">
                       {b.name}
                     </h2>
 
@@ -102,7 +102,7 @@ export default function ArabicBranchesIndexPage() {
                   {/* Footer */}
                   <div className="pt-4 border-t border-border/50 flex items-center justify-between">
                     <div>
-                      <span className="text-[10px] text-muted-foreground uppercase block">ابتداءً من</span>
+                      <span className="text-xs text-muted-foreground uppercase block">ابتداءً من</span>
                       <div className="flex items-baseline gap-1">
                         <span className="font-heading text-xl font-bold text-foreground">
                           {b.startingRate}
@@ -113,10 +113,10 @@ export default function ArabicBranchesIndexPage() {
 
                     <Link
                       href={`/ar/branches/${b.slug}`}
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] font-semibold text-xs hover:brightness-105 transition-all shadow-sm"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-gold to-gold-deep text-ink font-semibold text-xs hover:brightness-105 transition-all shadow-sm"
                     >
                       <span>استكشف الفرع</span>
-                      <ArrowLeft className="w-3.5 h-3.5 text-[#140E08]" />
+                      <ArrowLeft className="w-3.5 h-3.5 text-ink" />
                     </Link>
                   </div>
                 </div>

@@ -9,7 +9,27 @@
 - **Flat selector** (`components/hero/flat-occupancy-modal.tsx`) — brand/logo block removed, Reset and Close share the title row, Extra Adults / Extra Children sit in one row, hint "Tap + on more than one flat type", "Only 1 available" wording.
 - **Flatel Membership** — `/membership` and `/ar/membership`: animated gold member card, 7 benefits, savings calculator, how-it-works, FAQ, WhatsApp join button. Homepage strip (EN + AR), "Membership" in the desktop and mobile nav. Header spacing tightened at 1024px so the extra link fits.
 
-## Client must confirm — membership benefits are PROPOSED
+## UPDATE 2026-10-30 — membership is now "Flatel O Signature Membership" (Golden + Platinum)
+The client replaced the single ₹777 card with two cards. **This supersedes the proposed-benefits table and the ₹777 notes below.**
+
+| | Golden Card | Platinum Card |
+|---|---|---|
+| Price (struck-through list price) | **₹4,999** (₹11,999) | **₹7,777** (₹54,999) |
+| Stay discount, all direct bookings | 10% | 15% |
+| Airport transfer | Pickup only, 5-seater, 4×/year (once per quarter) | Pickup and drop, 7-seater, 4×/year (once per quarter) |
+| Check-in | Priority and early check-in, subject to availability | Guaranteed check-in, 4×/year (once per quarter) |
+| Welcome kit (Osmania biscuits etc.) | Yes | Yes |
+| Dedicated priority support | Yes | Yes |
+
+- **One file holds the numbers and copy**: `lib/membership/membership-content.ts` (`MEMBERSHIP_TIERS`, EN + AR). The page, cards, emails and the booking price all read from it.
+- **Server decides the price and rate**: `POST /api/membership/create` takes `tier` (`golden` | `platinum`); the browser never sends a price. Checkout applies 10% or 15% from the member's stored tier (still not stacked with long-stay discounts: the higher wins).
+- **Setup required**: run `supabase/migrations/20261031_membership_tiers.sql` after `20261029_memberships.sql` (`rollback_membership_tiers.sql` reverts). It adds `memberships.tier`; any existing ₹777 rows become `golden` (same 10%). Until it runs, joining shows "not open yet" with the WhatsApp fallback.
+- **Removed** (not in the client's list): free night after 10 stays, 10% add-on discount, referral credit, free date change, 2-hour early check-in/late check-out, and the savings calculator (at ₹4,999+ it never pays back on room rate alone, so it would have shown a loss).
+- **Applied by staff, not the website**: airport pickup/drop, priority/guaranteed check-in, welcome kit and priority support. Guests are told to WhatsApp their Member ID. Only the discount is automatic. Nobody is tracking the "4 times a year, once per quarter" limit yet.
+- **Assumed, please confirm with the client**: 12-month validity (they did not say; "4 times annually" implies a year), and that "Complimentary Only Airport Pickup" means pickup only. Arabic copy needs a native read-through.
+- **Not verified end to end**: no real payment was run (tables not migrated here). Unit tests (`npx tsx tests/membership/membership.test.ts`, `tests/notifications/templates.test.ts`), `tsc` and ESLint pass; `scripts/verify-live-flows.ts` was updated for tiers but not run.
+
+## (Superseded) Client must confirm — membership benefits are PROPOSED
 All numbers live in `lib/membership/membership-content.ts` (one place; page, card, strip and calculator read from it). Set `CONFIRMED_BY_CLIENT` to `true` after sign-off.
 
 | Benefit | Proposed | Notes |

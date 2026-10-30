@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -34,6 +35,7 @@ import {
 import { MEMBER_ID_STORAGE_KEY } from "@/components/membership/join-form";
 import { GroupCheckoutView } from "@/components/checkout/group-checkout-view";
 import { isGroupCart, parseCart } from "@/lib/booking/cart";
+import { BRAND_HEX } from "@/lib/design-tokens";
 
 const EMPTY_FARE: FareCalculationResult = {
   nights: 0,
@@ -418,7 +420,7 @@ function SingleCheckoutView({ locale = "en" }: CheckoutViewProps) {
         description: `20% Advance Booking Deposit for ${room.title}`,
         order_id: data.orderId,
         prefill: { name: fullName, email, contact: phone },
-        theme: { color: "#E5C178" },
+        theme: { color: BRAND_HEX.gold },
         modal: {
           ondismiss: () => {
             void markPendingPaymentFailed(data.bookingId, "Payment was cancelled before completion.");
@@ -457,7 +459,7 @@ function SingleCheckoutView({ locale = "en" }: CheckoutViewProps) {
   if (!room) {
     return (
       <div className={cn("mx-auto max-w-2xl px-5 py-20 text-center text-foreground", locale === "ar" && "font-arabic")} dir={locale === "ar" ? "rtl" : "ltr"}>
-        <h1 className="font-heading text-3xl font-normal">{locale === "ar" ? "العقار غير موجود" : "Property not found"}</h1>
+        <h1 className="font-heading heading-page">{locale === "ar" ? "العقار غير موجود" : "Property not found"}</h1>
         <p className="mt-3 text-sm text-muted-foreground">{locale === "ar" ? "يرجى اختيار شقة قبل المتابعة إلى الدفع." : "Choose a residence before continuing to checkout."}</p>
         <Link href={`${basePath}/properties`} className="mt-7 inline-flex min-h-11 items-center gap-2 rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
           <ArrowLeft className={cn("h-4 w-4", locale === "ar" && "rotate-180")} /> {locale === "ar" ? "استعراض الشقق والإقامات" : "Browse residences"}
@@ -493,8 +495,8 @@ function SingleCheckoutView({ locale = "en" }: CheckoutViewProps) {
         )}
       </div>
       <div className="pt-4">
-        <p className="text-xs font-medium uppercase tracking-[0.12em] text-primary">{localizedRoom.type}</p>
-        <h2 className="mt-1 font-heading text-2xl leading-tight text-foreground">{localizedRoom.title}</h2>
+        <p className="text-xs font-medium uppercase tracking-[0.14em] text-primary">{localizedRoom.type}</p>
+        <h2 className="mt-1 font-heading text-foreground heading-sub">{localizedRoom.title}</h2>
         {branch && (
           <p className="mt-2 flex items-start gap-2 text-sm leading-6 text-muted-foreground">
             <MapPin className="mt-1 h-4 w-4 shrink-0 text-primary" />
@@ -503,7 +505,7 @@ function SingleCheckoutView({ locale = "en" }: CheckoutViewProps) {
         )}
       </div>
 
-      <div className="mt-5 grid grid-cols-2 gap-x-4 gap-y-4 border-y border-[rgba(212,163,89,0.2)] py-4 text-sm">
+      <div className="mt-5 grid grid-cols-2 gap-x-4 gap-y-4 border-y border-line-soft py-4 text-sm">
         <div>
           <p className="text-xs text-muted-foreground">{locale === "ar" ? "تسجيل الوصول · ١١ ص - ١ ظ" : "Check-in · 11 AM–1 PM"}</p>
           <p className="mt-1 flex items-center gap-2 text-foreground"><CalendarDays className="h-4 w-4 text-primary" />{formatStayDate(checkInParam, locale)}</p>
@@ -533,7 +535,7 @@ function SingleCheckoutView({ locale = "en" }: CheckoutViewProps) {
         </Link>
       </div>
 
-      <div className="mt-4 border-t border-[rgba(212,163,89,0.2)] pt-4">
+      <div className="mt-4 border-t border-line-soft pt-4">
         <h3 className="text-sm font-semibold text-foreground">{locale === "ar" ? "تفاصيل الأسعار" : "Price breakdown"}</h3>
         {!areDatesValid ? (
           <p className="mt-3 text-sm text-muted-foreground">
@@ -567,7 +569,7 @@ function SingleCheckoutView({ locale = "en" }: CheckoutViewProps) {
                 <span className="tabular-nums text-foreground">{formatMoney(fareResult.addonsTotal)}</span>
               </div>
             )}
-            <div className="flex justify-between gap-3 border-t border-[rgba(212,163,89,0.2)] pt-3 font-semibold text-foreground">
+            <div className="flex justify-between gap-3 border-t border-line-soft pt-3 font-semibold text-foreground">
               <span>{dict.checkout.totalStay}</span>
               <span className="tabular-nums">{formatMoney(fareResult.grossTotal)}</span>
             </div>
@@ -584,7 +586,7 @@ function SingleCheckoutView({ locale = "en" }: CheckoutViewProps) {
       </div>
 
       {selectedAddonList.length > 0 && (
-        <div className="mt-4 border-t border-[rgba(212,163,89,0.2)] pt-3">
+        <div className="mt-4 border-t border-line-soft pt-3">
           <p className="text-xs font-medium text-muted-foreground">{locale === "ar" ? "الخدمات المختارة" : "Selected services"}</p>
           <ul className="mt-2 space-y-2">
             {selectedAddonList.map((addon) => {
@@ -605,7 +607,7 @@ function SingleCheckoutView({ locale = "en" }: CheckoutViewProps) {
         </div>
       )}
 
-      <div className="mt-5 border-t border-[rgba(212,163,89,0.2)] pt-4">
+      <div className="mt-5 border-t border-line-soft pt-4">
         <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
           <CalendarDays className="h-4 w-4 text-primary" />{dict.checkout.cancellationPolicy}
         </h3>
@@ -615,7 +617,7 @@ function SingleCheckoutView({ locale = "en" }: CheckoutViewProps) {
   );
 
   const fieldClass = (field: string) => cn(
-    "mt-2 min-h-12 w-full rounded-lg border bg-secondary px-4 text-base text-foreground placeholder:text-[#B8A692] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+    "mt-2 min-h-12 w-full rounded-lg border bg-secondary px-4 text-base text-foreground placeholder:text-fg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
     errors[field] ? "border-rose-400" : "border-border"
   );
 
@@ -624,20 +626,8 @@ function SingleCheckoutView({ locale = "en" }: CheckoutViewProps) {
       <header className="border-b border-border/70 bg-background">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-4 sm:px-8">
           <Link href={basePath || "/"} aria-label="Flatel Hospitality home" className="group flex min-h-11 items-center gap-3 rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring">
-            <span className="grid h-10 w-10 place-items-center rounded-lg border border-border bg-secondary text-primary" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-                <path d="M3 10.5L12 3l9 7.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 19.5v-9z" />
-                <path d="M9 21V12h6v9" />
-              </svg>
-            </span>
-            <span>
-              <span className="block font-heading text-lg leading-none tracking-[0.12em] text-foreground">
-                {locale === "ar" ? "ضيافة فلاتيل" : "FLATEL HOSPITALITY"}
-              </span>
-              <span className="mt-1 block text-[10px] tracking-[0.18em] text-primary">
-                {locale === "ar" ? "شقق فندقية مفروشة • حيدر أباد" : "SERVICED RESIDENCES · HYDERABAD"}
-              </span>
-            </span>
+            <Image src="/images/flatel-monogram-clean.png" alt="" width={36} height={36} className="h-9 w-9 shrink-0 object-contain" />
+            <Image src="/images/flatel-logo-clean.png" alt="FLATEL Hospitality" width={140} height={42} className="h-7 w-auto shrink-0 object-contain" />
           </Link>
         </div>
         <nav aria-label="Booking progress" className="border-t border-border/50">
@@ -649,15 +639,15 @@ function SingleCheckoutView({ locale = "en" }: CheckoutViewProps) {
                 <span className="sm:hidden">{locale === "ar" ? "الإقامة" : "Stay"}</span>
               </Link>
             </li>
-            <li aria-hidden="true" className="h-px flex-1 bg-[#C69344]/70" />
+            <li aria-hidden="true" className="h-px flex-1 bg-gold-deep/70" />
             <li aria-current="step" className="inline-flex min-h-10 items-center gap-2 font-medium text-primary">
               <span className="grid h-6 w-6 place-items-center rounded-full bg-primary text-primary-foreground">2</span>
               <span className="hidden sm:inline">{locale === "ar" ? "بيانات النزيل" : "Guest details"}</span>
               <span className="sm:hidden">{locale === "ar" ? "النزيل" : "Guest"}</span>
             </li>
-            <li aria-hidden="true" className="h-px flex-1 bg-[#5B4A36]" />
-            <li className="inline-flex min-h-10 items-center gap-2 text-[#A89887]">
-              <span className="grid h-6 w-6 place-items-center rounded-full border border-[#5B4A36]">3</span>
+            <li aria-hidden="true" className="h-px flex-1 bg-line-strong" />
+            <li className="inline-flex min-h-10 items-center gap-2 text-fg-faint">
+              <span className="grid h-6 w-6 place-items-center rounded-full border border-line-strong">3</span>
               <span className="hidden sm:inline">{locale === "ar" ? "التأكيد والدفع" : "Confirmation & payment"}</span>
               <span className="sm:hidden">{locale === "ar" ? "التأكيد" : "Confirm"}</span>
             </li>
@@ -665,9 +655,9 @@ function SingleCheckoutView({ locale = "en" }: CheckoutViewProps) {
         </nav>
       </header>
 
-      <main className="mx-auto max-w-6xl px-5 pb-16 pt-8 sm:px-8 sm:pt-10">
+      <div className="mx-auto max-w-6xl px-5 pb-16 pt-8 sm:px-8 sm:pt-10">
         <div className="mb-7 max-w-2xl">
-          <h1 className="font-heading text-3xl leading-tight text-foreground sm:text-4xl">{dict.checkout.title}</h1>
+          <h1 className="font-heading text-foreground heading-page">{dict.checkout.title}</h1>
           <p className="mt-2 text-base leading-7 text-muted-foreground">{dict.checkout.subtitle}</p>
         </div>
 
@@ -682,7 +672,7 @@ function SingleCheckoutView({ locale = "en" }: CheckoutViewProps) {
               <span className="tabular-nums text-lg font-semibold text-primary">{areDatesValid ? formatMoney(fareResult.advancePayable) : "—"}</span>
             </span>
           </summary>
-          <div className="border-t border-[rgba(212,163,89,0.2)] p-4">{summaryContent}</div>
+          <div className="border-t border-line-soft p-4">{summaryContent}</div>
         </details>
 
         <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(340px,0.8fr)] lg:gap-10">
@@ -697,8 +687,8 @@ function SingleCheckoutView({ locale = "en" }: CheckoutViewProps) {
               </div>
             )}
             <form onSubmit={handleProceedToPayment} noValidate className="rounded-xl border border-border bg-card p-5 sm:p-7">
-              <div className="mb-6 flex flex-wrap items-baseline justify-between gap-2 border-b border-[rgba(212,163,89,0.2)] pb-4">
-                <h2 id="guest-heading" className="font-heading text-2xl text-foreground">{dict.checkout.guestDetails}</h2>
+              <div className="mb-6 flex flex-wrap items-baseline justify-between gap-2 border-b border-line-soft pb-4">
+                <h2 id="guest-heading" className="font-heading text-foreground heading-sub">{dict.checkout.guestDetails}</h2>
                 <p className="text-xs text-muted-foreground">{locale === "ar" ? "الحقول الإلزامية مميزة بـ *" : "Required fields are marked *"}</p>
               </div>
 
@@ -777,7 +767,7 @@ function SingleCheckoutView({ locale = "en" }: CheckoutViewProps) {
                   </div>
                 </div>
 
-                <label className="flex min-h-12 items-start gap-3 rounded-lg border border-[rgba(212,163,89,0.18)] p-3 text-sm text-foreground">
+                <label className="flex min-h-12 items-start gap-3 rounded-lg border border-line-soft p-3 text-sm text-foreground">
                   <input
                     type="checkbox"
                     checked={isInternational}
@@ -792,7 +782,7 @@ function SingleCheckoutView({ locale = "en" }: CheckoutViewProps) {
                   </span>
                 </label>
 
-                <div className="rounded-lg border border-[rgba(212,163,89,0.18)] p-3">
+                <div className="rounded-lg border border-line-soft p-3">
                   <label htmlFor="memberCode" className="text-sm font-medium text-foreground">
                     {locale === "ar" ? "رقم عضوية فلاتيل (اختياري)" : "Flatel Member ID (optional)"}
                   </label>
@@ -811,7 +801,7 @@ function SingleCheckoutView({ locale = "en" }: CheckoutViewProps) {
                       type="button"
                       onClick={handleApplyMember}
                       disabled={!memberCode.trim() || memberCheck.status === "checking" || isBusy}
-                      className="min-h-12 shrink-0 rounded-lg border border-[rgba(212,163,89,0.4)] px-4 text-sm font-semibold text-primary hover:border-primary disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                      className="min-h-12 shrink-0 rounded-lg border border-line-strong px-4 text-sm font-semibold text-primary hover:border-primary disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                     >
                       {memberCheck.status === "checking" ? (locale === "ar" ? "جارٍ التحقق…" : "Checking…") : (locale === "ar" ? "تطبيق" : "Apply")}
                     </button>
@@ -843,7 +833,7 @@ function SingleCheckoutView({ locale = "en" }: CheckoutViewProps) {
                   <p className="mt-1 text-right text-xs text-muted-foreground">{specialRequests.length}/300</p>
                 </div>
 
-                <div className="flex items-start gap-3 border-t border-[rgba(212,163,89,0.2)] pt-5">
+                <div className="flex items-start gap-3 border-t border-line-soft pt-5">
                   <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
                   <div>
                     <h3 className="text-sm font-semibold text-foreground">{locale === "ar" ? "إثبات الهوية مطلوب عند الوصول" : "Photo ID required at check-in"}</h3>
@@ -851,7 +841,7 @@ function SingleCheckoutView({ locale = "en" }: CheckoutViewProps) {
                   </div>
                 </div>
 
-                <div className="border-t border-[rgba(212,163,89,0.2)] pt-5">
+                <div className="border-t border-line-soft pt-5">
                   <label className="flex items-start gap-3 text-sm leading-6 text-muted-foreground">
                     <input
                       type="checkbox"
@@ -868,11 +858,11 @@ function SingleCheckoutView({ locale = "en" }: CheckoutViewProps) {
 
                 {(errors.dates || errors.booking) && <p role="alert" className="text-sm text-rose-300">{errors.dates || errors.booking}</p>}
 
-                <div className="border-t border-[rgba(212,163,89,0.2)] pt-5">
+                <div className="border-t border-line-soft pt-5">
                   <button
                     type="submit"
                     disabled={isBusy || !areDatesValid || fareResult.advancePayable <= 0}
-                    className="flex min-h-14 w-full items-center justify-center gap-2 rounded-lg bg-primary px-5 text-base font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:bg-[#77664A] disabled:text-[#E8DFD1]"
+                    className="flex min-h-14 w-full items-center justify-center gap-2 rounded-lg bg-primary px-5 text-base font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:bg-fg-faint disabled:text-fg"
                   >
                     <CreditCard className="h-5 w-5" />
                     {isSubmitting
@@ -889,7 +879,7 @@ function SingleCheckoutView({ locale = "en" }: CheckoutViewProps) {
                       ? `ستراجع وتدفع بالضبط مبلغ العربون المعروض في نافذة الدفع الآمنة.`
                       : `You’ll review and pay exactly ${areDatesValid ? formatMoney(fareResult.advancePayable) : "the advance shown in your summary"} in the secure payment window.`}
                   </p>
-                  <p className="mt-2 text-center text-xs text-[#B8A692]">
+                  <p className="mt-2 text-center text-xs text-fg-muted">
                     {locale === "ar" ? "لا يتم تأكيد الحجز إلا بعد نجاح التحقق من سداد العربون." : "No reservation is confirmed until payment is verified."}
                   </p>
                 </div>
@@ -899,7 +889,7 @@ function SingleCheckoutView({ locale = "en" }: CheckoutViewProps) {
 
           <aside aria-label="Booking summary" className="hidden lg:block lg:sticky lg:top-6">
             <div className="rounded-xl border border-border bg-card p-5 sm:p-6">
-              <h2 className="mb-4 font-heading text-2xl text-foreground">{dict.checkout.bookingSummary}</h2>
+              <h2 className="mb-4 font-heading text-foreground heading-sub">{dict.checkout.bookingSummary}</h2>
               {summaryContent}
             </div>
           </aside>
@@ -908,7 +898,7 @@ function SingleCheckoutView({ locale = "en" }: CheckoutViewProps) {
         <div className="mt-8 border-t border-border/50 pt-5 text-center text-xs text-muted-foreground sm:text-left">
           <span>{locale === "ar" ? "حجز فندقي آمن ومؤكد · ضيافة فلاتيل حيدر أباد" : "Secure reservation · Flatel Hospitality"}</span>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

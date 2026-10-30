@@ -309,7 +309,7 @@ export function AmenitiesSection({ className }: AmenitiesSectionProps) {
     <section
       id="amenities"
       className={cn(
-        "scroll-mt-20 relative w-full bg-[#0E0A07] text-[#FAF4EB] py-14 sm:py-18 select-none overflow-hidden",
+        "scroll-mt-20 relative w-full bg-canvas text-fg py-14 sm:py-18 select-none overflow-hidden",
         className
       )}
       aria-labelledby="amenities-heading"
@@ -320,38 +320,38 @@ export function AmenitiesSection({ className }: AmenitiesSectionProps) {
         aria-hidden="true"
       />
 
-      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 relative z-10 space-y-7 sm:space-y-8">
+      <div className="container-page relative z-10 space-y-7 sm:space-y-8">
         
         {/* ========================================================== */}
         {/* 1. TOP HEADER SECTION                                      */}
         {/* ========================================================== */}
         <div className="text-center max-w-2xl mx-auto space-y-2.5">
-          <p className="text-xs font-sans font-semibold tracking-[0.14em] text-[#E5C178] uppercase">
+          <p className="text-xs font-sans font-semibold tracking-[0.14em] text-gold uppercase">
             {isAr ? "خدمات وتجهيزات فندقية متكاملة" : "THE FLATEL EXPERIENCE"}
           </p>
 
           <h2
             id="amenities-heading"
-            className="font-heading text-2xl sm:text-3xl md:text-4xl font-medium tracking-normal text-[#FAF4EB] leading-tight"
+            className="font-heading text-fg heading-section"
           >
             {isAr ? (
               <>
                 كل ما تحتاجه{" "}
-                <span className="font-heading italic text-[#E5C178]">
+                <span className="font-heading italic text-gold">
                   لتشعر وكأنك في بيتك.
                 </span>
               </>
             ) : (
               <>
                 Everything you need to{" "}
-                <span className="font-heading italic text-[#E5C178]">
+                <span className="font-heading italic text-gold">
                   feel at home.
                 </span>
               </>
             )}
           </h2>
 
-          <p className="text-xs sm:text-sm text-[#D4C4B3] font-sans font-normal max-w-lg mx-auto leading-relaxed">
+          <p className="text-xs sm:text-sm text-fg-soft font-sans font-normal max-w-lg mx-auto leading-relaxed">
             {isAr
               ? "مساحات مصممة بعناية مع تجهيزات ومرافق عصرية لإقامة غاية في الراحة."
               : "Thoughtfully designed spaces with modern amenities for a comfortable stay."}
@@ -370,17 +370,17 @@ export function AmenitiesSection({ className }: AmenitiesSectionProps) {
                 type="button"
                 onClick={() => setActiveFilter(tab.id)}
                 className={cn(
-                  "px-3.5 py-1.5 min-h-[36px] rounded-full text-xs font-sans font-medium tracking-wide transition-all duration-200 cursor-pointer shrink-0 inline-flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E5C178]",
+                  "px-3.5 py-1.5 min-h-[36px] rounded-full text-xs font-sans font-medium tracking-wide transition-all duration-200 cursor-pointer shrink-0 inline-flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold",
                   isActive
-                    ? "bg-[#E5C178] text-[#140E08] font-semibold shadow-sm shadow-[#E5C178]/30"
-                    : "bg-[#18120D] text-[#D4C4B3] hover:text-[#FAF4EB] hover:bg-[#221810] border border-[rgba(212,163,89,0.18)]"
+                    ? "bg-gold text-ink font-semibold shadow-sm shadow-gold/30"
+                    : "bg-surface text-fg-soft hover:text-fg hover:bg-raised border border-line-soft"
                 )}
                 aria-pressed={isActive}
               >
                 <span>{isAr ? tab.labelAr : tab.label}</span>
                 <span className={cn(
-                  "ml-1.5 text-[11px] px-1.5 py-0.2 rounded-full",
-                  isActive ? "bg-[#140E08]/20 text-[#140E08]" : "bg-[rgba(212,163,89,0.12)] text-[#E5C178]"
+                  "ml-1.5 text-xs px-1.5 py-0.2 rounded-full",
+                  isActive ? "bg-ink/20 text-ink" : "bg-gold/12 text-gold"
                 )}>
                   {tab.count}
                 </span>
@@ -393,23 +393,23 @@ export function AmenitiesSection({ className }: AmenitiesSectionProps) {
         {/* 3. HUMAN-CRAFTED AMENITIES SHOWCASE                        */}
         {/* Clean, balanced layout with semantic icons & micro-details */}
         {/* ========================================================== */}
-        <div className="w-full max-w-5xl mx-auto pt-2 pb-1">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-3.5">
+        <div className="w-full pt-2 pb-1">
+          <div data-stagger className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-3.5">
             {displayedItems.map((item) => {
               const ItemIcon = item.icon;
               return (
                 <div
                   key={item.id}
-                  className="flex items-start gap-3 p-3 rounded-xl bg-[#16100B]/80 border border-[rgba(212,163,89,0.14)] hover:border-[#E5C178]/40 transition-all duration-200 group"
+                  className="flex items-start gap-3 py-2 group"
                 >
-                  <div className="w-8 h-8 rounded-lg bg-[rgba(34,24,16,0.9)] border border-[rgba(212,163,89,0.22)] flex items-center justify-center text-[#E5C178] shrink-0 group-hover:scale-105 transition-transform">
+                  <div className="w-8 h-8 rounded-lg bg-raised/90 border border-line flex items-center justify-center text-gold shrink-0 group-hover:scale-105 transition-transform">
                     <ItemIcon className="w-4 h-4" />
                   </div>
                   <div className={cn("min-w-0 flex-1", isAr ? "text-right" : "text-left")}>
-                    <h4 className="text-xs sm:text-[13px] font-medium text-[#FAF4EB] group-hover:text-[#E5C178] transition-colors leading-snug truncate">
+                    <h3 className="text-xs sm:text-sm font-medium text-fg group-hover:text-gold transition-colors leading-snug truncate">
                       {item.name}
-                    </h4>
-                    <p className="text-[11px] text-[#A69380] leading-tight line-clamp-1 mt-0.5">
+                    </h3>
+                    <p className="text-xs text-fg-faint leading-tight line-clamp-1 mt-0.5">
                       {item.detail}
                     </p>
                   </div>
@@ -429,12 +429,12 @@ export function AmenitiesSection({ className }: AmenitiesSectionProps) {
               setModalActiveTab("all");
               setIsModalOpen(true);
             }}
-            className="group px-6 py-2.5 min-h-[42px] rounded-xl bg-transparent hover:bg-[#E5C178]/10 border border-[#E5C178]/70 hover:border-[#E5C178] text-xs sm:text-sm font-sans font-semibold text-[#E5C178] transition-all duration-200 cursor-pointer flex items-center gap-2 shadow-sm"
+            className="group px-6 py-2.5 min-h-[42px] rounded-xl bg-transparent hover:bg-gold/10 border border-gold/70 hover:border-gold text-xs sm:text-sm font-sans font-semibold text-gold transition-all duration-200 cursor-pointer flex items-center gap-2 shadow-sm"
           >
             <span>{isAr ? "استكشف دليل كافة التجهيزات الـ ٢٩" : "Explore all 29 amenities directory"}</span>
             <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />
           </button>
-          <span className="text-[11px] text-[#8C7A68]">
+          <span className="text-xs text-fg-faint">
             {isAr
               ? "مزايا شاملة في المعيشة، المطبخ، الكهرباء، العناية والترفيه"
               : "Complete inclusions across living, kitchen, power, care & recreation"}
@@ -456,29 +456,29 @@ export function AmenitiesSection({ className }: AmenitiesSectionProps) {
         >
           {/* Backdrop Overlay */}
           <div
-            className="fixed inset-0 bg-[#0E0A07]/85 backdrop-blur-md transition-opacity"
+            className="fixed inset-0 bg-canvas/85 backdrop-blur-md transition-opacity"
             onClick={() => setIsModalOpen(false)}
             aria-hidden="true"
           />
 
           {/* Modal Container */}
-          <div className="relative w-full max-w-4xl max-h-[88vh] flex flex-col rounded-2xl bg-[#140E0A] border border-[rgba(212,163,89,0.28)] shadow-[0_24px_64px_rgba(0,0,0,0.9)] overflow-hidden z-10 animate-in zoom-in-95 duration-200 backdrop-blur-xl">
+          <div className="relative w-full max-w-4xl max-h-[88vh] flex flex-col rounded-2xl bg-surface border border-line shadow-[0_24px_64px_rgba(0,0,0,0.9)] overflow-hidden z-10 animate-in zoom-in-95 duration-200 backdrop-blur-xl">
             {/* Modal Header */}
-            <div className="sticky top-0 z-20 px-6 sm:px-8 py-5 bg-[#140E0A]/98 backdrop-blur-md border-b border-[rgba(212,163,89,0.18)] flex items-start justify-between gap-4">
+            <div className="sticky top-0 z-20 px-6 sm:px-8 py-5 bg-surface/98 backdrop-blur-md border-b border-line-soft flex items-start justify-between gap-4">
               <div className={cn(isAr ? "text-right" : "text-left")}>
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-[#E5C178]" />
-                  <span className="text-xs font-sans font-semibold tracking-[0.14em] text-[#E5C178] uppercase">
+                  <span className="w-2 h-2 rounded-full bg-gold" />
+                  <span className="text-xs font-sans font-semibold tracking-[0.14em] text-gold uppercase">
                     {isAr ? "دليل مرافق وتجهيزات فلاتيل" : "FLATEL RESIDENCE DIRECTORY"}
                   </span>
                 </div>
                 <h3
                   id="all-amenities-dialog-title"
-                  className="font-heading text-xl sm:text-2xl font-semibold text-[#FAF4EB] mt-0.5 tracking-normal"
+                  className="font-heading text-xl sm:text-2xl font-semibold text-fg mt-0.5 tracking-normal"
                 >
                   {isAr ? "كافة التجهيزات الأساسية الـ ٢٩" : "All 29 Master Inclusions"}
                 </h3>
-                <p className="text-xs text-[#B8A692] mt-0.5 font-sans">
+                <p className="text-xs text-fg-muted mt-0.5 font-sans">
                   {isAr
                     ? "تجهيزات قياسية معتمدة متوفرة في كافة شقق باركاس ومغل بورا الفندقية."
                     : "Verified standard inclusions across all Barkas & Moghal Pura serviced apartments."}
@@ -488,7 +488,7 @@ export function AmenitiesSection({ className }: AmenitiesSectionProps) {
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="h-9 w-9 rounded-full bg-[#1F1610] border border-[rgba(212,163,89,0.25)] flex items-center justify-center text-[#D4C4B3] hover:text-[#FAF4EB] hover:border-[#E5C178] transition-colors cursor-pointer shrink-0 mt-1"
+                className="h-9 w-9 rounded-full bg-surface border border-line flex items-center justify-center text-fg-soft hover:text-fg hover:border-gold transition-colors cursor-pointer shrink-0 mt-1"
                 aria-label="Close amenities dialog"
               >
                 <X className="w-4 h-4" />
@@ -496,15 +496,15 @@ export function AmenitiesSection({ className }: AmenitiesSectionProps) {
             </div>
 
             {/* In-Modal Category Quick-Filter Pills (Prevents Crowding) */}
-            <div className="px-6 sm:px-8 py-3 bg-[#18110C] border-b border-[rgba(212,163,89,0.12)] flex items-center gap-2 overflow-x-auto no-scrollbar shrink-0">
+            <div className="px-6 sm:px-8 py-3 bg-surface border-b border-line-soft flex items-center gap-2 overflow-x-auto no-scrollbar shrink-0">
               <button
                 type="button"
                 onClick={() => setModalActiveTab("all")}
                 className={cn(
                   "px-3 py-1 rounded-full text-xs font-sans whitespace-nowrap transition-colors cursor-pointer",
                   modalActiveTab === "all"
-                    ? "bg-[#E5C178] text-[#140E08] font-bold"
-                    : "bg-[#221810] text-[#D4C4B3] hover:text-[#FAF4EB]"
+                    ? "bg-gold text-ink font-bold"
+                    : "bg-raised text-fg-soft hover:text-fg"
                 )}
               >
                 {isAr ? "الكل (٢٩)" : "All (29)"}
@@ -519,8 +519,8 @@ export function AmenitiesSection({ className }: AmenitiesSectionProps) {
                     className={cn(
                       "px-3 py-1 rounded-full text-xs font-sans whitespace-nowrap transition-colors cursor-pointer",
                       modalActiveTab === cat.id
-                        ? "bg-[#E5C178] text-[#140E08] font-bold"
-                        : "bg-[#221810] text-[#D4C4B3] hover:text-[#FAF4EB]"
+                        ? "bg-gold text-ink font-bold"
+                        : "bg-raised text-fg-soft hover:text-fg"
                     )}
                   >
                     {label} ({cat.items.length})
@@ -535,19 +535,19 @@ export function AmenitiesSection({ className }: AmenitiesSectionProps) {
                 return (
                   <div key={category.id} className="space-y-4">
                     {/* Category Title & Description */}
-                    <div className="border-b border-[rgba(212,163,89,0.18)] pb-2.5 flex items-baseline justify-between">
+                    <div className="border-b border-line-soft pb-2.5 flex items-baseline justify-between">
                       <div className={cn(isAr ? "text-right" : "text-left")}>
                         <div className="flex items-center gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#E5C178]" />
-                          <h4 className="font-heading text-lg sm:text-xl font-medium text-[#FAF4EB] tracking-normal">
+                          <span className="w-1.5 h-1.5 rounded-full bg-gold" />
+                          <h4 className="font-heading text-lg sm:text-xl font-medium text-fg tracking-normal">
                             {category.title}
                           </h4>
                         </div>
-                        <p className={cn("text-xs text-[#A69380] mt-0.5", isAr ? "pr-3.5" : "pl-3.5")}>
+                        <p className={cn("text-xs text-fg-faint mt-0.5", isAr ? "pr-3.5" : "pl-3.5")}>
                           {category.subtitle}
                         </p>
                       </div>
-                      <span className="text-xs font-mono text-[#D4C4B3] shrink-0 ml-4">
+                      <span className="text-xs font-mono text-fg-soft shrink-0 ml-4">
                         {isAr ? `${category.items.length} مزايا` : `${category.items.length} items`}
                       </span>
                     </div>
@@ -559,18 +559,18 @@ export function AmenitiesSection({ className }: AmenitiesSectionProps) {
                         return (
                           <div
                             key={item.id}
-                            className="flex items-start gap-3.5 py-1 text-[#FAF4EB] group"
+                            className="flex items-start gap-3.5 py-1 text-fg group"
                           >
-                            <div className="w-7 h-7 rounded-md bg-[rgba(34,24,16,0.8)] border border-[rgba(212,163,89,0.22)] flex items-center justify-center text-[#E5C178] shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                            <div className="w-7 h-7 rounded-md bg-raised/80 border border-line flex items-center justify-center text-gold shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
                               <ItemIcon className="w-4 h-4" />
                             </div>
                             <div className={cn("min-w-0 flex-1", isAr ? "text-right" : "text-left")}>
                               <div className="flex items-center gap-2">
-                                <span className="text-sm font-medium text-[#FAF4EB] group-hover:text-[#E5C178] transition-colors leading-tight">
+                                <span className="text-sm font-medium text-fg group-hover:text-gold transition-colors leading-tight">
                                   {item.name}
                                 </span>
                               </div>
-                              <p className="text-xs text-[#B8A692] leading-relaxed mt-0.5">
+                              <p className="text-xs text-fg-muted leading-relaxed mt-0.5">
                                 {item.detail}
                               </p>
                             </div>
@@ -584,9 +584,9 @@ export function AmenitiesSection({ className }: AmenitiesSectionProps) {
             </div>
 
             {/* Modal Footer */}
-            <div className="sticky bottom-0 z-20 px-6 sm:px-8 py-4 bg-[#140E0A]/98 backdrop-blur-md border-t border-[rgba(212,163,89,0.18)] flex items-center justify-between text-xs sm:text-sm text-[#D4C4B3]">
+            <div className="sticky bottom-0 z-20 px-6 sm:px-8 py-4 bg-surface/98 backdrop-blur-md border-t border-line-soft flex items-center justify-between text-xs sm:text-sm text-fg-soft">
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-[#E5C178]" />
+                <CheckCircle2 className="w-4 h-4 text-gold" />
                 <span className="hidden sm:inline">
                   {isAr ? "جميع المزايا الـ ٢٩ مشمولة ومؤكدة مجاناً مع كل حجز" : "100% verified complimentary inclusions with every booking"}
                 </span>
@@ -597,7 +597,7 @@ export function AmenitiesSection({ className }: AmenitiesSectionProps) {
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] font-bold text-xs sm:text-sm hover:brightness-105 transition-all cursor-pointer min-h-[38px]"
+                className="px-5 py-2 rounded-xl bg-gradient-to-r from-gold to-gold-deep text-ink font-bold text-xs sm:text-sm hover:brightness-105 transition-all cursor-pointer min-h-[38px]"
               >
                 {isAr ? "تم" : "Done"}
               </button>

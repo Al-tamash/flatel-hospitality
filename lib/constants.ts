@@ -163,6 +163,8 @@ export const HEADER_NAVIGATION = {
   links: [
     { label: "Properties", href: "/properties" },
     { label: "Hospitals", href: "/hospitals" },
+    { label: "Branches", href: "/branches" },
+    { label: "Membership", href: "/membership" },
     { label: "About", href: "/about" },
     { label: "Policies", href: "/policies" },
     { label: "List Property", href: "/list-property" },

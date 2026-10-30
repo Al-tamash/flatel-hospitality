@@ -358,13 +358,13 @@ export default function AdminInventoryPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <p className="text-[11px] font-medium tracking-[0.18em] uppercase text-[#E5C178] mb-1">
+          <p className="text-xs font-medium tracking-[0.18em] uppercase text-gold mb-1">
             Dynamic Residence Inventory
           </p>
-          <h1 className="font-heading text-2xl sm:text-3xl font-normal text-[#FAF4EB] tracking-tight">
+          <h1 className="font-heading text-2xl sm:text-3xl font-normal text-fg">
             Inventory &amp; Content Manager
           </h1>
-          <p className="text-xs sm:text-sm text-[#B8A692] mt-1">
+          <p className="text-xs sm:text-sm text-fg-muted mt-1">
             Control live nightly rates, photos, descriptions, specs, amenities &amp; landmarks for every flat.
           </p>
         </div>
@@ -373,15 +373,15 @@ export default function AdminInventoryPage() {
             type="button"
             onClick={fetchInventory}
             disabled={isLoading}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#16100B] hover:bg-[#221810] border border-[rgba(212,163,89,0.25)] text-xs text-[#FAF4EB] transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-surface hover:bg-raised border border-line text-xs text-fg transition-colors cursor-pointer"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin text-[#E5C178]" : "text-[#E5C178]"}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin text-gold" : "text-gold"}`} />
             <span>Refresh</span>
           </button>
           <button
             type="button"
             onClick={() => setShowAddModal(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] hover:brightness-110 text-[#140E08] font-bold text-xs transition-all shadow-md shadow-[#E5C178]/15 cursor-pointer"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-gold to-gold-deep hover:brightness-110 text-ink font-bold text-xs transition-all shadow-md shadow-gold/15 cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>Add Residence Category</span>
@@ -411,11 +411,11 @@ export default function AdminInventoryPage() {
           return (
             <div
               key={room.id}
-              className="rounded-2xl bg-[rgba(34,24,16,0.75)] border border-[rgba(212,163,89,0.25)] backdrop-blur-md overflow-hidden shadow-xl flex flex-col justify-between"
+              className="rounded-2xl bg-raised/75 border border-line backdrop-blur-md overflow-hidden shadow-xl flex flex-col justify-between"
             >
               <div>
                 {/* Photo Header */}
-                <div className="relative aspect-[16/9] w-full bg-[#16100B]">
+                <div className="relative aspect-[16/9] w-full bg-surface">
                   <Image
                     src={photoUrl}
                     alt={room.title}
@@ -424,13 +424,13 @@ export default function AdminInventoryPage() {
                     className="object-cover"
                   />
                   <div className="absolute top-3 left-3">
-                    <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[#FAF4EB] px-2.5 py-1 rounded-xl bg-[#16100B]/85 backdrop-blur-md border border-[rgba(212,163,89,0.3)]">
-                      <MapPin className="w-3 h-3 text-[#E5C178]" />
+                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-fg px-2.5 py-1 rounded-xl bg-surface/85 backdrop-blur-md border border-line">
+                      <MapPin className="w-3 h-3 text-gold" />
                       <span>{room.branchSlug === "barkas-salala" ? "Barkas Salala" : "Moghal Pura"}</span>
                     </span>
                   </div>
                   <div className="absolute top-3 right-3 flex items-center gap-2">
-                    <span className="text-xs font-bold text-[#140E08] px-2.5 py-1 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] shadow-sm shadow-[#E5C178]/20">
+                    <span className="text-xs font-bold text-ink px-2.5 py-1 rounded-xl bg-gradient-to-r from-gold to-gold-deep shadow-sm shadow-gold/20">
                       {room.type}
                     </span>
                   </div>
@@ -440,38 +440,38 @@ export default function AdminInventoryPage() {
                 <div className="p-5 space-y-3">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <h3 className="font-heading text-lg font-normal text-[#FAF4EB]">
+                      <h3 className="font-heading text-lg font-normal text-fg">
                         {room.title}
                       </h3>
-                      <p className="text-[11px] text-[#B8A692] mt-0.5 line-clamp-2">
+                      <p className="text-xs text-fg-muted mt-0.5 line-clamp-2">
                         {room.shortDescription}
                       </p>
                     </div>
                     <div className="text-right shrink-0">
-                      <span className="text-base font-heading oldstyle-nums text-[#E5C178] font-bold">
+                      <span className="text-base font-heading oldstyle-nums text-gold font-bold">
                         {formatPrice(room.basePricePerNight)}
                       </span>
-                      <span className="text-xs text-[#B8A692] block">/ night</span>
+                      <span className="text-xs text-fg-muted block">/ night</span>
                     </div>
                   </div>
 
                   {/* Quick Specs Grid */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] text-[#B8A692] pt-2 border-t border-[rgba(212,163,89,0.18)]">
-                    <div className="p-2 rounded-lg bg-[#16100B] border border-[rgba(212,163,89,0.15)]">
-                      <span className="block text-[10px] uppercase text-[#E5C178]">Base Guests</span>
-                      <span className="text-[#FAF4EB] font-medium">{room.baseAdults} Adults</span>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-fg-muted pt-2 border-t border-line-soft">
+                    <div className="p-2 rounded-lg bg-surface border border-line-soft">
+                      <span className="block text-xs uppercase text-gold">Base Guests</span>
+                      <span className="text-fg font-medium">{room.baseAdults} Adults</span>
                     </div>
-                    <div className="p-2 rounded-lg bg-[#16100B] border border-[rgba(212,163,89,0.15)]">
-                      <span className="block text-[10px] uppercase text-[#E5C178]">Max Guests</span>
-                      <span className="text-[#FAF4EB] font-medium">{room.maxAdults} Adults</span>
+                    <div className="p-2 rounded-lg bg-surface border border-line-soft">
+                      <span className="block text-xs uppercase text-gold">Max Guests</span>
+                      <span className="text-fg font-medium">{room.maxAdults} Adults</span>
                     </div>
-                    <div className="p-2 rounded-lg bg-[#16100B] border border-[rgba(212,163,89,0.15)]">
-                      <span className="block text-[10px] uppercase text-[#E5C178]">Extra Fee</span>
-                      <span className="text-[#FAF4EB] font-medium">₹{room.extraPersonFeePerNight}</span>
+                    <div className="p-2 rounded-lg bg-surface border border-line-soft">
+                      <span className="block text-xs uppercase text-gold">Extra Fee</span>
+                      <span className="text-fg font-medium">₹{room.extraPersonFeePerNight}</span>
                     </div>
-                    <div className="p-2 rounded-lg bg-[#16100B] border border-[rgba(212,163,89,0.15)]">
-                      <span className="block text-[10px] uppercase text-[#E5C178]">Photos</span>
-                      <span className="text-[#FAF4EB] font-medium">{room.gallery.length} Images</span>
+                    <div className="p-2 rounded-lg bg-surface border border-line-soft">
+                      <span className="block text-xs uppercase text-gold">Photos</span>
+                      <span className="text-fg font-medium">{room.gallery.length} Images</span>
                     </div>
                   </div>
 
@@ -480,24 +480,24 @@ export default function AdminInventoryPage() {
                     {room.amenities.slice(0, 4).map((am) => (
                       <span
                         key={am.name}
-                        className="text-[10px] px-2 py-0.5 rounded-md bg-[#16100B] border border-[rgba(212,163,89,0.2)] text-[#FAF4EB]"
+                        className="text-xs px-2 py-0.5 rounded-md bg-surface border border-line-soft text-fg"
                       >
                         ✓ {am.name}
                       </span>
                     ))}
                     {room.amenities.length > 4 && (
-                      <span className="text-[10px] px-2 py-0.5 rounded-md text-[#E5C178]">
+                      <span className="text-xs px-2 py-0.5 rounded-md text-gold">
                         +{room.amenities.length - 4} more
                       </span>
                     )}
                   </div>
 
                   {/* Actions Row */}
-                  <div className="pt-3 border-t border-[rgba(212,163,89,0.18)] flex items-center justify-between">
+                  <div className="pt-3 border-t border-line-soft flex items-center justify-between">
                     <Link
                       href={`/properties/${room.slug}`}
                       target="_blank"
-                      className="text-xs text-[#B8A692] hover:text-[#FAF4EB] inline-flex items-center gap-1 transition-colors"
+                      className="text-xs text-fg-muted hover:text-fg inline-flex items-center gap-1 transition-colors"
                     >
                       <span>View Live Page</span>
                       <ExternalLink className="w-3 h-3" />
@@ -507,7 +507,7 @@ export default function AdminInventoryPage() {
                       <button
                         type="button"
                         onClick={() => openFullEditModal(room)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] font-bold text-xs hover:brightness-110 transition-all cursor-pointer shadow-sm"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-gold to-gold-deep text-ink font-bold text-xs hover:brightness-110 transition-all cursor-pointer shadow-sm"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                         <span>Edit Flat Content</span>
@@ -536,29 +536,29 @@ export default function AdminInventoryPage() {
       {/* COMPREHENSIVE FULL EDIT MODAL                            */}
       {/* ======================================================== */}
       {editModalRoom && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0E0A07]/85 backdrop-blur-md p-3 sm:p-6 overflow-y-auto">
-          <div className="bg-[#16100B] border border-[rgba(212,163,89,0.3)] rounded-3xl max-w-3xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-canvas/85 backdrop-blur-md p-3 sm:p-6 overflow-y-auto">
+          <div className="bg-surface border border-line rounded-3xl max-w-3xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
             {/* Modal Header */}
-            <div className="p-4 sm:p-5 border-b border-[rgba(212,163,89,0.2)] flex items-center justify-between shrink-0 bg-[#16100B]">
+            <div className="p-4 sm:p-5 border-b border-line-soft flex items-center justify-between shrink-0 bg-surface">
               <div>
-                <span className="text-[10px] font-mono uppercase tracking-widest text-[#E5C178]">
+                <span className="text-xs font-mono uppercase tracking-widest text-gold">
                   Edit Flat Inventory &amp; Content
                 </span>
-                <h2 className="font-heading text-lg sm:text-xl font-normal text-[#FAF4EB]">
+                <h2 className="font-heading text-lg sm:text-xl font-normal text-fg">
                   {editModalRoom.title} ({editModalRoom.category})
                 </h2>
               </div>
               <button
                 type="button"
                 onClick={() => setEditModalRoom(null)}
-                className="h-8 w-8 rounded-full bg-[#221810] hover:bg-[#2a1e14] text-[#FAF4EB] flex items-center justify-center border border-[rgba(212,163,89,0.25)] cursor-pointer"
+                className="h-8 w-8 rounded-full bg-raised hover:bg-raised-hover text-fg flex items-center justify-center border border-line cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {/* Modal Tabs Navigation */}
-            <div className="flex border-b border-[rgba(212,163,89,0.2)] px-4 sm:px-6 bg-[#16100B]/80 text-xs overflow-x-auto shrink-0 gap-2">
+            <div className="flex border-b border-line-soft px-4 sm:px-6 bg-surface/80 text-xs overflow-x-auto shrink-0 gap-2">
               {[
                 { id: "pricing", label: "Pricing & Capacity", icon: Users },
                 { id: "content", label: "Descriptions", icon: FileText },
@@ -577,8 +577,8 @@ export default function AdminInventoryPage() {
                     className={cn(
                       "py-3 px-3 font-semibold flex items-center gap-1.5 border-b-2 transition-colors whitespace-nowrap cursor-pointer",
                       isActive
-                        ? "border-[#E5C178] text-[#E5C178]"
-                        : "border-transparent text-[#B8A692] hover:text-[#FAF4EB]"
+                        ? "border-gold text-gold"
+                        : "border-transparent text-fg-muted hover:text-fg"
                     )}
                   >
                     <Icon className="w-3.5 h-3.5" />
@@ -589,25 +589,25 @@ export default function AdminInventoryPage() {
             </div>
 
             {/* Modal Body / Tab Contents */}
-            <div className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-4 text-xs text-[#FAF4EB]">
+            <div className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-4 text-xs text-fg">
               {/* TAB 1: PRICING & CAPACITY */}
               {activeTab === "pricing" && (
                 <div className="space-y-4">
                   <div>
-                    <label className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">
+                    <label className="text-xs uppercase tracking-wider text-fg-muted block mb-1">
                       Residence Title
                     </label>
                     <input
                       type="text"
                       value={editModalRoom.title}
                       onChange={(e) => setEditModalRoom({ ...editModalRoom, title: e.target.value })}
-                      className="w-full bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:outline-none"
+                      className="w-full bg-ink border border-control rounded-xl px-3 py-2 text-fg focus:border-gold focus:outline-none"
                     />
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">
+                      <label className="text-xs uppercase tracking-wider text-fg-muted block mb-1">
                         Base Nightly Rate (₹)
                       </label>
                       <input
@@ -619,11 +619,11 @@ export default function AdminInventoryPage() {
                             basePricePerNight: Number(e.target.value),
                           })
                         }
-                        className="w-full bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:outline-none"
+                        className="w-full bg-ink border border-line rounded-xl px-3 py-2 text-fg focus:border-gold focus:outline-none"
                       />
                     </div>
                     <div>
-                      <label className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">
+                      <label className="text-xs uppercase tracking-wider text-fg-muted block mb-1">
                         Extra Person Fee / Night (₹)
                       </label>
                       <input
@@ -635,14 +635,14 @@ export default function AdminInventoryPage() {
                             extraPersonFeePerNight: Number(e.target.value),
                           })
                         }
-                        className="w-full bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:outline-none"
+                        className="w-full bg-ink border border-line rounded-xl px-3 py-2 text-fg focus:border-gold focus:outline-none"
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
-                      <label className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">
+                      <label className="text-xs uppercase tracking-wider text-fg-muted block mb-1">
                         Base Adults Included
                       </label>
                       <input
@@ -651,11 +651,11 @@ export default function AdminInventoryPage() {
                         onChange={(e) =>
                           setEditModalRoom({ ...editModalRoom, baseAdults: Number(e.target.value) })
                         }
-                        className="w-full bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:outline-none"
+                        className="w-full bg-ink border border-line rounded-xl px-3 py-2 text-fg focus:border-gold focus:outline-none"
                       />
                     </div>
                     <div>
-                      <label className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">
+                      <label className="text-xs uppercase tracking-wider text-fg-muted block mb-1">
                         Maximum Adult Limit
                       </label>
                       <input
@@ -664,11 +664,11 @@ export default function AdminInventoryPage() {
                         onChange={(e) =>
                           setEditModalRoom({ ...editModalRoom, maxAdults: Number(e.target.value) })
                         }
-                        className="w-full bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:outline-none"
+                        className="w-full bg-ink border border-line rounded-xl px-3 py-2 text-fg focus:border-gold focus:outline-none"
                       />
                     </div>
                     <div>
-                      <label className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">
+                      <label className="text-xs uppercase tracking-wider text-fg-muted block mb-1">
                         Physical Units In Property
                       </label>
                       <input
@@ -677,13 +677,13 @@ export default function AdminInventoryPage() {
                         onChange={(e) =>
                           setEditModalRoom({ ...editModalRoom, totalUnits: Number(e.target.value) })
                         }
-                        className="w-full bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:outline-none"
+                        className="w-full bg-ink border border-line rounded-xl px-3 py-2 text-fg focus:border-gold focus:outline-none"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">
+                    <label className="text-xs uppercase tracking-wider text-fg-muted block mb-1">
                       Assigned Branch Location
                     </label>
                     <select
@@ -691,7 +691,7 @@ export default function AdminInventoryPage() {
                       onChange={(e) =>
                         setEditModalRoom({ ...editModalRoom, branchSlug: e.target.value })
                       }
-                      className="w-full bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:outline-none"
+                      className="w-full bg-ink border border-line rounded-xl px-3 py-2 text-fg focus:border-gold focus:outline-none"
                     >
                       <option value="moghal-pura">Moghal Pura (Near Charminar &amp; Deccan Medical)</option>
                       <option value="barkas-salala">Barkas Salala (Near Airport &amp; Owaisi Hospital)</option>
@@ -704,7 +704,7 @@ export default function AdminInventoryPage() {
               {activeTab === "content" && (
                 <div className="space-y-4">
                   <div>
-                    <label className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">
+                    <label className="text-xs uppercase tracking-wider text-fg-muted block mb-1">
                       Short Overview (Shown on cards and top of details page)
                     </label>
                     <textarea
@@ -713,12 +713,12 @@ export default function AdminInventoryPage() {
                       onChange={(e) =>
                         setEditModalRoom({ ...editModalRoom, shortDescription: e.target.value })
                       }
-                      className="w-full bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:outline-none leading-relaxed"
+                      className="w-full bg-ink border border-line rounded-xl px-3 py-2 text-fg focus:border-gold focus:outline-none leading-relaxed"
                     />
                   </div>
 
                   <div>
-                    <label className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">
+                    <label className="text-xs uppercase tracking-wider text-fg-muted block mb-1">
                       Full In-Depth Description
                     </label>
                     <textarea
@@ -727,7 +727,7 @@ export default function AdminInventoryPage() {
                       onChange={(e) =>
                         setEditModalRoom({ ...editModalRoom, fullDescription: e.target.value })
                       }
-                      className="w-full bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:outline-none leading-relaxed"
+                      className="w-full bg-ink border border-line rounded-xl px-3 py-2 text-fg focus:border-gold focus:outline-none leading-relaxed"
                     />
                   </div>
                 </div>
@@ -738,7 +738,7 @@ export default function AdminInventoryPage() {
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">
+                      <label className="text-xs uppercase tracking-wider text-fg-muted block mb-1">
                         Bedrooms Spec Label
                       </label>
                       <input
@@ -750,11 +750,11 @@ export default function AdminInventoryPage() {
                             specs: { ...editModalRoom.specs, bedrooms: e.target.value },
                           })
                         }
-                        className="w-full bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:outline-none"
+                        className="w-full bg-ink border border-line rounded-xl px-3 py-2 text-fg focus:border-gold focus:outline-none"
                       />
                     </div>
                     <div>
-                      <label className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">
+                      <label className="text-xs uppercase tracking-wider text-fg-muted block mb-1">
                         Bathrooms Spec Label
                       </label>
                       <input
@@ -766,11 +766,11 @@ export default function AdminInventoryPage() {
                             specs: { ...editModalRoom.specs, bathroom: e.target.value },
                           })
                         }
-                        className="w-full bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:outline-none"
+                        className="w-full bg-ink border border-line rounded-xl px-3 py-2 text-fg focus:border-gold focus:outline-none"
                       />
                     </div>
                     <div>
-                      <label className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">
+                      <label className="text-xs uppercase tracking-wider text-fg-muted block mb-1">
                         Kitchen Spec Label
                       </label>
                       <input
@@ -782,11 +782,11 @@ export default function AdminInventoryPage() {
                             specs: { ...editModalRoom.specs, kitchen: e.target.value },
                           })
                         }
-                        className="w-full bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:outline-none"
+                        className="w-full bg-ink border border-line rounded-xl px-3 py-2 text-fg focus:border-gold focus:outline-none"
                       />
                     </div>
                     <div>
-                      <label className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">
+                      <label className="text-xs uppercase tracking-wider text-fg-muted block mb-1">
                         Residence Area (Sq.Ft.)
                       </label>
                       <input
@@ -798,7 +798,7 @@ export default function AdminInventoryPage() {
                             specs: { ...editModalRoom.specs, areaSqFt: e.target.value },
                           })
                         }
-                        className="w-full bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:outline-none"
+                        className="w-full bg-ink border border-line rounded-xl px-3 py-2 text-fg focus:border-gold focus:outline-none"
                       />
                     </div>
                   </div>
@@ -808,7 +808,7 @@ export default function AdminInventoryPage() {
               {/* TAB 4: GALLERY PHOTOS */}
               {activeTab === "photos" && (
                 <div className="space-y-2">
-                  <span className="text-[11px] uppercase tracking-wider text-[#B8A692] block">
+                  <span className="text-xs uppercase tracking-wider text-fg-muted block">
                     Gallery Photos <span className="normal-case tracking-normal">(first photo is the cover)</span>
                   </span>
                   <ImageUploader
@@ -823,7 +823,7 @@ export default function AdminInventoryPage() {
               {/* TAB 5: AMENITIES CHECKLIST */}
               {activeTab === "amenities" && (
                 <div className="space-y-4">
-                  <p className="text-xs text-[#B8A692]">
+                  <p className="text-xs text-fg-muted">
                     Select which verified inclusions apply to this residence. Checked items are automatically rendered with authentic 3D miniature illustrations on the details page.
                   </p>
 
@@ -842,8 +842,8 @@ export default function AdminInventoryPage() {
                           className={cn(
                             "p-3 rounded-xl border flex items-center justify-between cursor-pointer transition-all",
                             isSelected
-                              ? "bg-[rgba(229,193,120,0.12)] border-[#E5C178] text-[#FAF4EB]"
-                              : "bg-[#140E08] border-[rgba(212,163,89,0.2)] text-[#B8A692] hover:border-[#E5C178]/50"
+                              ? "bg-gold/12 border-gold text-fg"
+                              : "bg-ink border-line-soft text-fg-muted hover:border-gold/50"
                           )}
                         >
                           <span className="font-medium text-xs">{amenity}</span>
@@ -851,8 +851,8 @@ export default function AdminInventoryPage() {
                             className={cn(
                               "w-5 h-5 rounded-md flex items-center justify-center text-xs font-bold",
                               isSelected
-                                ? "bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08]"
-                                : "border border-[rgba(212,163,89,0.3)] text-transparent"
+                                ? "bg-gradient-to-r from-gold to-gold-deep text-ink"
+                                : "border border-line text-transparent"
                             )}
                           >
                             ✓
@@ -867,7 +867,7 @@ export default function AdminInventoryPage() {
               {/* TAB 6: NEARBY LANDMARKS */}
               {activeTab === "landmarks" && (
                 <div className="space-y-4">
-                  <p className="text-xs text-[#B8A692]">
+                  <p className="text-xs text-fg-muted">
                     Set the top 4 nearby hospitals, monuments, or transport links shown in the Location section.
                   </p>
 
@@ -875,10 +875,10 @@ export default function AdminInventoryPage() {
                     {editModalRoom.landmarks.map((lm, idx) => (
                       <div
                         key={idx}
-                        className="p-3 rounded-xl bg-[#140E08] border border-[rgba(212,163,89,0.2)] grid grid-cols-1 sm:grid-cols-3 gap-2"
+                        className="p-3 rounded-xl bg-ink border border-line-soft grid grid-cols-1 sm:grid-cols-3 gap-2"
                       >
                         <div className="sm:col-span-2">
-                          <label className="text-[10px] text-[#B8A692] block mb-0.5">
+                          <label className="text-xs text-fg-muted block mb-0.5">
                             Landmark #{idx + 1} Name
                           </label>
                           <input
@@ -889,11 +889,11 @@ export default function AdminInventoryPage() {
                               updated[idx] = { ...updated[idx], name: e.target.value };
                               setEditModalRoom({ ...editModalRoom, landmarks: updated });
                             }}
-                            className="w-full bg-[#16100B] border border-[rgba(212,163,89,0.25)] rounded-lg px-2.5 py-1.5 text-[#FAF4EB] text-xs focus:border-[#E5C178] focus:outline-none"
+                            className="w-full bg-surface border border-control rounded-lg px-2.5 py-1.5 text-fg text-xs focus:border-gold focus:outline-none"
                           />
                         </div>
                         <div>
-                          <label className="text-[10px] text-[#B8A692] block mb-0.5">
+                          <label className="text-xs text-fg-muted block mb-0.5">
                             Distance &amp; Time
                           </label>
                           <input
@@ -908,7 +908,7 @@ export default function AdminInventoryPage() {
                               updated[idx] = { ...updated[idx], dist, time };
                               setEditModalRoom({ ...editModalRoom, landmarks: updated });
                             }}
-                            className="w-full bg-[#16100B] border border-[rgba(212,163,89,0.25)] rounded-lg px-2.5 py-1.5 text-[#FAF4EB] text-xs focus:border-[#E5C178] focus:outline-none"
+                            className="w-full bg-surface border border-control rounded-lg px-2.5 py-1.5 text-fg text-xs focus:border-gold focus:outline-none"
                           />
                         </div>
                       </div>
@@ -919,15 +919,15 @@ export default function AdminInventoryPage() {
             </div>
 
             {/* Modal Footer */}
-            <div className="p-4 sm:p-5 border-t border-[rgba(212,163,89,0.2)] shrink-0 bg-[#16100B] flex items-center justify-between">
-              <span className="text-[11px] text-[#B8A692]">
+            <div className="p-4 sm:p-5 border-t border-line-soft shrink-0 bg-surface flex items-center justify-between">
+              <span className="text-xs text-fg-muted">
                 Changes sync immediately to Supabase database.
               </span>
               <div className="flex items-center gap-3">
                 <button
                   type="button"
                   onClick={() => setEditModalRoom(null)}
-                  className="px-4 py-2 rounded-xl bg-[#221810] text-[#B8A692] hover:text-[#FAF4EB] border border-[rgba(212,163,89,0.2)] text-xs cursor-pointer transition-colors"
+                  className="px-4 py-2 rounded-xl bg-raised text-fg-muted hover:text-fg border border-line-soft text-xs cursor-pointer transition-colors"
                 >
                   Cancel
                 </button>
@@ -935,7 +935,7 @@ export default function AdminInventoryPage() {
                   type="button"
                   disabled={isSaving}
                   onClick={handleSaveModal}
-                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] hover:brightness-110 text-[#140E08] font-bold text-xs flex items-center gap-1.5 transition-all shadow-md shadow-[#E5C178]/20 disabled:opacity-50 cursor-pointer"
+                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-gold to-gold-deep hover:brightness-110 text-ink font-bold text-xs flex items-center gap-1.5 transition-all shadow-md shadow-gold/20 disabled:opacity-50 cursor-pointer"
                 >
                   <Save className="w-3.5 h-3.5" />
                   <span>{isSaving ? "Saving..." : "Save All Changes"}</span>
@@ -950,18 +950,18 @@ export default function AdminInventoryPage() {
       {/* MODAL: ADD CUSTOM UNIT CATEGORY (e.g. 5 BHK)             */}
       {/* ======================================================== */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0E0A07]/85 backdrop-blur-md p-4 overflow-y-auto">
-          <div role="dialog" aria-modal="true" aria-labelledby="add-residence-title" className="bg-[#16100B] border border-[rgba(212,163,89,0.3)] rounded-3xl p-6 max-h-[90vh] overflow-y-auto max-w-lg w-full shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-[rgba(212,163,89,0.2)] pb-3">
-              <h3 id="add-residence-title" className="font-heading text-lg font-normal text-[#FAF4EB] flex items-center gap-2">
-                <Plus className="w-5 h-5 text-[#E5C178]" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-canvas/85 backdrop-blur-md p-4 overflow-y-auto">
+          <div role="dialog" aria-modal="true" aria-labelledby="add-residence-title" className="bg-surface border border-line rounded-3xl p-6 max-h-[90vh] overflow-y-auto max-w-lg w-full shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-line-soft pb-3">
+              <h3 id="add-residence-title" className="font-heading text-lg font-normal text-fg flex items-center gap-2">
+                <Plus className="w-5 h-5 text-gold" />
                 <span>Add Residence to Inventory</span>
               </h3>
               <button
                 type="button"
                 onClick={() => setShowAddModal(false)}
                 aria-label="Close add residence form"
-                className="text-[#B8A692] hover:text-[#FAF4EB] cursor-pointer"
+                className="text-fg-muted hover:text-fg cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -975,7 +975,7 @@ export default function AdminInventoryPage() {
 
             <form onSubmit={handleCreateUnit} className="space-y-3.5 text-xs">
               <div>
-                <label htmlFor="new-residence-title" className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">
+                <label htmlFor="new-residence-title" className="text-xs uppercase tracking-wider text-fg-muted block mb-1">
                   Residence Title
                 </label>
                 <input
@@ -985,13 +985,13 @@ export default function AdminInventoryPage() {
                   maxLength={100}
                   value={newUnitForm.title}
                   onChange={(e) => setNewUnitForm({ ...newUnitForm, title: e.target.value })}
-                  className="w-full bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:outline-none"
+                  className="w-full bg-ink border border-control rounded-xl px-3 py-2 text-fg focus:border-gold focus:outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label htmlFor="new-residence-category" className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">
+                  <label htmlFor="new-residence-category" className="text-xs uppercase tracking-wider text-fg-muted block mb-1">
                     Category
                   </label>
                   <select
@@ -1003,7 +1003,7 @@ export default function AdminInventoryPage() {
                         category: e.target.value as RoomDetail["category"] | "",
                       })
                     }
-                    className="w-full bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:outline-none"
+                    className="w-full bg-ink border border-line rounded-xl px-3 py-2 text-fg focus:border-gold focus:outline-none"
                   >
                     <option value="" disabled>Select a category</option>
                     <option value="5BHK">5 BHK</option>
@@ -1014,7 +1014,7 @@ export default function AdminInventoryPage() {
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="new-residence-slug" className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">
+                  <label htmlFor="new-residence-slug" className="text-xs uppercase tracking-wider text-fg-muted block mb-1">
                     URL Identifier (Slug)
                   </label>
                   <input
@@ -1026,14 +1026,14 @@ export default function AdminInventoryPage() {
                     placeholder="e.g. 5bhk-moghal-pura"
                     value={newUnitForm.slug}
                     onChange={(e) => setNewUnitForm({ ...newUnitForm, slug: e.target.value })}
-                    className="w-full bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] font-mono focus:border-[#E5C178] focus:outline-none"
+                    className="w-full bg-ink border border-control rounded-xl px-3 py-2 text-fg font-mono focus:border-gold focus:outline-none"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label htmlFor="new-residence-price" className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">
+                  <label htmlFor="new-residence-price" className="text-xs uppercase tracking-wider text-fg-muted block mb-1">
                     Base Price / Night (₹)
                   </label>
                   <input
@@ -1046,11 +1046,11 @@ export default function AdminInventoryPage() {
                     onChange={(e) =>
                       setNewUnitForm({ ...newUnitForm, basePricePerNight: e.target.value === "" ? null : Number(e.target.value) })
                     }
-                    className="w-full bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:outline-none"
+                    className="w-full bg-ink border border-line rounded-xl px-3 py-2 text-fg focus:border-gold focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label htmlFor="new-residence-extra-fee" className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">
+                  <label htmlFor="new-residence-extra-fee" className="text-xs uppercase tracking-wider text-fg-muted block mb-1">
                     Extra Person Fee (₹)
                   </label>
                   <input
@@ -1066,14 +1066,14 @@ export default function AdminInventoryPage() {
                         extraPersonFeePerNight: e.target.value === "" ? null : Number(e.target.value),
                       })
                     }
-                    className="w-full bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:outline-none"
+                    className="w-full bg-ink border border-line rounded-xl px-3 py-2 text-fg focus:border-gold focus:outline-none"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label htmlFor="new-residence-base-adults" className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">
+                  <label htmlFor="new-residence-base-adults" className="text-xs uppercase tracking-wider text-fg-muted block mb-1">
                     Base Adults
                   </label>
                   <input
@@ -1086,11 +1086,11 @@ export default function AdminInventoryPage() {
                     onChange={(e) =>
                       setNewUnitForm({ ...newUnitForm, baseAdults: e.target.value === "" ? null : Number(e.target.value) })
                     }
-                    className="w-full bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:outline-none"
+                    className="w-full bg-ink border border-line rounded-xl px-3 py-2 text-fg focus:border-gold focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label htmlFor="new-residence-max-adults" className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">
+                  <label htmlFor="new-residence-max-adults" className="text-xs uppercase tracking-wider text-fg-muted block mb-1">
                     Max Adults
                   </label>
                   <input
@@ -1103,11 +1103,11 @@ export default function AdminInventoryPage() {
                     onChange={(e) =>
                       setNewUnitForm({ ...newUnitForm, maxAdults: e.target.value === "" ? null : Number(e.target.value) })
                     }
-                    className="w-full bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:outline-none"
+                    className="w-full bg-ink border border-line rounded-xl px-3 py-2 text-fg focus:border-gold focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label htmlFor="new-residence-max-kids" className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">
+                  <label htmlFor="new-residence-max-kids" className="text-xs uppercase tracking-wider text-fg-muted block mb-1">
                     Max Children
                   </label>
                   <input
@@ -1118,11 +1118,11 @@ export default function AdminInventoryPage() {
                     step={1}
                     value={newUnitForm.maxKids ?? ""}
                     onChange={(e) => setNewUnitForm({ ...newUnitForm, maxKids: e.target.value === "" ? null : Number(e.target.value) })}
-                    className="w-full bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:outline-none"
+                    className="w-full bg-ink border border-control rounded-xl px-3 py-2 text-fg focus:border-gold focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label htmlFor="new-residence-units" className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">
+                  <label htmlFor="new-residence-units" className="text-xs uppercase tracking-wider text-fg-muted block mb-1">
                     Physical Units
                   </label>
                   <input
@@ -1135,13 +1135,13 @@ export default function AdminInventoryPage() {
                     onChange={(e) =>
                       setNewUnitForm({ ...newUnitForm, totalUnits: e.target.value === "" ? null : Number(e.target.value) })
                     }
-                    className="w-full bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:outline-none"
+                    className="w-full bg-ink border border-line rounded-xl px-3 py-2 text-fg focus:border-gold focus:outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label htmlFor="new-residence-branch" className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">
+                <label htmlFor="new-residence-branch" className="text-xs uppercase tracking-wider text-fg-muted block mb-1">
                   Branch
                 </label>
                 <select
@@ -1149,7 +1149,7 @@ export default function AdminInventoryPage() {
                   required
                   value={newUnitForm.branchSlug}
                   onChange={(e) => setNewUnitForm({ ...newUnitForm, branchSlug: e.target.value })}
-                  className="w-full bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:outline-none"
+                  className="w-full bg-ink border border-control rounded-xl px-3 py-2 text-fg focus:border-gold focus:outline-none"
                 >
                   <option value="" disabled>Select a branch</option>
                   <option value="barkas-salala">Barkas Salala</option>
@@ -1158,7 +1158,7 @@ export default function AdminInventoryPage() {
               </div>
 
               <div>
-                <span className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">
+                <span className="text-xs uppercase tracking-wider text-fg-muted block mb-1">
                   Photos <span className="normal-case tracking-normal">(first photo is the cover)</span>
                 </span>
                 <ImageUploader
@@ -1169,45 +1169,45 @@ export default function AdminInventoryPage() {
                 />
               </div>
 
-              <div className="space-y-3 border-t border-[rgba(212,163,89,0.18)] pt-3">
+              <div className="space-y-3 border-t border-line-soft pt-3">
                 <div>
-                  <label htmlFor="new-residence-short-description" className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">Short Description</label>
-                  <textarea id="new-residence-short-description" required maxLength={240} rows={2} value={newUnitForm.shortDescription} onChange={(e) => setNewUnitForm({ ...newUnitForm, shortDescription: e.target.value })} className="w-full bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:outline-none" />
+                  <label htmlFor="new-residence-short-description" className="text-xs uppercase tracking-wider text-fg-muted block mb-1">Short Description</label>
+                  <textarea id="new-residence-short-description" required maxLength={240} rows={2} value={newUnitForm.shortDescription} onChange={(e) => setNewUnitForm({ ...newUnitForm, shortDescription: e.target.value })} className="w-full bg-ink border border-control rounded-xl px-3 py-2 text-fg focus:border-gold focus:outline-none" />
                 </div>
                 <div>
-                  <label htmlFor="new-residence-full-description" className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">Full Description</label>
-                  <textarea id="new-residence-full-description" required maxLength={2000} rows={4} value={newUnitForm.fullDescription} onChange={(e) => setNewUnitForm({ ...newUnitForm, fullDescription: e.target.value })} className="w-full bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:outline-none" />
+                  <label htmlFor="new-residence-full-description" className="text-xs uppercase tracking-wider text-fg-muted block mb-1">Full Description</label>
+                  <textarea id="new-residence-full-description" required maxLength={2000} rows={4} value={newUnitForm.fullDescription} onChange={(e) => setNewUnitForm({ ...newUnitForm, fullDescription: e.target.value })} className="w-full bg-ink border border-control rounded-xl px-3 py-2 text-fg focus:border-gold focus:outline-none" />
                 </div>
                 <div>
-                  <label htmlFor="new-residence-capacity" className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">Guest Capacity Description</label>
-                  <input id="new-residence-capacity" type="text" required maxLength={80} placeholder="Enter the verified guest capacity" value={newUnitForm.guestCapacity} onChange={(e) => setNewUnitForm({ ...newUnitForm, guestCapacity: e.target.value })} className="w-full bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:outline-none" />
+                  <label htmlFor="new-residence-capacity" className="text-xs uppercase tracking-wider text-fg-muted block mb-1">Guest Capacity Description</label>
+                  <input id="new-residence-capacity" type="text" required maxLength={80} placeholder="Enter the verified guest capacity" value={newUnitForm.guestCapacity} onChange={(e) => setNewUnitForm({ ...newUnitForm, guestCapacity: e.target.value })} className="w-full bg-ink border border-control rounded-xl px-3 py-2 text-fg focus:border-gold focus:outline-none" />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label htmlFor="new-residence-bedrooms" className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">Bedroom Details</label>
-                    <input id="new-residence-bedrooms" required maxLength={120} value={newUnitForm.bedrooms} onChange={(e) => setNewUnitForm({ ...newUnitForm, bedrooms: e.target.value })} className="w-full bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:outline-none" />
+                    <label htmlFor="new-residence-bedrooms" className="text-xs uppercase tracking-wider text-fg-muted block mb-1">Bedroom Details</label>
+                    <input id="new-residence-bedrooms" required maxLength={120} value={newUnitForm.bedrooms} onChange={(e) => setNewUnitForm({ ...newUnitForm, bedrooms: e.target.value })} className="w-full bg-ink border border-control rounded-xl px-3 py-2 text-fg focus:border-gold focus:outline-none" />
                   </div>
                   <div>
-                    <label htmlFor="new-residence-bathrooms" className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">Bathroom Details</label>
-                    <input id="new-residence-bathrooms" required maxLength={120} value={newUnitForm.bathroom} onChange={(e) => setNewUnitForm({ ...newUnitForm, bathroom: e.target.value })} className="w-full bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:outline-none" />
+                    <label htmlFor="new-residence-bathrooms" className="text-xs uppercase tracking-wider text-fg-muted block mb-1">Bathroom Details</label>
+                    <input id="new-residence-bathrooms" required maxLength={120} value={newUnitForm.bathroom} onChange={(e) => setNewUnitForm({ ...newUnitForm, bathroom: e.target.value })} className="w-full bg-ink border border-control rounded-xl px-3 py-2 text-fg focus:border-gold focus:outline-none" />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label htmlFor="new-residence-kitchen" className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">Kitchen Details</label>
-                    <input id="new-residence-kitchen" required maxLength={120} value={newUnitForm.kitchen} onChange={(e) => setNewUnitForm({ ...newUnitForm, kitchen: e.target.value })} className="w-full bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:outline-none" />
+                    <label htmlFor="new-residence-kitchen" className="text-xs uppercase tracking-wider text-fg-muted block mb-1">Kitchen Details</label>
+                    <input id="new-residence-kitchen" required maxLength={120} value={newUnitForm.kitchen} onChange={(e) => setNewUnitForm({ ...newUnitForm, kitchen: e.target.value })} className="w-full bg-ink border border-control rounded-xl px-3 py-2 text-fg focus:border-gold focus:outline-none" />
                   </div>
                   <div>
-                    <label htmlFor="new-residence-area" className="text-[11px] uppercase tracking-wider text-[#B8A692] block mb-1">Area (optional)</label>
-                    <input id="new-residence-area" type="text" maxLength={40} value={newUnitForm.areaSqFt} onChange={(e) => setNewUnitForm({ ...newUnitForm, areaSqFt: e.target.value })} className="w-full bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:outline-none" />
+                    <label htmlFor="new-residence-area" className="text-xs uppercase tracking-wider text-fg-muted block mb-1">Area (optional)</label>
+                    <input id="new-residence-area" type="text" maxLength={40} value={newUnitForm.areaSqFt} onChange={(e) => setNewUnitForm({ ...newUnitForm, areaSqFt: e.target.value })} className="w-full bg-ink border border-control rounded-xl px-3 py-2 text-fg focus:border-gold focus:outline-none" />
                   </div>
                 </div>
                 <fieldset>
-                  <legend className="text-[11px] uppercase tracking-wider text-[#B8A692] mb-2">Verified Amenities (optional)</legend>
+                  <legend className="text-xs uppercase tracking-wider text-fg-muted mb-2">Verified Amenities (optional)</legend>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {MASTER_AMENITIES_OPTIONS.map((amenity) => (
-                      <label key={amenity} className="flex items-center gap-2 text-sm text-[#FAF4EB]">
-                        <input type="checkbox" checked={newUnitAmenities.includes(amenity)} onChange={(e) => setNewUnitAmenities((current) => e.target.checked ? [...current, amenity] : current.filter((item) => item !== amenity))} className="accent-[#E5C178]" />
+                      <label key={amenity} className="flex items-center gap-2 text-sm text-fg">
+                        <input type="checkbox" checked={newUnitAmenities.includes(amenity)} onChange={(e) => setNewUnitAmenities((current) => e.target.checked ? [...current, amenity] : current.filter((item) => item !== amenity))} className="accent-gold" />
                         {amenity}
                       </label>
                     ))}
@@ -1215,18 +1215,18 @@ export default function AdminInventoryPage() {
                 </fieldset>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[rgba(212,163,89,0.2)]">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-line-soft">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 rounded-xl bg-[#221810] text-[#B8A692] hover:text-[#FAF4EB] border border-[rgba(212,163,89,0.2)] transition-colors cursor-pointer"
+                  className="px-4 py-2 rounded-xl bg-raised text-fg-muted hover:text-fg border border-line-soft transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] hover:brightness-110 text-[#140E08] font-bold transition-all shadow-md shadow-[#E5C178]/15 disabled:opacity-50 cursor-pointer"
+                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-gold to-gold-deep hover:brightness-110 text-ink font-bold transition-all shadow-md shadow-gold/15 disabled:opacity-50 cursor-pointer"
                 >
                   {isSaving ? "Creating..." : "Create Residence"}
                 </button>

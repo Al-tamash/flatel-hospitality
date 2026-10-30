@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import Image from "next/image";
+import { SafeImage } from "@/components/media/safe-image";
 import Link from "next/link";
 import {
   Users,
@@ -76,13 +76,13 @@ export function PropertiesCatalogView() {
       {/* ======================================================== */}
       {/* 1. FILTER CONTROLS (Champagne Gold Segmented Toggles)    */}
       {/* ======================================================== */}
-      <div className="mb-10 p-4 sm:p-6 rounded-2xl bg-[#16100B] border border-[rgba(212,163,89,0.25)] flex flex-col xl:flex-row items-center justify-between gap-5">
+      <div className="mb-10 p-4 sm:p-6 rounded-2xl bg-surface border border-line flex flex-col xl:flex-row items-center justify-between gap-5">
         {/* Branch Filter */}
         <div className="flex flex-col sm:flex-row items-center gap-3 w-full xl:w-auto">
-          <span className="text-xs font-sans font-bold uppercase tracking-wider text-[#E5C178] shrink-0 self-start sm:self-center">
+          <span className="text-xs font-sans font-bold uppercase tracking-wider text-gold shrink-0 self-start sm:self-center">
             {isAr ? "الفرع:" : "Branch:"}
           </span>
-          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#0E0A07] border border-[rgba(212,163,89,0.2)] w-full sm:w-auto overflow-x-auto">
+          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-canvas border border-line-soft w-full sm:w-auto overflow-x-auto">
             {[
               { id: "all", label: isAr ? "كافة الفروع" : "All Properties" },
               { id: "barkas-salala", label: isAr ? "بركاس صلالة" : "Barkas Salala" },
@@ -95,8 +95,8 @@ export function PropertiesCatalogView() {
                 className={cn(
                   "px-3.5 py-1.5 rounded-lg text-xs font-sans font-semibold transition-all whitespace-nowrap cursor-pointer",
                   selectedBranch === b.id
-                    ? "bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] font-bold shadow-xs"
-                    : "text-[#D4C4B3] hover:text-[#FAF4EB]"
+                    ? "bg-gradient-to-r from-gold to-gold-deep text-ink font-bold shadow-xs"
+                    : "text-fg-soft hover:text-fg"
                 )}
               >
                 {b.label}
@@ -107,10 +107,10 @@ export function PropertiesCatalogView() {
 
         {/* BHK Category Filter */}
         <div className="flex flex-col sm:flex-row items-center gap-3 w-full xl:w-auto">
-          <span className="text-xs font-sans font-bold uppercase tracking-wider text-[#E5C178] shrink-0 self-start sm:self-center">
+          <span className="text-xs font-sans font-bold uppercase tracking-wider text-gold shrink-0 self-start sm:self-center">
             {isAr ? "نوع الشقة:" : "Apartment Type:"}
           </span>
-          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#0E0A07] border border-[rgba(212,163,89,0.2)] w-full sm:w-auto overflow-x-auto">
+          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-canvas border border-line-soft w-full sm:w-auto overflow-x-auto">
             {[
               { id: "all", label: isAr ? "كافة الشقق" : "All BHK" },
               { id: "1bhk", label: "1 BHK" },
@@ -125,8 +125,8 @@ export function PropertiesCatalogView() {
                 className={cn(
                   "px-3 py-1.5 rounded-lg text-xs font-sans font-semibold transition-all whitespace-nowrap cursor-pointer",
                   selectedCategory === c.id
-                    ? "bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] font-bold shadow-xs"
-                    : "text-[#D4C4B3] hover:text-[#FAF4EB]"
+                    ? "bg-gradient-to-r from-gold to-gold-deep text-ink font-bold shadow-xs"
+                    : "text-fg-soft hover:text-fg"
                 )}
               >
                 {c.label}
@@ -140,20 +140,20 @@ export function PropertiesCatalogView() {
       {/* 2. CATALOG LIST (Editorial Showcase Layout)              */}
       {/* ======================================================== */}
       {isLoading ? (
-        <p className="py-12 text-center text-sm text-[#D4C4B3]" role="status">
+        <p className="py-12 text-center text-sm text-fg-soft" role="status">
           {isAr ? "جاري تحميل الشقق المتوفرة..." : "Loading current residences…"}
         </p>
       ) : filteredFlats.length === 0 ? (
-        <div className="text-center py-16 px-4 rounded-2xl bg-[#16100B] border border-[rgba(212,163,89,0.22)]">
-          <Building2 className="w-12 h-12 text-[#E5C178]/50 mx-auto mb-3" />
-          <h3 className="font-heading text-xl font-bold text-[#FAF4EB]">
+        <div className="text-center py-16 px-4 rounded-2xl bg-surface border border-line">
+          <Building2 className="w-12 h-12 text-gold/50 mx-auto mb-3" />
+          <h2 className="font-heading text-xl font-bold text-fg">
             {inventoryError
               ? (isAr ? "معلومات الشقق غير متوفرة حالياً" : "Residence information is unavailable")
               : flats.length === 0
                 ? (isAr ? "لا توجد شقق مدرجة حالياً" : "No residences are listed")
                 : (isAr ? "لا توجد شقق مطابقة للتصفية الحالية" : "No residences match your current filter")}
-          </h3>
-          <p className="text-sm text-[#D4C4B3] mt-1 max-w-md mx-auto">
+          </h2>
+          <p className="text-sm text-fg-soft mt-1 max-w-md mx-auto">
             {inventoryError
               ? (isAr ? "تعذر تحميل الأسعار والوحدات الشاغرة. يرجى المحاولة مرة أخرى لاحقاً." : "Current residence and rate information could not be loaded. Please try again shortly.")
               : flats.length === 0
@@ -166,13 +166,13 @@ export function PropertiesCatalogView() {
               setSelectedBranch("all");
               setSelectedCategory("all");
             }}
-            className="mt-5 px-5 py-2.5 rounded-xl bg-[rgba(34,24,16,0.9)] border border-[rgba(212,163,89,0.35)] text-[#E5C178] text-xs font-bold uppercase tracking-wider hover:border-[#E5C178] transition-colors cursor-pointer"
+            className="mt-5 px-5 py-2.5 rounded-xl bg-raised/90 border border-line text-gold text-xs font-bold uppercase tracking-wider hover:border-gold transition-colors cursor-pointer"
           >
             {isAr ? "إعادة ضبط التصفية" : "Reset Filters"}
           </button>}
         </div>
       ) : (
-        <div className="space-y-8 sm:space-y-10">
+        <div data-stagger className="space-y-8 sm:space-y-10">
           {filteredFlats.map((rawFlat, index) => {
             const flat = getLocalizedRoom(rawFlat, currentLocale);
             const branch = flat.branchSlug ? getBranchBySlug(flat.branchSlug) : undefined;
@@ -184,12 +184,12 @@ export function PropertiesCatalogView() {
             return (
               <div
                 key={flat.id}
-                className="rounded-2xl border border-[rgba(212,163,89,0.25)] bg-[#16100B] overflow-hidden hover:border-[#E5C178]/50 transition-colors shadow-xl"
+                className="card-lift rounded-2xl border border-line bg-surface overflow-hidden shadow-xl"
               >
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-0">
                   {/* Photo Column (5 cols) */}
                   <div className="lg:col-span-5 relative min-h-[260px] sm:min-h-[300px] lg:min-h-full">
-                    <Image
+                    <SafeImage
                       src={photoUrl}
                       alt={flat.title}
                       fill
@@ -198,11 +198,11 @@ export function PropertiesCatalogView() {
                       className="object-cover object-center"
                     />
                     <div
-                      className="absolute inset-0 bg-gradient-to-t from-[#16100B] via-transparent to-transparent lg:hidden pointer-events-none"
+                      className="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent lg:hidden pointer-events-none"
                       aria-hidden="true"
                     />
                     {/* Category Pill */}
-                    <div className="absolute top-4 left-4 z-10 px-3 py-1.5 rounded-lg bg-[#0E0A07]/90 backdrop-blur-md border border-[rgba(212,163,89,0.35)] text-xs font-bold text-[#E5C178] uppercase tracking-wider">
+                    <div className="absolute top-4 left-4 z-10 px-3 py-1.5 rounded-lg bg-canvas/90 backdrop-blur-md border border-line text-xs font-bold text-gold uppercase tracking-wider">
                       {flat.category} · {flat.capacityLabel}
                     </div>
                   </div>
@@ -211,67 +211,67 @@ export function PropertiesCatalogView() {
                   <div className="lg:col-span-7 p-6 sm:p-8 flex flex-col justify-between">
                     <div>
                       {/* Branch & Locality Header */}
-                      <div className="flex items-center gap-2 text-xs font-sans text-[#E5C178] font-bold uppercase tracking-wider mb-2">
-                        <MapPin className="w-3.5 h-3.5 text-[#E5C178]" />
+                      <div className="flex items-center gap-2 text-xs font-sans text-gold font-bold uppercase tracking-wider mb-2">
+                        <MapPin className="w-3.5 h-3.5 text-gold" />
                         <span>{branchName}</span>
                         {branchAddress && (
                           <>
-                            <span className="text-[rgba(212,163,89,0.4)]">·</span>
-                            <span className="text-[#D4C4B3] font-normal">{branchAddress}</span>
+                            <span className="text-gold/40">·</span>
+                            <span className="text-fg-soft font-normal">{branchAddress}</span>
                           </>
                         )}
                       </div>
 
-                      <h3 className="font-heading text-2xl sm:text-3xl font-bold text-[#FAF4EB]">
+                      <h2 className="font-heading text-2xl sm:text-3xl font-bold text-fg">
                         {flat.title}
-                      </h3>
+                      </h2>
 
-                      <p className="text-sm text-[#D4C4B3] mt-2 line-clamp-2 leading-relaxed">
+                      <p className="text-sm text-fg-soft mt-2 line-clamp-2 leading-relaxed">
                         {flat.shortDescription}
                       </p>
 
                       {/* Specs Row with Subtle Dividers */}
-                      <div className="mt-5 py-3.5 border-y border-[rgba(212,163,89,0.18)] grid grid-cols-3 gap-3 text-xs sm:text-sm text-[#FAF4EB]">
+                      <div className="mt-5 py-3.5 border-y border-line-soft grid grid-cols-3 gap-3 text-xs sm:text-sm text-fg">
                         <div className="flex items-center gap-2">
-                          <Users className="w-4 h-4 text-[#E5C178] shrink-0" />
+                          <Users className="w-4 h-4 text-gold shrink-0" />
                           <span>{flat.specs.guests}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <BedDouble className="w-4 h-4 text-[#E5C178] shrink-0" />
+                          <BedDouble className="w-4 h-4 text-gold shrink-0" />
                           <span>{flat.specs.bedrooms}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <UtensilsCrossed className="w-4 h-4 text-[#E5C178] shrink-0" />
+                          <UtensilsCrossed className="w-4 h-4 text-gold shrink-0" />
                           <span>{flat.specs.kitchen}</span>
                         </div>
                       </div>
 
                       {/* Inclusions Strip */}
-                      <div className="mt-4 flex flex-wrap gap-2 text-xs text-[#D4C4B3]">
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[rgba(34,24,16,0.6)] border border-[rgba(212,163,89,0.18)]">
-                          <Check className="w-3 h-3 text-[#E5C178]" /> {isAr ? "تنظيف دوري للغرف" : "Alternate-Day Housekeeping"}
+                      <div className="mt-4 flex flex-wrap gap-2 text-xs text-fg-soft">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-raised/60 border border-line-soft">
+                          <Check className="w-3 h-3 text-gold" /> {isAr ? "تنظيف دوري للغرف" : "Alternate-Day Housekeeping"}
                         </span>
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[rgba(34,24,16,0.6)] border border-[rgba(212,163,89,0.18)]">
-                          <Check className="w-3 h-3 text-[#E5C178]" /> {isAr ? "غاز طهي مركزي مجاني" : "Piped Cooking Gas"}
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-raised/60 border border-line-soft">
+                          <Check className="w-3 h-3 text-gold" /> {isAr ? "غاز طهي مركزي مجاني" : "Piped Cooking Gas"}
                         </span>
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[rgba(34,24,16,0.6)] border border-[rgba(212,163,89,0.18)]">
-                          <Check className="w-3 h-3 text-[#E5C178]" /> {isAr ? "مولد طاقة احتياطي متواصل" : "Inverter Power Backup"}
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-raised/60 border border-line-soft">
+                          <Check className="w-3 h-3 text-gold" /> {isAr ? "مولد طاقة احتياطي متواصل" : "Inverter Power Backup"}
                         </span>
                       </div>
                     </div>
 
                     {/* Price & Action Footer */}
-                    <div className="mt-6 pt-5 border-t border-[rgba(212,163,89,0.18)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="mt-6 pt-5 border-t border-line-soft flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div>
                         <div className="flex items-baseline gap-1.5">
-                          <span className="font-heading text-3xl font-bold text-[#E5C178]">
+                          <span className="font-heading text-3xl font-bold text-gold">
                             {formatPrice(flat.basePricePerNight)}
                           </span>
-                          <span className="text-xs text-[#D4C4B3] font-sans">
+                          <span className="text-xs text-fg-soft font-sans">
                             {isAr ? "/ ليلة (السعر الأساسي)" : "/ night base rate"}
                           </span>
                         </div>
-                        <p className="text-xs text-[#FAF4EB]/70 mt-0.5">
+                        <p className="text-xs text-fg/70 mt-0.5">
                           {isAr
                             ? `عربون ٢٠٪ (${formatPrice(Math.round(flat.basePricePerNight * 0.2))}) لتثبيت الحجز`
                             : `20% advance deposit (${formatPrice(Math.round(flat.basePricePerNight * 0.2))}) to reserve`}
@@ -281,7 +281,7 @@ export function PropertiesCatalogView() {
                       <div className="flex items-center gap-3">
                         <Link
                           href={`${localePrefix}/properties/${flat.slug}`}
-                          className="w-full sm:w-auto px-6 py-3 min-h-[46px] rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] hover:brightness-105 text-[#140E08] font-bold text-xs uppercase tracking-wider inline-flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
+                          className="w-full sm:w-auto px-6 py-3 min-h-[46px] rounded-xl bg-gradient-to-r from-gold to-gold-deep hover:brightness-105 text-ink font-bold text-xs uppercase tracking-wider inline-flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
                         >
                           <span>{isAr ? "حجز الشقة الآن" : "Reserve Suite"}</span>
                           <ArrowRight className={cn("w-4 h-4", isAr && "rotate-180")} />

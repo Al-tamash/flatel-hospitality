@@ -57,13 +57,13 @@ export function TrustHighlights() {
         aria-hidden="true"
       />
 
-      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
+      <div className="container-page">
         {/* Section Header */}
         <div className="max-w-2xl">
           {/* Editorial Eyebrow */}
           <div className="inline-flex items-center gap-2 mb-2 sm:mb-3">
             <span className="h-px w-5 sm:w-6 bg-primary" aria-hidden="true" />
-            <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.25em] text-primary">
+            <span className="text-xs sm:text-xs font-semibold uppercase tracking-[0.25em] text-primary">
               Why Stay With Us
             </span>
           </div>
@@ -71,7 +71,7 @@ export function TrustHighlights() {
           {/* Main Heading (Cormorant Garamond) */}
           <h2
             id="trust-section-heading"
-            className="font-heading text-2xl sm:text-3xl md:text-4xl font-normal leading-[1.18] text-foreground tracking-tight text-balance"
+            className="font-heading text-foreground heading-section"
           >
             Everything you need for a comfortable stay.
           </h2>
@@ -84,13 +84,13 @@ export function TrustHighlights() {
         </div>
 
         {/* Four Primary Highlights Grid */}
-        <div className="mt-10 sm:mt-12 lg:mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 lg:gap-5">
+        <div data-stagger className="mt-10 sm:mt-12 lg:mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 lg:gap-5">
           {HIGHLIGHTS.map((item) => {
             const Icon = item.icon;
             return (
               <div
                 key={item.index}
-                className="group relative flex flex-col justify-between rounded-xl border border-border/80 bg-[#0B0E10]/90 p-4 sm:p-5 lg:p-6 transition-all duration-200 hover:border-primary/40 hover:bg-[#0B0E10] focus-within:border-primary/50"
+                className="group relative flex flex-col justify-between border-t border-line pt-5 lg:pt-6"
               >
                 {/* Top Row: Index Numeral & Restrained Icon Badge */}
                 <div>
@@ -107,18 +107,18 @@ export function TrustHighlights() {
                   </div>
 
                   {/* Highlight Title */}
-                  <h3 className="font-heading text-base sm:text-lg font-normal text-foreground tracking-tight mt-3.5 sm:mt-4 leading-snug">
+                  <h3 className="font-heading text-base sm:text-lg font-normal text-foreground mt-3.5 sm:mt-4 leading-snug">
                     {item.title}
                   </h3>
 
                   {/* Highlight Description */}
-                  <p className="text-xs sm:text-[13px] text-muted-foreground leading-relaxed mt-2">
+                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed mt-2">
                     {item.description}
                   </p>
                 </div>
 
                 {/* Bottom Tag */}
-                <div className="mt-4 pt-3 border-t border-border/50 flex items-center justify-between text-[10px] uppercase tracking-wider font-mono text-primary/80">
+                <div className="mt-4 pt-3 border-t border-border/50 flex items-center justify-between text-xs uppercase tracking-wider font-mono text-primary/80">
                   <span>{item.tag}</span>
                   <span className="h-1 w-1 rounded-full bg-primary/60" aria-hidden="true" />
                 </div>

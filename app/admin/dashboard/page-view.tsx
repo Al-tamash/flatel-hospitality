@@ -100,13 +100,13 @@ export default function AdminDashboardPage() {
       {/* Page Title & Status */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <p className="text-[11px] font-medium tracking-[0.18em] uppercase text-[#E5C178] mb-1">
+          <p className="text-xs font-medium tracking-[0.18em] uppercase text-gold mb-1">
             Executive Operations
           </p>
-          <h1 className="font-serif text-2xl sm:text-3xl font-normal text-[#FAF4EB] tracking-tight">
+          <h1 className="font-serif text-2xl sm:text-3xl font-normal text-fg">
             Hospitality Dashboard
           </h1>
-          <p className="text-xs sm:text-sm text-[#B8A692] mt-1">
+          <p className="text-xs sm:text-sm text-fg-muted mt-1">
             Real-time occupancy, arrivals, and 20% advance / 80% on-arrival collection metrics.
           </p>
         </div>
@@ -115,12 +115,12 @@ export default function AdminDashboardPage() {
             type="button"
             onClick={fetchDashboardData}
             disabled={isLoading}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#16100B] hover:bg-[#221810] border border-[rgba(212,163,89,0.25)] text-xs text-[#FAF4EB] transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface hover:bg-raised border border-line text-xs text-fg transition-colors cursor-pointer"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin text-[#E5C178]" : "text-[#E5C178]"}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin text-gold" : "text-gold"}`} />
             <span>Refresh</span>
           </button>
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#16100B] border border-[rgba(212,163,89,0.25)] text-xs text-[#E5C178]">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface border border-line text-xs text-gold">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             <span>Live Operations · Hyderabad</span>
           </div>
@@ -144,34 +144,34 @@ export default function AdminDashboardPage() {
       {/* 4 PRD KPI METRIC CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         {/* Metric 1: Today's Arrivals */}
-        <div className="rounded-2xl bg-[rgba(34,24,16,0.75)] border border-[rgba(212,163,89,0.25)] backdrop-blur-md p-5 shadow-lg flex flex-col justify-between">
-          <div className="flex items-center justify-between text-[#B8A692]">
-            <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-[#B8A692]">Today&apos;s Arrivals</span>
-            <div className="h-8 w-8 rounded-xl bg-[#16100B] border border-[rgba(212,163,89,0.2)] flex items-center justify-center text-[#E5C178]">
+        <div className="rounded-2xl bg-raised/75 border border-line backdrop-blur-md p-5 shadow-lg flex flex-col justify-between">
+          <div className="flex items-center justify-between text-fg-muted">
+            <span className="text-xs font-medium uppercase tracking-[0.18em] text-fg-muted">Today&apos;s Arrivals</span>
+            <div className="h-8 w-8 rounded-xl bg-surface border border-line-soft flex items-center justify-center text-gold">
               <Clock className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-4">
-            <span className="font-serif oldstyle-nums text-3xl font-normal text-[#FAF4EB]">
+            <span className="font-serif oldstyle-nums text-3xl font-normal text-fg">
               {stats.todayArrivals}
             </span>
-            <span className="text-xs text-[#B8A692] block mt-0.5">
+            <span className="text-xs text-fg-muted block mt-0.5">
               Check-in window: <span className="font-serif oldstyle-nums">11:00 AM – 1:00 PM</span>
             </span>
           </div>
         </div>
 
         {/* Metric 2: Active Occupancies */}
-        <div className="rounded-2xl bg-[rgba(34,24,16,0.75)] border border-[rgba(212,163,89,0.25)] backdrop-blur-md p-5 shadow-lg flex flex-col justify-between">
-          <div className="flex items-center justify-between text-[#B8A692]">
-            <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-[#B8A692]">Active Occupancies</span>
-            <div className="h-8 w-8 rounded-xl bg-[#16100B] border border-[rgba(212,163,89,0.2)] flex items-center justify-center text-[#E5C178]">
+        <div className="rounded-2xl bg-raised/75 border border-line backdrop-blur-md p-5 shadow-lg flex flex-col justify-between">
+          <div className="flex items-center justify-between text-fg-muted">
+            <span className="text-xs font-medium uppercase tracking-[0.18em] text-fg-muted">Active Occupancies</span>
+            <div className="h-8 w-8 rounded-xl bg-surface border border-line-soft flex items-center justify-center text-gold">
               <Building2 className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-4">
-            <span className="font-serif oldstyle-nums text-3xl font-normal text-[#E5C178]">
-              {stats.activeOccupancies} <span className="text-base text-[#B8A692] font-normal">/ 5 Units</span>
+            <span className="font-serif oldstyle-nums text-3xl font-normal text-gold">
+              {stats.activeOccupancies} <span className="text-base text-fg-muted font-normal">/ 5 Units</span>
             </span>
             <span className="text-xs text-emerald-400 block mt-0.5 font-serif oldstyle-nums">
               {stats.occupancyRate}% Current Capacity
@@ -180,36 +180,36 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Metric 3: 20% Advance Online Collected */}
-        <div className="rounded-2xl bg-[rgba(34,24,16,0.75)] border border-[rgba(212,163,89,0.25)] backdrop-blur-md p-5 shadow-lg flex flex-col justify-between">
-          <div className="flex items-center justify-between text-[#B8A692]">
-            <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-[#B8A692]">20% Online Deposit</span>
-            <div className="h-8 w-8 rounded-xl bg-[#16100B] border border-[rgba(212,163,89,0.2)] flex items-center justify-center text-[#E5C178]">
+        <div className="rounded-2xl bg-raised/75 border border-line backdrop-blur-md p-5 shadow-lg flex flex-col justify-between">
+          <div className="flex items-center justify-between text-fg-muted">
+            <span className="text-xs font-medium uppercase tracking-[0.18em] text-fg-muted">20% Online Deposit</span>
+            <div className="h-8 w-8 rounded-xl bg-surface border border-line-soft flex items-center justify-center text-gold">
               <CreditCard className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-4">
-            <span className="font-serif oldstyle-nums text-3xl font-normal text-[#FAF4EB]">
+            <span className="font-serif oldstyle-nums text-3xl font-normal text-fg">
               {formatPrice(stats.totalAdvanceCollected)}
             </span>
-            <span className="text-xs text-[#B8A692] block mt-0.5">
+            <span className="text-xs text-fg-muted block mt-0.5">
               Secured via Razorpay Gateway
             </span>
           </div>
         </div>
 
         {/* Metric 4: Pending 80% On-Arrival Collections */}
-        <div className="rounded-2xl bg-[rgba(34,24,16,0.75)] border border-[rgba(212,163,89,0.25)] backdrop-blur-md p-5 shadow-lg flex flex-col justify-between">
-          <div className="flex items-center justify-between text-[#B8A692]">
-            <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-[#B8A692]">80% Due on Arrival</span>
-            <div className="h-8 w-8 rounded-xl bg-[#16100B] border border-[rgba(212,163,89,0.2)] flex items-center justify-center text-[#E5C178]">
+        <div className="rounded-2xl bg-raised/75 border border-line backdrop-blur-md p-5 shadow-lg flex flex-col justify-between">
+          <div className="flex items-center justify-between text-fg-muted">
+            <span className="text-xs font-medium uppercase tracking-[0.18em] text-fg-muted">80% Due on Arrival</span>
+            <div className="h-8 w-8 rounded-xl bg-surface border border-line-soft flex items-center justify-center text-gold">
               <Banknote className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-4">
-            <span className="font-serif oldstyle-nums text-3xl font-normal text-[#E5C178]">
+            <span className="font-serif oldstyle-nums text-3xl font-normal text-gold">
               {formatPrice(stats.pendingBalanceDue)}
             </span>
-            <span className="text-xs text-[#B8A692] block mt-0.5">
+            <span className="text-xs text-fg-muted block mt-0.5">
               Payable via Cash / UPI at property
             </span>
           </div>
@@ -217,19 +217,19 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Recent Reservations Table */}
-      <div className="rounded-2xl bg-[rgba(34,24,16,0.75)] border border-[rgba(212,163,89,0.25)] backdrop-blur-md overflow-hidden shadow-xl">
-        <div className="p-5 border-b border-[rgba(212,163,89,0.18)] flex items-center justify-between">
+      <div className="rounded-2xl bg-raised/75 border border-line backdrop-blur-md overflow-hidden shadow-xl">
+        <div className="p-5 border-b border-line-soft flex items-center justify-between">
           <div>
-            <h3 className="font-serif text-lg font-normal text-[#FAF4EB]">
+            <h3 className="font-serif text-lg font-normal text-fg">
               Recent Bookings & Collection Actions
             </h3>
-            <p className="text-xs text-[#B8A692] mt-0.5">
+            <p className="text-xs text-fg-muted mt-0.5">
               Review guest arrivals, verify original ID proofs, and collect the 80% arrival balance.
             </p>
           </div>
           <Link
             href="/admin/bookings"
-            className="text-xs text-[#E5C178] hover:underline font-semibold flex items-center gap-1"
+            className="text-xs text-gold hover:underline font-semibold flex items-center gap-1"
           >
             <span>View All ({stats.totalBookings})</span>
             <ArrowUpRight className="w-3.5 h-3.5" />
@@ -238,12 +238,12 @@ export default function AdminDashboardPage() {
 
         <div className="overflow-x-auto">
           {recentBookings.length === 0 ? (
-            <div className="p-10 text-center text-[#B8A692] text-xs">
+            <div className="p-10 text-center text-fg-muted text-xs">
               No reservations recorded yet. New guest bookings will appear here automatically in real time.
             </div>
           ) : (
             <table className="w-full text-left text-xs">
-              <thead className="bg-[#16100B]/90 text-[10px] font-medium text-[#B8A692] uppercase tracking-[0.18em] border-b border-[rgba(212,163,89,0.18)]">
+              <thead className="bg-surface/90 text-xs font-medium text-fg-muted uppercase tracking-[0.18em] border-b border-line-soft">
                 <tr>
                   <th className="py-3 px-4">Booking ID</th>
                   <th className="py-3 px-4">Guest</th>
@@ -255,34 +255,34 @@ export default function AdminDashboardPage() {
                   <th className="py-3 px-4">Quick Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[rgba(212,163,89,0.12)] text-[#FAF4EB]">
+              <tbody className="divide-y divide-line-soft text-fg">
                 {recentBookings.map((b) => (
-                  <tr key={b.id} className="hover:bg-[#221810]/70 transition-colors">
-                    <td className="py-3 px-4 font-mono font-bold text-[#E5C178]">{b.bookingCode}</td>
+                  <tr key={b.id} className="hover:bg-raised/70 transition-colors">
+                    <td className="py-3 px-4 font-mono font-bold text-gold">{b.bookingCode}</td>
                     <td className="py-3 px-4">
-                      <span className="font-semibold block text-[#FAF4EB]">{b.guest.fullName}</span>
-                      <span className="text-[11px] text-[#B8A692]">{b.guest.phone}</span>
+                      <span className="font-semibold block text-fg">{b.guest.fullName}</span>
+                      <span className="text-xs text-fg-muted">{b.guest.phone}</span>
                     </td>
                     <td className="py-3 px-4">
-                      <span className="font-medium uppercase text-[#FAF4EB]">{b.unitId}</span>
-                      <span className="text-[10px] text-[#B8A692] block capitalize">{b.stayPurpose} stay</span>
+                      <span className="font-medium uppercase text-fg">{b.unitId}</span>
+                      <span className="text-xs text-fg-muted block capitalize">{b.stayPurpose} stay</span>
                     </td>
-                    <td className="py-3 px-4 text-[#B8A692]">
+                    <td className="py-3 px-4 text-fg-muted">
                       {b.checkInDate} → {b.checkOutDate} <span className="font-serif oldstyle-nums">({b.totalNights}N)</span>
                     </td>
                     <td className="py-3 px-4 text-emerald-400 font-semibold font-serif oldstyle-nums">
                       {formatPrice(b.pricing.advancePayable)}
                     </td>
-                    <td className="py-3 px-4 font-bold text-[#E5C178] font-serif oldstyle-nums">
+                    <td className="py-3 px-4 font-bold text-gold font-serif oldstyle-nums">
                       {formatPrice(b.pricing.balanceDueOnArrival)}
                     </td>
                     <td className="py-3 px-4">
                       {b.balanceCollected ? (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/25">
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/25">
                           <CheckCircle2 className="w-3 h-3" /> Collected
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/25">
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/25">
                           <Clock className="w-3 h-3" /> Pending on Arrival
                         </span>
                       )}
@@ -292,7 +292,7 @@ export default function AdminDashboardPage() {
                         <button
                           type="button"
                           onClick={() => handleCollectBalance(b.id, b.bookingCode, b.pricing.balanceDueOnArrival)}
-                          className="px-2.5 py-1 rounded-lg bg-gradient-to-r from-[#E5C178] to-[#C69344] hover:brightness-110 text-[#140E08] font-bold text-[10px] transition-all whitespace-nowrap shadow-sm shadow-[#E5C178]/20 cursor-pointer"
+                          className="px-2.5 py-1 rounded-lg bg-gradient-to-r from-gold to-gold-deep hover:brightness-110 text-ink font-bold text-xs transition-all whitespace-nowrap shadow-sm shadow-gold/20 cursor-pointer"
                         >
                           Mark Collected
                         </button>

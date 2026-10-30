@@ -54,8 +54,10 @@ const totalAdvance = group.reduce((sum, b) => sum + b.pricing.advancePayable, 0)
 assert.ok(combined.text.includes(`₹${totalAdvance.toLocaleString("en-IN")}`));
 
 // 4. Member emails carry the ID
-const member = { fullName: "Asha", email: "asha@example.com", memberCode: "FL-AB23CD", validUntil: "2027-10-29T10:00:00.000Z", siteUrl: "https://flatel.test" };
+const member = { fullName: "Asha", email: "asha@example.com", memberCode: "FL-AB23CD", tier: "platinum" as const, validUntil: "2027-10-29T10:00:00.000Z", siteUrl: "https://flatel.test" };
 assert.ok(membershipWelcomeEmail(member).text.includes("FL-AB23CD"));
+assert.ok(membershipWelcomeEmail(member).text.includes("15% off"), "Platinum email states its own rate");
+assert.ok(membershipWelcomeEmail({ ...member, tier: "golden" }).text.includes("10% off"), "Golden email states its own rate");
 assert.ok(membershipReminderEmail(member).html.includes("/membership#join"));
 
 // 5. Without email settings nothing is sent and nothing throws

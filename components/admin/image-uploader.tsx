@@ -128,7 +128,7 @@ export function ImageUploader({ urls, onChange, folder, disabled }: ImageUploade
         }}
         className={cn(
           "rounded-xl border border-dashed px-4 py-6 text-center transition-colors",
-          isDragging ? "border-[#E5C178] bg-[#E5C178]/10" : "border-[rgba(212,163,89,0.35)] bg-[#140E08]"
+          isDragging ? "border-gold bg-gold/10" : "border-line bg-ink"
         )}
       >
         <input
@@ -145,18 +145,18 @@ export function ImageUploader({ urls, onChange, folder, disabled }: ImageUploade
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={disabled || isUploading || isFull}
-          className="inline-flex items-center gap-2 px-4 min-h-[40px] rounded-lg bg-[#E5C178] text-[#140E08] text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          className="inline-flex items-center gap-2 px-4 min-h-[40px] rounded-lg bg-gold text-ink text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ImagePlus className="w-4 h-4" />}
           {isUploading ? "Uploading…" : "Upload photos"}
         </button>
-        <p className="mt-2 text-xs text-[#B8A692]">
+        <p className="mt-2 text-xs text-fg-muted">
           Drag photos here or browse. JPG, PNG or WebP · up to {MAX_PHOTOS} photos · {urls.length}/{MAX_PHOTOS} added
         </p>
       </div>
 
       {message && (
-        <p role="alert" className="text-xs text-[#F2B8A0]">
+        <p role="alert" className="text-xs text-danger-soft">
           {message}
         </p>
       )}
@@ -166,22 +166,22 @@ export function ImageUploader({ urls, onChange, folder, disabled }: ImageUploade
           {urls.map((url, index) => (
             <li
               key={url}
-              className="relative aspect-video rounded-xl overflow-hidden bg-[#140E08] border border-[rgba(212,163,89,0.2)] group"
+              className="relative aspect-video rounded-xl overflow-hidden bg-ink border border-line-soft group"
             >
               <Image src={url} alt={`Residence photo ${index + 1}`} fill sizes="160px" className="object-cover" />
               {index === 0 && (
-                <span className="absolute top-1 left-1 bg-[#E5C178] text-[#140E08] px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider">
+                <span className="absolute top-1 left-1 bg-gold text-ink px-1.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider">
                   Cover
                 </span>
               )}
-              <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-1 bg-[#0E0A07]/85 px-1 py-1">
+              <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-1 bg-canvas/85 px-1 py-1">
                 <div className="flex gap-1">
                   <button
                     type="button"
                     onClick={() => move(index, -1)}
                     disabled={index === 0}
                     aria-label={`Move photo ${index + 1} earlier`}
-                    className="w-6 h-6 rounded flex items-center justify-center text-[#FAF4EB] hover:text-[#E5C178] disabled:opacity-30 cursor-pointer"
+                    className="w-6 h-6 rounded flex items-center justify-center text-fg hover:text-gold disabled:opacity-30 cursor-pointer"
                   >
                     <ArrowLeft className="w-3.5 h-3.5" />
                   </button>
@@ -190,7 +190,7 @@ export function ImageUploader({ urls, onChange, folder, disabled }: ImageUploade
                     onClick={() => move(index, 1)}
                     disabled={index === urls.length - 1}
                     aria-label={`Move photo ${index + 1} later`}
-                    className="w-6 h-6 rounded flex items-center justify-center text-[#FAF4EB] hover:text-[#E5C178] disabled:opacity-30 cursor-pointer"
+                    className="w-6 h-6 rounded flex items-center justify-center text-fg hover:text-gold disabled:opacity-30 cursor-pointer"
                   >
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
@@ -199,7 +199,7 @@ export function ImageUploader({ urls, onChange, folder, disabled }: ImageUploade
                   type="button"
                   onClick={() => onChange(urls.filter((_, i) => i !== index))}
                   aria-label={`Remove photo ${index + 1}`}
-                  className="w-6 h-6 rounded flex items-center justify-center text-[#F2B8A0] hover:text-[#FF8A6B] cursor-pointer"
+                  className="w-6 h-6 rounded flex items-center justify-center text-danger-soft hover:text-danger cursor-pointer"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
@@ -210,7 +210,7 @@ export function ImageUploader({ urls, onChange, folder, disabled }: ImageUploade
       )}
 
       <div className="flex items-center gap-2">
-        <Link2 className="w-4 h-4 text-[#B8A692] shrink-0" aria-hidden="true" />
+        <Link2 className="w-4 h-4 text-fg-muted shrink-0" aria-hidden="true" />
         <input
           type="text"
           value={manualUrl}
@@ -224,13 +224,13 @@ export function ImageUploader({ urls, onChange, folder, disabled }: ImageUploade
           placeholder="Or paste a photo link (R2 or /images/… path)"
           aria-label="Add a photo by link"
           disabled={disabled || isFull}
-          className="flex-1 min-w-0 bg-[#140E08] border border-[rgba(212,163,89,0.25)] rounded-lg px-3 py-1.5 text-xs text-[#FAF4EB] font-mono focus:border-[#E5C178] focus:outline-none"
+          className="flex-1 min-w-0 bg-ink border border-control rounded-lg px-3 py-1.5 text-xs text-fg font-mono focus:border-gold focus:outline-none"
         />
         <button
           type="button"
           onClick={addManualUrl}
           disabled={disabled || isFull || !manualUrl.trim()}
-          className="px-3 min-h-[32px] rounded-lg border border-[rgba(212,163,89,0.35)] text-xs font-semibold text-[#E5C178] hover:border-[#E5C178] disabled:opacity-40 cursor-pointer"
+          className="px-3 min-h-[32px] rounded-lg border border-line text-xs font-semibold text-gold hover:border-gold disabled:opacity-40 cursor-pointer"
         >
           Add
         </button>

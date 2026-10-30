@@ -129,7 +129,7 @@ export function FaqSection({ className }: FaqSectionProps) {
     <section
       id="faq"
       className={cn(
-        "scroll-mt-20 relative w-full bg-[#0E0A07] text-[#FAF4EB] py-14 sm:py-18 lg:py-20 select-none overflow-hidden",
+        "scroll-mt-20 relative w-full bg-canvas text-fg py-14 sm:py-18 lg:py-20 select-none overflow-hidden",
         className
       )}
       aria-labelledby="faq-heading"
@@ -138,35 +138,35 @@ export function FaqSection({ className }: FaqSectionProps) {
 
       {/* Luxury Subtle Radial Ambient Glow */}
       <div
-        className="pointer-events-none absolute top-1/3 left-1/2 -translate-x-1/2 w-[900px] h-[450px] bg-[radial-gradient(ellipse_at_center,rgba(212,163,89,0.1)_0%,transparent_70%)]"
+        className="pointer-events-none absolute top-1/3 left-1/2 -translate-x-1/2 w-[900px] h-[450px] bg-[radial-gradient(ellipse_at_center,color-mix(in_srgb,var(--gold)_10%,transparent)_0%,transparent_70%)]"
         aria-hidden="true"
       />
 
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10 relative z-10">
-        <div className="max-w-3xl mx-auto">
+      <div className="container-page relative z-10">
+        <div>
           {/* ========================================================== */}
           {/* 1. SECTION HEADER                                          */}
           {/* ========================================================== */}
           <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12">
-            <p className="text-xs sm:text-sm font-sans font-semibold tracking-[0.14em] text-[#E5C178] uppercase mb-2 sm:mb-3">
+            <p className="text-xs sm:text-sm font-sans font-semibold tracking-[0.14em] text-gold uppercase mb-2 sm:mb-3">
               {isAr ? "الأسئلة الشائعة" : "Frequently Asked Questions"}
             </p>
 
             <h2
               id="faq-heading"
-              className="font-heading text-3xl sm:text-4xl md:text-5xl font-medium tracking-normal text-[#FAF4EB] leading-[1.08]"
+              className="font-heading text-fg heading-section"
             >
               {isAr ? (
                 <>
-                  الأسئلة <span className="text-[#E5C178]">الأكثر تكراراً</span>
+                  الأسئلة <span className="text-gold">الأكثر تكراراً</span>
                 </>
               ) : (
                 <>
-                  Commonly Asked <span className="text-[#E5C178]">Questions</span>
+                  Commonly Asked <span className="text-gold">Questions</span>
                 </>
               )}
             </h2>
-            <p className="mt-3 text-sm sm:text-base text-[#D4C4B3] font-sans font-normal max-w-lg mx-auto leading-relaxed">
+            <p className="mt-3 text-sm sm:text-base text-fg-soft font-sans font-normal max-w-lg mx-auto leading-relaxed">
               {isAr
                 ? "كل ما تود معرفته عن عربون الـ ٢٠٪، مواعيد الوصول، المطابخ الخاصة، والسياسات."
                 : "Everything you need to know about our 20% deposit, check-in, private kitchens, and policies."}
@@ -176,7 +176,7 @@ export function FaqSection({ className }: FaqSectionProps) {
           {/* ========================================================== */}
           {/* 2. MINIMAL LINED FAQ LIST                                  */}
           {/* ========================================================== */}
-          <div className="border-t border-[rgba(212,163,89,0.2)] divide-y divide-[rgba(212,163,89,0.15)]">
+          <div className="border-t border-line-soft divide-y divide-line-soft">
             {visibleFaqs.map((faq) => {
               const isExpanded = expandedId === faq.id;
               const question = isAr ? faq.questionAr : faq.question;
@@ -195,8 +195,8 @@ export function FaqSection({ className }: FaqSectionProps) {
                   >
                     <ChevronDown
                       className={cn(
-                        "w-4 h-4 text-[#E5C178] transition-transform duration-300 shrink-0",
-                        isExpanded ? "rotate-180 text-[#FAF4EB]" : "rotate-0 text-[#E5C178]/70 group-hover:text-[#E5C178]"
+                        "w-4 h-4 text-gold transition-transform duration-300 shrink-0",
+                        isExpanded ? "rotate-180 text-fg" : "rotate-0 text-gold/70 group-hover:text-gold"
                       )}
                       aria-hidden="true"
                     />
@@ -204,22 +204,31 @@ export function FaqSection({ className }: FaqSectionProps) {
                       className={cn(
                         "font-sans font-semibold text-base sm:text-lg transition-colors leading-snug flex-1",
                         isExpanded
-                          ? "text-[#E5C178]"
-                          : "text-[#FAF4EB] group-hover:text-[#E5C178]"
+                          ? "text-gold"
+                          : "text-fg group-hover:text-gold"
                       )}
                     >
                       {question}
                     </span>
                   </button>
 
-                  {isExpanded && (
-                    <div className={cn(
-                      "pb-4 sm:pb-5 text-sm sm:text-base text-[#D4C4B3] font-sans leading-relaxed animate-fadeIn",
-                      isAr ? "pr-8 sm:pr-9 pl-2 text-right" : "pl-8 sm:pl-9 pr-2 text-left"
-                    )}>
-                      <p>{answer}</p>
+                  <div
+                    className={cn(
+                      "grid transition-[grid-template-rows,opacity] duration-300",
+                      isExpanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                    )}
+                    aria-hidden={!isExpanded}
+                    inert={!isExpanded}
+                  >
+                    <div className="overflow-hidden">
+                      <div className={cn(
+                        "pb-4 sm:pb-5 text-sm sm:text-base text-fg-soft font-sans leading-relaxed",
+                        isAr ? "pr-8 sm:pr-9 pl-2 text-right" : "pl-8 sm:pl-9 pr-2 text-left"
+                      )}>
+                        <p className="max-w-3xl">{answer}</p>
+                      </div>
                     </div>
-                  )}
+                  </div>
                 </div>
               );
             })}
@@ -230,7 +239,7 @@ export function FaqSection({ className }: FaqSectionProps) {
             <button
               type="button"
               onClick={() => setShowAll((prev) => !prev)}
-              className="px-5 py-2.5 rounded-xl bg-[rgba(34,24,16,0.85)] border border-[rgba(212,163,89,0.3)] hover:border-[#E5C178] text-[#E5C178] text-xs font-bold uppercase tracking-wider transition-all inline-flex items-center gap-1.5 cursor-pointer shadow-xs"
+              className="px-5 py-2.5 rounded-xl bg-raised/85 border border-line hover:border-gold text-gold text-xs font-bold uppercase tracking-wider transition-all inline-flex items-center gap-1.5 cursor-pointer shadow-xs"
             >
               <span>
                 {showAll
@@ -242,7 +251,7 @@ export function FaqSection({ className }: FaqSectionProps) {
           </div>
 
           {/* In-Line Policy Internal Link */}
-          <div className="mt-8 pt-5 border-t border-[rgba(212,163,89,0.18)] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs sm:text-sm text-[#D4C4B3]">
+          <div className="mt-8 pt-5 border-t border-line-soft flex flex-col sm:flex-row items-center justify-between gap-3 text-xs sm:text-sm text-fg-soft">
             <span>
               {isAr
                 ? "هل تحتاج لمعرفة المزيد عن شروط إثبات الهوية، مواعيد الخروج، أو قواعد الإقامة؟"
@@ -250,7 +259,7 @@ export function FaqSection({ className }: FaqSectionProps) {
             </span>
             <Link
               href={`${localePrefix}/policies`}
-              className="text-[#E5C178] font-semibold hover:underline inline-flex items-center gap-1 shrink-0"
+              className="text-gold font-semibold hover:underline inline-flex items-center gap-1 shrink-0"
             >
               <span>{isAr ? "اقرأ سياسات النزلاء الكاملة" : "Read Complete Guest Policies"}</span>
               <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />

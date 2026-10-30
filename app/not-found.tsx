@@ -3,10 +3,10 @@ import { ArrowLeft } from "lucide-react";
 
 export default function NotFound() {
   return (
-    <main className="flex min-h-[70vh] flex-col items-center justify-center bg-background px-6 py-16 text-center text-foreground">
-      <p className="font-sans text-sm font-semibold uppercase tracking-[0.16em] text-primary">FLATEL HOSPITALITY</p>
+    <main id="main-content" tabIndex={-1} className="flex min-h-[70vh] flex-col items-center justify-center bg-background px-6 py-16 text-center text-foreground">
+      <p className="font-sans text-sm font-semibold uppercase tracking-[0.14em] text-primary">FLATEL HOSPITALITY</p>
       <p className="mt-10 font-heading text-6xl font-medium text-primary">404</p>
-      <h1 className="mt-3 font-heading text-3xl font-normal">We couldn’t find that page</h1>
+      <h1 className="mt-3 font-heading heading-page">We couldn’t find that page</h1>
       <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
         The address may be incorrect, or the page may have moved.
       </p>

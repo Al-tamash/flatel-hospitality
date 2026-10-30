@@ -19,11 +19,11 @@ export default function ArabicCheckoutPage() {
         src="https://checkout.razorpay.com/v1/checkout.js"
         strategy="afterInteractive"
       />
-      <main className="flex-1 w-full">
+      <main id="main-content" tabIndex={-1} className="flex-1 w-full">
         <React.Suspense
           fallback={
-            <div className="mx-auto max-w-6xl px-4 py-20 text-center text-[#B8A692]">
-              <div className="w-8 h-8 border-2 border-[#E5C178] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <div className="mx-auto max-w-6xl px-4 py-20 text-center text-fg-muted">
+              <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin mx-auto mb-4" />
               <p>جاري تحميل صفحة الدفع الآمنة...</p>
             </div>
           }

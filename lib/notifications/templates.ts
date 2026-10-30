@@ -1,5 +1,5 @@
 import type { EmailMessage } from "@/lib/notifications/email";
-import { MEMBERSHIP } from "@/lib/membership/membership-content";
+import { MEMBERSHIP_NAME, getMembershipTier, type MembershipTierId } from "@/lib/membership/membership-content";
 import type { BookingRecord } from "@/types/booking";
 
 const GOLD = "#C69344";
@@ -36,22 +36,28 @@ interface MemberEmailInput {
   fullName: string;
   email: string;
   memberCode: string;
+  tier: MembershipTierId;
   validUntil: string;
   siteUrl: string;
 }
 
+const tierLabel = (tier: MembershipTierId) => (tier === "platinum" ? "Platinum Card" : "Golden Card");
+
 export function membershipWelcomeEmail(input: MemberEmailInput): EmailMessage {
   const until = formatDate(input.validUntil);
+  const { price, discountPercent } = getMembershipTier(input.tier);
+  const card = tierLabel(input.tier);
   const html = layout(
     `Welcome, ${input.fullName}`,
-    `<p style="line-height:1.6;color:#D4C4B3">Your Flatel Membership is active until <strong>${escapeHtml(until)}</strong>.
-Use this Member ID at checkout, with the same email or mobile number, to get ${MEMBERSHIP.stayDiscountPercent}% off your stay.</p>
+    `<p style="line-height:1.6;color:#D4C4B3">Your ${escapeHtml(MEMBERSHIP_NAME)} ${escapeHtml(card)} is active until <strong>${escapeHtml(until)}</strong>.
+Use this Member ID at checkout, with the same email or mobile number, to get ${discountPercent}% off your stay.</p>
 <p style="font-size:28px;letter-spacing:.14em;font-family:monospace;color:${GOLD};margin:18px 0"><strong>${escapeHtml(input.memberCode)}</strong></p>
+<p style="line-height:1.6;color:#D4C4B3">To arrange your airport transfer, priority check-in or welcome kit, message us on WhatsApp with your Member ID.</p>
 ${button(`${input.siteUrl}/properties`, "Browse flats")}
-<p style="font-size:13px;color:#B8A692">The ${inr(MEMBERSHIP.price)} membership fee is non-refundable once a Member ID is issued.</p>`
+<p style="font-size:13px;color:#B8A692">The ${inr(price)} membership fee is non-refundable once a Member ID is issued.</p>`
   );
-  const text = `Welcome to Flatel Membership, ${input.fullName}.\n\nYour Member ID: ${input.memberCode}\nValid until: ${until}\n\nEnter it at checkout with the same email or mobile number to get ${MEMBERSHIP.stayDiscountPercent}% off your stay.\n${input.siteUrl}/properties`;
-  return { to: input.email, subject: `Welcome to Flatel Membership — your Member ID ${input.memberCode}`, html, text };
+  const text = `Welcome to ${MEMBERSHIP_NAME}, ${input.fullName}.\n\nYour card: ${card}\nYour Member ID: ${input.memberCode}\nValid until: ${until}\n\nEnter it at checkout with the same email or mobile number to get ${discountPercent}% off your stay. To arrange your airport transfer, priority check-in or welcome kit, message us on WhatsApp with your Member ID.\n${input.siteUrl}/properties`;
+  return { to: input.email, subject: `Welcome to ${MEMBERSHIP_NAME} — your Member ID ${input.memberCode}`, html, text };
 }
 
 export function membershipReminderEmail(input: MemberEmailInput): EmailMessage {

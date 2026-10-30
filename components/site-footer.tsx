@@ -55,11 +55,11 @@ export function SiteFooter() {
   );
 
   return (
-    <footer
+    <footer data-reveal
       id="site-footer"
       dir={isAr ? "rtl" : "ltr"}
       className={cn(
-        "relative w-full bg-[#0E0A07] text-[#FAF4EB] select-none",
+        "relative w-full bg-canvas text-fg select-none",
         isAr && "font-arabic"
       )}
       aria-label="Site Footer"
@@ -85,7 +85,7 @@ export function SiteFooter() {
           {/* Main Footer Obsidian Fill below the inward curve */}
           <path
             d="M 0,16.8 H 758 C 758,16.8 950.5,16.8 966.55,44.7 C 982.55,16.8 1210.5,16 1210.5,16 H 1933.1 V 45 H 0 Z"
-            fill="#0E0A07"
+            className="fill-canvas"
           />
           {/* Crisp Champagne Gold Contour Line */}
           <path
@@ -99,7 +99,7 @@ export function SiteFooter() {
       </div>
 
       {/* ── Main Footer Area ── */}
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10 py-12 lg:py-16 relative">
+      <div className="container-page py-12 lg:py-16 relative">
         {/* Subtle Moroccan Gold Lattice Watermark Backdrop */}
         <div
           className="pointer-events-none absolute inset-0 opacity-[0.10] [mask-image:radial-gradient(ellipse_at_bottom_left,black_40%,transparent_85%)]"
@@ -117,7 +117,7 @@ export function SiteFooter() {
           <div className="lg:col-span-5 space-y-4">
             <Link
               href={localePrefix || "/"}
-              className="inline-flex items-center gap-3.5 sm:gap-4.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs group"
+              className="inline-flex items-center gap-3.5 sm:gap-4.5 focus:outline-none focus-visible:ring-1 focus-visible:ring-gold rounded-xs group"
               aria-label="FLATEL Hospitality Homepage"
             >
               {/* Official Gold Monogram Emblem (NO border, NO background box) */}
@@ -139,17 +139,17 @@ export function SiteFooter() {
               />
             </Link>
 
-            <p className="font-heading italic text-sm text-[#E5C178] leading-snug">
+            <p className="font-heading italic text-sm text-gold leading-snug">
               &ldquo;{isAr ? dict.common.brandTagline : BRAND_TAGLINE}&rdquo;
             </p>
 
-            <p className="text-sm text-[#D4C4B3] leading-relaxed max-w-md font-sans">
+            <p className="text-sm text-fg-soft leading-relaxed max-w-md font-sans">
               {isAr
                 ? "شقق فندقية مفروشة بالكامل من غرفة إلى ٤ غرف وصالة في حيدر أباد بمطابخ خاصة مجهزة، خدمة تنظيف دورية مجانية، ومكتب استقبال داعم في باركاس سلالة ومغل بورا."
                 : "Fully furnished 1 to 4 BHK serviced apartments in Hyderabad with private modular kitchens, alternate-day housekeeping, and on-call front desk support across Barkas Salala and Moghal Pura."}
             </p>
 
-            <div className="pt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs sm:text-sm font-mono text-[#D4C4B3]">
+            <div className="pt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs sm:text-sm font-mono text-fg-soft">
               <span>{isAr ? "باركاس سلالة" : "Barkas Salala"}</span>
               <span>·</span>
               <span>{isAr ? "مغل بورا" : "Moghal Pura"}</span>
@@ -163,14 +163,14 @@ export function SiteFooter() {
             
             {/* Column 1: Explore */}
             <div className="space-y-3.5">
-              <h4 className="text-xs sm:text-sm font-sans font-bold tracking-[0.14em] uppercase text-[#FAF4EB]">
+              <h2 className="text-xs sm:text-sm font-sans font-bold tracking-[0.14em] uppercase text-fg">
                 {isAr ? "استكشف" : "Explore"}
-              </h4>
-              <ul className="space-y-2.5 text-sm text-[#D4C4B3] font-sans">
+              </h2>
+              <ul className="space-y-2.5 text-sm text-fg-soft font-sans">
                 <li>
                   <Link
                     href={`${localePrefix}/properties`}
-                    className="hover:text-[#FAF4EB] transition-colors block py-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs"
+                    className="hover:text-fg transition-colors block py-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold rounded-xs"
                   >
                     {dict.nav.properties}
                   </Link>
@@ -178,7 +178,7 @@ export function SiteFooter() {
                 <li>
                   <Link
                     href={`${localePrefix}/#amenities`}
-                    className="hover:text-[#FAF4EB] transition-colors block py-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs"
+                    className="hover:text-fg transition-colors block py-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold rounded-xs"
                   >
                     {isAr ? "المرافق والخدمات" : "Amenities"}
                   </Link>
@@ -186,7 +186,7 @@ export function SiteFooter() {
                 <li>
                   <Link
                     href={`${localePrefix}/#locations`}
-                    className="hover:text-[#FAF4EB] transition-colors block py-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs"
+                    className="hover:text-fg transition-colors block py-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold rounded-xs"
                   >
                     {dict.nav.branches}
                   </Link>
@@ -194,7 +194,7 @@ export function SiteFooter() {
                 <li>
                   <Link
                     href={`${localePrefix}/branches/barkas-salala`}
-                    className="hover:text-[#FAF4EB] transition-colors block py-1 text-xs sm:text-sm text-[#D4C4B3] hover:text-[#E5C178] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs"
+                    className="hover:text-fg transition-colors block py-1 text-xs sm:text-sm text-fg-soft hover:text-gold focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold rounded-xs"
                   >
                     {isAr ? "فرع باركاس سلالة" : "Barkas Salala"}
                   </Link>
@@ -202,7 +202,7 @@ export function SiteFooter() {
                 <li>
                   <Link
                     href={`${localePrefix}/branches/moghal-pura`}
-                    className="hover:text-[#FAF4EB] transition-colors block py-1 text-xs sm:text-sm text-[#D4C4B3] hover:text-[#E5C178] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs"
+                    className="hover:text-fg transition-colors block py-1 text-xs sm:text-sm text-fg-soft hover:text-gold focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold rounded-xs"
                   >
                     {isAr ? "فرع مغل بورا" : "Moghal Pura"}
                   </Link>
@@ -212,14 +212,14 @@ export function SiteFooter() {
 
             {/* Column 2: Guest Information */}
             <div className="space-y-3.5">
-              <h4 className="text-xs sm:text-sm font-sans font-bold tracking-[0.14em] uppercase text-[#FAF4EB]">
+              <h2 className="text-xs sm:text-sm font-sans font-bold tracking-[0.14em] uppercase text-fg">
                 {isAr ? "معلومات الضيوف" : "Guest Information"}
-              </h4>
-              <ul className="space-y-2.5 text-sm text-[#D4C4B3] font-sans">
+              </h2>
+              <ul className="space-y-2.5 text-sm text-fg-soft font-sans">
                 <li>
                   <Link
                     href={`${localePrefix}/properties`}
-                    className="hover:text-[#FAF4EB] transition-colors block py-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs"
+                    className="hover:text-fg transition-colors block py-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold rounded-xs"
                   >
                     {dict.home.exploreResidences}
                   </Link>
@@ -227,7 +227,7 @@ export function SiteFooter() {
                 <li>
                   <Link
                     href={`${localePrefix}/#how-it-works`}
-                    className="hover:text-[#FAF4EB] transition-colors block py-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs"
+                    className="hover:text-fg transition-colors block py-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold rounded-xs"
                   >
                     {isAr ? "خطوات الحجز" : "Booking Process"}
                   </Link>
@@ -235,7 +235,7 @@ export function SiteFooter() {
                 <li>
                   <Link
                     href={`${localePrefix}/policies#checkin-checkout`}
-                    className="hover:text-[#FAF4EB] transition-colors block py-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs"
+                    className="hover:text-fg transition-colors block py-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold rounded-xs"
                   >
                     {isAr ? "قواعد وإرشادات الإقامة" : "House Rules"}
                   </Link>
@@ -243,7 +243,7 @@ export function SiteFooter() {
                 <li>
                   <Link
                     href={`${localePrefix}/policies#free-cancellation`}
-                    className="hover:text-[#FAF4EB] transition-colors block py-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs"
+                    className="hover:text-fg transition-colors block py-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold rounded-xs"
                   >
                     {dict.policies.cancellationTitle}
                   </Link>
@@ -251,7 +251,7 @@ export function SiteFooter() {
                 <li>
                   <Link
                     href={`${localePrefix}/list-property`}
-                    className="hover:text-[#FAF4EB] transition-colors block py-1 text-xs sm:text-sm text-[#E5C178] hover:text-[#FAF4EB] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs font-semibold"
+                    className="hover:text-fg transition-colors block py-1 text-xs sm:text-sm text-gold hover:text-fg focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold rounded-xs font-semibold"
                   >
                     {dict.nav.listProperty}
                   </Link>
@@ -261,25 +261,25 @@ export function SiteFooter() {
 
             {/* Column 3: Contact */}
             <div className="space-y-3.5">
-              <h4 className="text-xs sm:text-sm font-sans font-bold tracking-[0.14em] uppercase text-[#FAF4EB]">
+              <h2 className="text-xs sm:text-sm font-sans font-bold tracking-[0.14em] uppercase text-fg">
                 {isAr ? "اتصل بنا" : "Contact"}
-              </h4>
-              <ul className="space-y-3 text-sm text-[#D4C4B3] font-sans">
+              </h2>
+              <ul className="space-y-3 text-sm text-fg-soft font-sans">
                 <li>
                   <a
                     href={`mailto:${CONTACT_EMAIL}`}
-                    className="flex items-center gap-2.5 hover:text-[#FAF4EB] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs py-1"
+                    className="flex items-center gap-2.5 hover:text-fg transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold rounded-xs py-1"
                   >
-                    <Mail className="w-4 h-4 text-[#E5C178] shrink-0" />
+                    <Mail className="w-4 h-4 text-gold shrink-0" />
                     <span className="truncate">{CONTACT_EMAIL}</span>
                   </a>
                 </li>
                 <li>
                   <a
                     href={`tel:${CONTACT_PHONE.replace(/[^0-9+]/g, "")}`}
-                    className="flex items-center gap-2.5 hover:text-[#FAF4EB] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs py-1"
+                    className="flex items-center gap-2.5 hover:text-fg transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold rounded-xs py-1"
                   >
-                    <Phone className="w-4 h-4 text-[#E5C178] shrink-0" />
+                    <Phone className="w-4 h-4 text-gold shrink-0" />
                     <span className="font-mono">{CONTACT_PHONE}</span>
                   </a>
                 </li>
@@ -288,15 +288,15 @@ export function SiteFooter() {
                     href={whatsappInquiryUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-[#25D366] hover:text-[#34D399] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs group py-1"
+                    className="inline-flex items-center gap-2 text-whatsapp hover:text-success transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold rounded-xs group py-1"
                   >
                     <WhatsAppIcon className="w-4 h-4 shrink-0" />
                     <span>{isAr ? "خدمة العملاء عبر واتساب" : "WhatsApp Support"}</span>
-                    <ArrowUpRight className={cn("w-3.5 h-3.5 text-[#D4C4B3]/70 group-hover:text-[#34D399] transition-colors", isAr && "rotate-[-90deg]")} />
+                    <ArrowUpRight className={cn("w-3.5 h-3.5 text-fg-soft/70 group-hover:text-success transition-colors", isAr && "rotate-[-90deg]")} />
                   </a>
                 </li>
-                <li className="flex items-center gap-2 text-[#D4C4B3] text-xs sm:text-sm py-1">
-                  <Clock className="w-4 h-4 text-[#E5C178] shrink-0" />
+                <li className="flex items-center gap-2 text-fg-soft text-xs sm:text-sm py-1">
+                  <Clock className="w-4 h-4 text-gold shrink-0" />
                   <span>{isAr ? "خدمة استقبال ودعم نزلاء ٢٤/٧" : "24/7 Front Desk & Guest Support"}</span>
                 </li>
               </ul>
@@ -306,20 +306,20 @@ export function SiteFooter() {
         </div>
 
         {/* ── D. Bottom Legal Bar ── */}
-        <div className="mt-12 pt-6 border-t border-[rgba(212,163,89,0.18)] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm text-[#D4C4B3]">
+        <div className="mt-12 pt-6 border-t border-line-soft flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm text-fg-soft">
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-4 gap-y-1">
             <span>© {currentYear} {COMPANY_NAME}. {dict.common.allRightsReserved}</span>
             <span className="hidden sm:inline">·</span>
             <Link
               href={`${localePrefix}/policies`}
-              className="hover:text-[#FAF4EB] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs"
+              className="inline-block py-1 hover:text-fg transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold rounded-xs"
             >
               {isAr ? "سياسات وقواعد الإقامة" : "Guest Policies & Stay Rules"}
             </Link>
             <span className="hidden sm:inline">·</span>
             <Link
               href={`${localePrefix}/policies#free-cancellation`}
-              className="hover:text-[#FAF4EB] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] rounded-xs"
+              className="inline-block py-1 hover:text-fg transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold rounded-xs"
             >
               {dict.policies.cancellationTitle}
             </Link>

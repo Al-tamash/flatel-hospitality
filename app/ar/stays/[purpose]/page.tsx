@@ -33,9 +33,9 @@ export default async function StayPurposePage({ params }: StayPurposePageProps) 
   const rooms = liveRooms.length > 0 ? liveRooms : MOCK_ROOMS;
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col selection:bg-[#E5C178]/20 selection:text-[#E5C178]">
+    <div className="min-h-screen bg-background text-foreground flex flex-col selection:bg-gold/20 selection:text-gold">
       <SiteHeader />
-      <main className="flex-1 w-full">
+      <main id="main-content" tabIndex={-1} className="flex-1 w-full">
         <PurposePageView purpose={purpose} locale="ar" rooms={rooms} />
       </main>
       <SiteFooter />

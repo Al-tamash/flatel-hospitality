@@ -322,17 +322,17 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
   if (!room) {
     return (
       <div className="mx-auto w-full max-w-4xl px-4 py-24 text-center select-none">
-        <h1 className="font-heading text-3xl font-normal text-[#FAF4EB]">
+        <h1 className="font-heading text-fg heading-page">
           {isAr ? "الشقة غير موجودة" : "Residence Not Found"}
         </h1>
-        <p className="text-sm text-[#B8A692] mt-2">
+        <p className="text-sm text-fg-muted mt-2">
           {isAr
             ? `لم يتم العثور على الشقة برمز "${requestedId}".`
             : `The requested apartment ID "${requestedId}" was not found.`}
         </p>
         <Link
           href={`${localePrefix}/#flats`}
-          className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] font-bold text-xs shadow-md hover:opacity-95 transition-opacity"
+          className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-gold to-gold-deep text-ink font-bold text-xs shadow-md hover:opacity-95 transition-opacity"
         >
           <ArrowLeft className={cn("w-4 h-4", isAr && "rotate-180")} />
           <span>{isAr ? "استكشف كافة الشقق الفندقية" : "Explore All Residences"}</span>
@@ -348,27 +348,27 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
       {/* ======================================================== */}
       <nav
         aria-label="Breadcrumb"
-        className="w-full border-b border-[rgba(212,163,89,0.18)] bg-[#16100B]/60"
+        className="w-full border-b border-line-soft bg-surface/60"
       >
-        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10 py-2.5 sm:py-3 flex items-center justify-between text-xs text-[#B8A692]">
+        <div className="container-page py-2.5 sm:py-3 flex items-center justify-between text-xs text-fg-muted">
           <div className="flex items-center gap-2 min-w-0">
-            <Link href={localePrefix || "/"} className="hover:text-[#FAF4EB] transition-colors shrink-0">
+            <Link href={localePrefix || "/"} className="hover:text-fg transition-colors shrink-0">
               {isAr ? "الرئيسية" : "Home"}
             </Link>
-            <ChevronRight className={cn("h-3 w-3 text-[#E5C178]/60 shrink-0", isAr && "rotate-180")} />
-            <Link href={`${localePrefix}/properties`} className="hover:text-[#FAF4EB] transition-colors shrink-0">
+            <ChevronRight className={cn("h-3 w-3 text-gold/60 shrink-0", isAr && "rotate-180")} />
+            <Link href={`${localePrefix}/properties`} className="hover:text-fg transition-colors shrink-0">
               {dict.nav.properties}
             </Link>
-            <ChevronRight className={cn("h-3 w-3 text-[#E5C178]/60 shrink-0", isAr && "rotate-180")} />
+            <ChevronRight className={cn("h-3 w-3 text-gold/60 shrink-0", isAr && "rotate-180")} />
             {branch && (
               <>
-                <Link href={`${localePrefix}/branches/${branch.slug}`} className="hover:text-[#FAF4EB] transition-colors shrink-0">
+                <Link href={`${localePrefix}/branches/${branch.slug}`} className="hover:text-fg transition-colors shrink-0">
                   {branchName}
                 </Link>
-                <ChevronRight className={cn("h-3 w-3 text-[#E5C178]/60 shrink-0", isAr && "rotate-180")} />
+                <ChevronRight className={cn("h-3 w-3 text-gold/60 shrink-0", isAr && "rotate-180")} />
               </>
             )}
-            <span className="text-[#FAF4EB] font-medium truncate">
+            <span className="text-fg font-medium truncate">
               {room.title}
             </span>
           </div>
@@ -378,9 +378,9 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
       {/* ======================================================== */}
       {/* 2. MAIN CONTENT AREA                                     */}
       {/* ======================================================== */}
-      <main className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10 pt-5 sm:pt-6 space-y-8">
+      <div className="container-page pt-5 sm:pt-6 space-y-8">
         {/* PROPERTY PHOTO GALLERY */}
-        <RoomGallery images={room.gallery} roomTitle={room.title} />
+        <RoomGallery images={room.gallery} roomTitle={room.title} category={room.category} branchSlug={room.branchSlug} />
 
         {/* 2-COLUMN LUXURY ARCHITECTURE */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
@@ -391,30 +391,29 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
             {/* ── 1. PROPERTY HEADER & SPECS ── */}
             <section className="space-y-4">
               <div>
-                <span className="text-xs font-sans font-medium tracking-[0.16em] uppercase text-[#E5C178]">
+                <span className="text-xs font-sans font-medium tracking-[0.14em] uppercase text-gold">
                   {isAr
                     ? `شقق فندقية مجهزة · ${branchName}`
                     : `FLATEL SERVICED RESIDENCE · ${branch?.name?.toUpperCase() || "HYDERABAD"}`}
                 </span>
-                <h1 data-flat-title className="font-heading text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#FAF4EB] tracking-[-0.015em] leading-[1.06] mt-1">
+                <h1 data-flat-title className="font-heading text-fg mt-1 heading-page">
                   {room.title}
                 </h1>
               </div>
 
               {/* Location and directions */}
-              <div className="flex items-center gap-3 text-xs sm:text-sm text-[#B8A692] flex-wrap">
-                <div className="flex items-center gap-1 text-[#FAF4EB]/90">
-                  <MapPin className="w-3.5 h-3.5 text-[#E5C178]" />
+              <div className="flex items-center gap-x-5 gap-y-1 text-sm text-fg-muted flex-wrap">
+                <div className="flex items-center gap-1 text-fg/90">
+                  <MapPin className="w-3.5 h-3.5 text-gold" />
                   <span>{branchAddress || "Hyderabad"}</span>
                 </div>
                 {branch?.googleMapsUrl && (
                   <>
-                    <span>•</span>
-                    <a
+                        <a
                       href={branch.googleMapsUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[#E5C178] hover:underline font-semibold inline-flex items-center gap-1"
+                      className="text-gold hover:underline font-semibold inline-flex items-center gap-1"
                     >
                       <span>{isAr ? "خرائط Google" : "Google Maps"}</span>
                       <ExternalLink className="w-3 h-3" />
@@ -424,57 +423,53 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
               </div>
 
               {/* Minimalist Specs Row */}
-              <div className="flex flex-wrap items-center gap-y-2 gap-x-5 pt-1 text-xs sm:text-sm text-[#FAF4EB]">
+              <div className="flex flex-wrap items-center gap-y-2 gap-x-5 pt-1 text-sm text-fg">
                 <div className="flex items-center gap-1.5">
-                  <Users className="w-4 h-4 text-[#E5C178]" />
+                  <Users className="w-4 h-4 text-gold" />
                   <span>{isAr ? `حتى ${room.maxAdults} ضيوف` : `Up to ${room.maxAdults} Guests`}</span>
                 </div>
-                <span>•</span>
                 <div className="flex items-center gap-1.5">
-                  <BedDouble className="w-4 h-4 text-[#E5C178]" />
+                  <BedDouble className="w-4 h-4 text-gold" />
                   <span>{room.specs.bedrooms}</span>
                 </div>
-                <span>•</span>
                 <div className="flex items-center gap-1.5">
-                  <Bath className="w-4 h-4 text-[#E5C178]" />
+                  <Bath className="w-4 h-4 text-gold" />
                   <span>{room.specs.bathroom}</span>
                 </div>
-                <span>•</span>
                 <div className="flex items-center gap-1.5">
-                  <UtensilsCrossed className="w-4 h-4 text-[#E5C178]" />
+                  <UtensilsCrossed className="w-4 h-4 text-gold" />
                   <span>{isAr ? "مطبخ مجهز بالكامل" : "Modular Kitchen"}</span>
                 </div>
-                <span>•</span>
                 <div className="flex items-center gap-1.5">
-                  <Zap className="w-4 h-4 text-[#E5C178]" />
+                  <Zap className="w-4 h-4 text-gold" />
                   <span>{isAr ? "مولد طاقة احتياطي" : "Inverter Backup"}</span>
                 </div>
               </div>
 
               {/* Nightly Price Banner for immediate understanding */}
               <div className="flex items-baseline gap-2 pt-2">
-                <span className="font-heading text-2xl sm:text-3xl font-normal text-[#FAF4EB] tabular-nums">
+                <span className="font-heading text-2xl sm:text-3xl font-normal text-fg tabular-nums">
                   ₹{room.basePricePerNight.toLocaleString("en-IN")}
                 </span>
-                <span className="text-sm text-[#B8A692]">{isAr ? "/ ليلة" : "/ night"}</span>
-                <span className="text-xs text-[#E5C178] font-medium ml-2">
+                <span className="text-sm text-fg-muted">{isAr ? "/ ليلة" : "/ night"}</span>
+                <span className="text-xs text-gold font-medium ml-2">
                   {isAr ? "عربون ٢٠٪ فقط لتأكيد الحجز" : "Pay 20% now to confirm"}
                 </span>
               </div>
 
               {/* Short Readable Property Description */}
-              <p className="text-sm sm:text-base text-[#B8A692] leading-relaxed pt-1 font-normal">
+              <p className="text-sm sm:text-base text-fg-muted leading-relaxed pt-1 font-normal">
                 {cleanInventoryDescription(room.shortDescription)}
               </p>
 
               {room.fullDescription && room.fullDescription !== room.shortDescription && (
-                <p className="text-xs sm:text-sm text-[#B8A692]/90 leading-relaxed pt-1 font-normal">
+                <p className="text-xs sm:text-sm text-fg-muted/90 leading-relaxed pt-1 font-normal">
                   {cleanInventoryDescription(room.fullDescription)}
                 </p>
               )}
             </section>
 
-            <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-[rgba(212,163,89,0.22)] to-transparent" aria-hidden="true" />
+            <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-gold/22 to-transparent" aria-hidden="true" />
 
             {/* ── 2. PURPOSE-FIRST SERVICES ── */}
             <section aria-label={isAr ? "خدمات حسب الغرض من الإقامة" : "Services for your stay purpose"}>
@@ -486,16 +481,16 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
               />
             </section>
 
-            <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-[rgba(212,163,89,0.22)] to-transparent" aria-hidden="true" />
+            <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-gold/22 to-transparent" aria-hidden="true" />
 
             {/* ── 2. INCLUDED WITH YOUR FLAT ── */}
-            <section className="space-y-4" aria-labelledby="amenities-heading">
+            <section data-reveal className="space-y-4" aria-labelledby="amenities-heading">
               <div className="flex items-baseline justify-between gap-4 flex-wrap">
                 <div>
-                  <h2 id="amenities-heading" className="font-heading text-xl sm:text-2xl font-normal text-[#FAF4EB]">
+                  <h2 id="amenities-heading" className="font-heading text-fg heading-sub">
                     {isAr ? "المزايا المشمولة في الشقة" : "Included with your flat"}
                   </h2>
-                  <p className="text-xs text-[#B8A692] mt-0.5">
+                  <p className="text-xs text-fg-muted mt-0.5">
                     {isAr
                       ? "مشمولة مجاناً في سعر إقامتك دون أي رسوم إضافية."
                       : "Included in your accommodation at no extra charge."}
@@ -504,7 +499,7 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
                 <button
                   type="button"
                   onClick={() => setAmenitiesModalOpen(true)}
-                  className="text-xs font-semibold text-[#E5C178] hover:text-[#FAF4EB] cursor-pointer flex items-center gap-1 transition-colors"
+                  className="text-xs font-semibold text-gold hover:text-fg cursor-pointer flex items-center gap-1 transition-colors"
                 >
                   <span>{isAr ? "عرض كافة المزايا والخدمات" : "View all amenities"}</span>
                   <span className={cn(isAr && "rotate-180")}>→</span>
@@ -512,14 +507,14 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
               </div>
 
               {/* 8 Key Included Amenities: 2-Col Compact on Mobile, 4-Col on Desktop */}
-              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5">
+              <div data-stagger className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5">
                 {essentialAmenities.map((item) => {
                   return (
                     <div
                       key={item.title}
-                      className="group flex flex-col sm:flex-row items-start gap-2 sm:gap-3 p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl bg-[rgba(34,24,16,0.65)] border border-[rgba(212,163,89,0.25)] hover:border-[#E5C178]/50 hover:bg-[rgba(42,30,20,0.7)] backdrop-blur-sm transition-all"
+                      className="group flex flex-col sm:flex-row items-start gap-2 sm:gap-3 py-2"
                     >
-                      <div className="relative w-8 h-8 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-[#1a130d] border border-[rgba(212,163,89,0.35)] group-hover:border-[#E5C178]/60 flex items-center justify-center shrink-0 overflow-hidden p-1 transition-colors shadow-xs">
+                      <div className="relative w-8 h-8 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-surface border border-line group-hover:border-gold/60 flex items-center justify-center shrink-0 overflow-hidden p-1 transition-colors shadow-xs">
                         <Image
                           src={item.image}
                           alt={item.title}
@@ -529,10 +524,10 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
                         />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <h3 className="text-[11px] sm:text-sm font-semibold text-[#FAF4EB] tracking-tight leading-snug line-clamp-2">
+                        <h3 className="text-xs sm:text-sm font-semibold text-fg leading-snug line-clamp-2">
                           {item.title}
                         </h3>
-                        <p className="text-[10px] sm:text-xs text-[#B8A692] mt-0.5 leading-snug line-clamp-2">
+                        <p className="text-xs sm:text-xs text-fg-muted mt-0.5 leading-snug line-clamp-2">
                           {item.desc}
                         </p>
                       </div>
@@ -542,16 +537,16 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
               </div>
             </section>
 
-            <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-[rgba(212,163,89,0.22)] to-transparent" aria-hidden="true" />
+            <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-gold/22 to-transparent" aria-hidden="true" />
 
             {/* ── 3. LOCATION & NEARBY PLACES ── */}
-            <section className="space-y-4" aria-labelledby="location-heading">
+            <section data-reveal className="space-y-4" aria-labelledby="location-heading">
               <div className="flex items-baseline justify-between gap-4 flex-wrap">
                 <div>
-                  <h2 id="location-heading" className="font-heading text-xl sm:text-2xl font-normal text-[#FAF4EB]">
+                  <h2 id="location-heading" className="font-heading text-fg heading-sub">
                     {isAr ? "ما الذي يوجد بالقرب؟" : "What's nearby"}
                   </h2>
-                  <p className="text-xs text-[#B8A692] mt-0.5">
+                  <p className="text-xs text-fg-muted mt-0.5">
                     {isAr
                       ? `يقع في ${branchName}. استخدم الخريطة للتوجيه المباشر.`
                       : `Located in ${branch?.name || "Hyderabad"}. Use the map for directions.`}
@@ -562,7 +557,7 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
                     href={branch.googleMapsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs font-semibold text-[#E5C178] hover:text-[#FAF4EB] transition-colors"
+                    className="text-xs font-semibold text-gold hover:text-fg transition-colors"
                   >
                     {isAr ? "فتح التوجيه عبر خرائط Google ←" : "Open Google Maps Navigation →"}
                   </a>
@@ -570,11 +565,11 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
-                <ul className="divide-y divide-[rgba(212,163,89,0.14)] rounded-2xl border border-[rgba(212,163,89,0.25)] bg-[rgba(34,24,16,0.65)] text-xs">
+                <ul className="divide-y divide-line-soft border-y border-line-soft text-xs">
                   {landmarks.map((lm) => (
                     <li key={lm.name} className="px-4 py-3 flex items-center justify-between gap-3">
-                      <span className="text-[#FAF4EB] font-medium text-xs">{lm.name}</span>
-                      <span className="font-sans text-xs text-[#E5C178] shrink-0 font-semibold tabular-nums">
+                      <span className="text-fg font-medium text-xs">{lm.name}</span>
+                      <span className="font-sans text-xs text-gold shrink-0 font-semibold tabular-nums">
                         {lm.time || lm.dist || ""}
                       </span>
                     </li>
@@ -584,16 +579,16 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
               </div>
             </section>
 
-            <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-[rgba(212,163,89,0.22)] to-transparent" aria-hidden="true" />
+            <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-gold/22 to-transparent" aria-hidden="true" />
 
             {/* ── 5. POLICIES & HOUSE RULES ── */}
-            <section className="space-y-4" aria-labelledby="policies-heading">
+            <section data-reveal className="space-y-4" aria-labelledby="policies-heading">
               <div className="flex items-baseline justify-between gap-4 flex-wrap">
                 <div>
-                  <h2 id="policies-heading" className="font-heading text-xl sm:text-2xl font-normal text-[#FAF4EB]">
+                  <h2 id="policies-heading" className="font-heading text-fg heading-sub">
                     {isAr ? "سياسات الإقامة وشروط الحجز" : "Stay Policies & House Rules"}
                   </h2>
-                  <p className="text-xs text-[#B8A692] mt-0.5">
+                  <p className="text-xs text-fg-muted mt-0.5">
                     {isAr
                       ? "شروط ميسرة وواضحة لتسجيل الوصول والدفع والإلغاء."
                       : "Simple check-in, payment, and cancellation terms."}
@@ -602,65 +597,65 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
                 <button
                   type="button"
                   onClick={() => setPoliciesModalOpen(true)}
-                  className="text-xs font-semibold text-[#E5C178] hover:text-[#FAF4EB] cursor-pointer transition-colors"
+                  className="text-xs font-semibold text-gold hover:text-fg cursor-pointer transition-colors"
                 >
                   {isAr ? "عرض سياسة الإلغاء الكاملة ←" : "View full cancellation policy →"}
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-[#B8A692]">
+              <div data-stagger className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-fg-muted">
                 <div className="space-y-1">
-                  <h3 className="text-[#FAF4EB] font-medium text-xs">
+                  <h3 className="text-fg font-medium text-xs">
                     {isAr ? "تسجيل الوصول والمغادرة" : "Check-In & Check-Out"}
                   </h3>
-                  <p className="text-xs leading-relaxed text-[#B8A692]">
+                  <p className="text-xs leading-relaxed text-fg-muted">
                     {isAr ? (
                       <>
-                        تسجيل الوصول: <span className="font-medium text-[#FAF4EB]">١١:٠٠ ص – ١:٠٠ م</span>
+                        تسجيل الوصول: <span className="font-medium text-fg">١١:٠٠ ص – ١:٠٠ م</span>
                         <br />
-                        تسجيل المغادرة: حتى <span className="font-medium text-[#FAF4EB]">١١:٠٠ ص</span>
+                        تسجيل المغادرة: حتى <span className="font-medium text-fg">١١:٠٠ ص</span>
                       </>
                     ) : (
                       <>
-                        Check-in: <span className="font-medium text-[#FAF4EB]">11:00 AM – 1:00 PM</span>
+                        Check-in: <span className="font-medium text-fg">11:00 AM – 1:00 PM</span>
                         <br />
-                        Check-out: By <span className="font-medium text-[#FAF4EB]">11:00 AM</span>
+                        Check-out: By <span className="font-medium text-fg">11:00 AM</span>
                       </>
                     )}
                   </p>
                 </div>
                 <div className="space-y-1">
-                  <h3 className="text-[#FAF4EB] font-medium text-xs">
+                  <h3 className="text-fg font-medium text-xs">
                     {isAr ? "شروط الدفع" : "Payment Terms"}
                   </h3>
-                  <p className="text-xs leading-relaxed text-[#B8A692]">
+                  <p className="text-xs leading-relaxed text-fg-muted">
                     {isAr ? (
                       <>
-                        عربون <span className="font-medium text-[#FAF4EB]">٢٠٪</span> عبر الإنترنت لتثبيت الحجز
+                        عربون <span className="font-medium text-fg">٢٠٪</span> عبر الإنترنت لتثبيت الحجز
                         <br />
-                        الرصيد المتبقي <span className="font-medium text-[#FAF4EB]">٨٠٪</span> عند الوصول (نقداً أو UPI)
+                        الرصيد المتبقي <span className="font-medium text-fg">٨٠٪</span> عند الوصول (نقداً أو UPI)
                       </>
                     ) : (
                       <>
-                        <span className="font-medium text-[#FAF4EB]">20%</span> advance payable online to reserve
+                        <span className="font-medium text-fg">20%</span> advance payable online to reserve
                         <br />
-                        <span className="font-medium text-[#FAF4EB]">80%</span> remaining balance at check-in (Cash / UPI)
+                        <span className="font-medium text-fg">80%</span> remaining balance at check-in (Cash / UPI)
                       </>
                     )}
                   </p>
                 </div>
                 <div className="space-y-1">
-                  <h3 className="text-[#FAF4EB] font-medium text-xs">
+                  <h3 className="text-fg font-medium text-xs">
                     {isAr ? "سياسة الإلغاء" : "Cancellation Policy"}
                   </h3>
-                  <p className="text-xs leading-relaxed text-[#B8A692]">
+                  <p className="text-xs leading-relaxed text-fg-muted">
                     {isAr ? (
                       <>
-                        استرداد <span className="font-medium text-[#FAF4EB]">١٠٠٪</span> حتى <span className="font-medium text-[#FAF4EB]">٤٨ ساعة</span> قبل الوصول. غير مسترد خلال <span className="font-medium text-[#FAF4EB]">٤٨ ساعة</span>.
+                        استرداد <span className="font-medium text-fg">١٠٠٪</span> حتى <span className="font-medium text-fg">٤٨ ساعة</span> قبل الوصول. غير مسترد خلال <span className="font-medium text-fg">٤٨ ساعة</span>.
                       </>
                     ) : (
                       <>
-                        <span className="font-medium text-[#FAF4EB]">100%</span> refund up to <span className="font-medium text-[#FAF4EB]">48 hrs</span> before check-in. Non-refundable within <span className="font-medium text-[#FAF4EB]">48 hrs</span>.
+                        <span className="font-medium text-fg">100%</span> refund up to <span className="font-medium text-fg">48 hrs</span> before check-in. Non-refundable within <span className="font-medium text-fg">48 hrs</span>.
                       </>
                     )}
                   </p>
@@ -676,7 +671,7 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
             <div id="reservation-panel" className="w-full max-w-xl mx-auto lg:max-w-none">
               <React.Suspense
                 fallback={
-                  <div className="h-[400px] w-full animate-pulse rounded-3xl border border-[rgba(212,163,89,0.2)] bg-[#16100B]" />
+                  <div className="h-[400px] w-full animate-pulse rounded-3xl border border-line-soft bg-surface" />
                 }
               >
                 <BookingSidebar
@@ -704,17 +699,17 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
         {/* 3. OTHER RESIDENCES AT THIS BRANCH (Full Width Below)    */}
         {/* ======================================================== */}
         {branchSuites.length > 0 && (
-          <section className="space-y-4 pt-6 border-t border-[rgba(212,163,89,0.18)]" aria-labelledby="other-flats-heading">
+          <section data-reveal className="space-y-4 pt-6 border-t border-line-soft" aria-labelledby="other-flats-heading">
             <div className="flex items-baseline justify-between gap-4 flex-wrap">
               <div>
-                <h2 id="other-flats-heading" className="font-heading text-xl sm:text-2xl font-normal text-[#FAF4EB]">
+                <h2 id="other-flats-heading" className="font-heading text-fg heading-sub">
                   {isAr ? `شقق أخرى في فرع ${branchName}` : `Other Residences at ${branch?.name || "This Location"}`}
                 </h2>
-                <p className="text-xs text-[#B8A692] mt-0.5">
+                <p className="text-xs text-fg-muted mt-0.5">
                   {isAr ? "قارن بين فئات الشقق الأخرى المتاحة في هذا الفرع." : "Compare other available BHK configurations at this branch."}
                 </p>
               </div>
-              <span className="text-xs text-[#E5C178] font-medium hidden sm:inline">
+              <span className="text-xs text-gold font-medium hidden sm:inline">
                 {isAr ? "استكشف المزيد من الوحدات" : "Explore more configurations"}
               </span>
             </div>
@@ -727,10 +722,10 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
                 return (
                   <div
                     key={s.id}
-                    className="w-[280px] sm:w-auto shrink-0 snap-start group relative flex flex-col justify-between rounded-2xl bg-[rgba(34,24,16,0.65)] p-3.5 border border-[rgba(212,163,89,0.25)] hover:border-[#E5C178]/60 hover:shadow-md transition-all backdrop-blur-sm"
+                    className="w-[280px] sm:w-auto shrink-0 snap-start group relative flex flex-col justify-between rounded-2xl bg-raised/65 p-3.5 border border-line hover:border-gold/60 hover:shadow-md transition-all backdrop-blur-sm"
                   >
                     {/* Property Image & Badge */}
-                    <div className="relative aspect-[16/10] w-full overflow-hidden rounded-lg bg-[#16100B]">
+                    <div className="relative aspect-[16/10] w-full overflow-hidden rounded-lg bg-surface">
                       <Image
                         src={suiteImage}
                         alt={localizedS.title}
@@ -742,7 +737,7 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
 
                       {/* Top-left: BHK Type Label */}
                       <div className="absolute top-2.5 left-2.5 z-10">
-                        <span className="px-2 py-0.5 rounded-md bg-[#16100B]/90 backdrop-blur-md border border-[rgba(212,163,89,0.3)] text-xs font-sans uppercase tracking-wider text-[#E5C178] font-semibold">
+                        <span className="px-2 py-0.5 rounded-md bg-surface/90 backdrop-blur-md border border-line text-xs font-sans uppercase tracking-wider text-gold font-semibold">
                           {s.type}
                         </span>
                       </div>
@@ -751,12 +746,12 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
                     {/* Content Info */}
                     <div className="pt-3 flex-1 flex flex-col justify-between">
                       <div>
-                        <h3 className="font-sans text-sm sm:text-base font-semibold text-[#FAF4EB] truncate group-hover:text-[#E5C178] transition-colors">
+                        <h3 className="font-sans text-sm sm:text-base font-semibold text-fg truncate group-hover:text-gold transition-colors">
                           {localizedS.title}
                         </h3>
 
-                        <p className="text-xs text-[#B8A692] flex items-center gap-1.5 mt-1 truncate">
-                          <Users className="w-3.5 h-3.5 text-[#E5C178] shrink-0" />
+                        <p className="text-xs text-fg-muted flex items-center gap-1.5 mt-1 truncate">
+                          <Users className="w-3.5 h-3.5 text-gold shrink-0" />
                           <span>
                             {isAr
                               ? `حتى ${s.maxAdults} ضيوف • ${localizedS.specs.bedrooms}`
@@ -767,21 +762,21 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
 
                       {/* Price & Action */}
                       <div className="mt-3">
-                        <div className="pt-2 border-t border-[rgba(212,163,89,0.2)] flex items-baseline justify-between">
+                        <div className="pt-2 border-t border-line-soft flex items-baseline justify-between">
                           <div className="flex items-baseline gap-1">
-                            <span className="font-heading text-base font-normal text-[#FAF4EB] tabular-nums">
+                            <span className="font-heading text-base font-normal text-fg tabular-nums">
                               ₹{s.basePricePerNight.toLocaleString("en-IN")}
                             </span>
-                            <span className="text-xs text-[#B8A692]">{isAr ? "/ ليلة" : "/ night"}</span>
+                            <span className="text-xs text-fg-muted">{isAr ? "/ ليلة" : "/ night"}</span>
                           </div>
-                          <span className="text-xs text-[#E5C178] font-medium">
+                          <span className="text-xs text-gold font-medium">
                             {isAr ? "عربون ٢٠٪" : "20% Advance"}
                           </span>
                         </div>
 
                         <Link
                           href={buildSuiteUrl(s.slug)}
-                          className="w-full mt-2.5 h-9 rounded-xl bg-[#16100B] hover:bg-gradient-to-r hover:from-[#E5C178] hover:to-[#C69344] border border-[rgba(212,163,89,0.3)] hover:border-transparent text-[#FAF4EB] hover:text-[#140E08] text-xs font-semibold flex items-center justify-center gap-1.5 transition-all active:scale-[0.98] group/btn cursor-pointer"
+                          className="w-full mt-2.5 h-9 rounded-xl bg-surface hover:bg-gradient-to-r hover:from-gold hover:to-gold-deep border border-line hover:border-transparent text-fg hover:text-ink text-xs font-semibold flex items-center justify-center gap-1.5 transition-all active:scale-[0.98] group/btn cursor-pointer"
                         >
                           <span>{isAr ? "عرض التفاصيل" : "View Residence"}</span>
                           <ArrowRight className={cn("w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform", isAr && "rotate-180")} />
@@ -794,7 +789,7 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
             </div>
           </section>
         )}
-      </main>
+      </div>
 
 
       {/* ======================================================== */}
@@ -804,19 +799,19 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[#0E0A07]/85 backdrop-blur-sm animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-canvas/85 backdrop-blur-sm animate-in fade-in duration-200"
           onClick={() => setAmenitiesModalOpen(false)}
         >
           <div
-            className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-3xl bg-[#16100B] border border-[rgba(212,163,89,0.3)] shadow-2xl text-[#FAF4EB] p-6 space-y-6"
+            className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-3xl bg-surface border border-line shadow-2xl text-fg p-6 space-y-6"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-[rgba(212,163,89,0.2)] pb-4">
+            <div className="flex items-center justify-between border-b border-line-soft pb-4">
               <div>
-                <h3 className="font-heading text-xl font-normal text-[#FAF4EB]">
+                <h3 className="font-heading text-xl font-normal text-fg">
                   {isAr ? "مزايا وتجهيزات الشقة الفندقية" : "Residence amenities"}
                 </h3>
-                <p className="text-xs text-[#B8A692] mt-0.5">
+                <p className="text-xs text-fg-muted mt-0.5">
                   {isAr
                     ? `قائمة المزايا والتجهيزات المتوفرة في ${room.title} (${branchName}).`
                     : `Amenities listed for ${room.title} (${branch?.name || "Hyderabad"}).`}
@@ -825,7 +820,7 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
               <button
                 type="button"
                 onClick={() => setAmenitiesModalOpen(false)}
-                className="h-8 w-8 rounded-full bg-[#221810] hover:bg-[#2a1e14] text-[#FAF4EB] flex items-center justify-center border border-[rgba(212,163,89,0.25)] cursor-pointer transition-colors"
+                className="h-8 w-8 rounded-full bg-raised hover:bg-raised-hover text-fg flex items-center justify-center border border-line cursor-pointer transition-colors"
                 aria-label={isAr ? "إغلاق" : "Close"}
               >
                 <X className="w-4 h-4" />
@@ -833,8 +828,8 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
             </div>
 
             {/* Informational Notice */}
-            <div className="p-3.5 rounded-2xl bg-[#221810]/70 border border-[rgba(212,163,89,0.2)] text-xs text-[#B8A692] flex items-start gap-2.5">
-              <Info className="w-4 h-4 text-[#E5C178] shrink-0 mt-0.5" />
+            <div className="p-3.5 rounded-2xl bg-raised/70 border border-line-soft text-xs text-fg-muted flex items-start gap-2.5">
+              <Info className="w-4 h-4 text-gold shrink-0 mt-0.5" />
               <p>
                 {isAr
                   ? "تجهيزات الشقق مشمولة تلقائياً وبشكل مجاني بالكامل في السعر الإجمالي للإقامة دون أي رسوم إضافية خفية."
@@ -867,7 +862,7 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
                 return (
                   <div key={cat.category} className="space-y-2.5">
                     <div className="flex items-center gap-2.5">
-                      <div className="relative w-7 h-7 rounded-lg bg-[#E5C178]/10 border border-[#E5C178]/30 flex items-center justify-center shrink-0 overflow-hidden p-0.5">
+                      <div className="relative w-7 h-7 rounded-lg bg-gold/10 border border-gold/30 flex items-center justify-center shrink-0 overflow-hidden p-0.5">
                         <Image
                           src={catIllustration}
                           alt={catTitle}
@@ -876,11 +871,11 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
                           className="object-contain"
                         />
                       </div>
-                      <h4 className="text-xs font-bold uppercase tracking-wider text-[#FAF4EB]">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-fg">
                         {catTitle}
                       </h4>
                     </div>
-                    <p className="text-[11px] text-[#B8A692] italic">
+                    <p className="text-xs text-fg-muted italic">
                       {catDesc}
                     </p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -908,9 +903,9 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
                         return (
                           <div
                             key={it.name}
-                            className="flex items-center gap-2.5 p-2 rounded-xl bg-[#221810] border border-[rgba(212,163,89,0.2)] text-xs text-[#FAF4EB]"
+                            className="flex items-center gap-2.5 p-2 rounded-xl bg-raised border border-line-soft text-xs text-fg"
                           >
-                            <div className="relative w-6 h-6 rounded-md bg-[#16100B] border border-[rgba(212,163,89,0.25)] flex items-center justify-center shrink-0 overflow-hidden p-0.5">
+                            <div className="relative w-6 h-6 rounded-md bg-surface border border-line flex items-center justify-center shrink-0 overflow-hidden p-0.5">
                               <Image
                                 src={itemIllustration}
                                 alt={itemName}
@@ -929,14 +924,14 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
               })}
             </div>
 
-            <div className="border-t border-[rgba(212,163,89,0.2)] pt-4 flex items-center justify-between text-xs">
-              <span className="text-[#B8A692] font-mono">
+            <div className="border-t border-line-soft pt-4 flex items-center justify-between text-xs">
+              <span className="text-fg-muted font-mono">
                 {isAr ? "مشمولة في السعر الأساسي للإقامة • رسوم إضافية ₹٠" : "Included in base nightly rent • ₹0 extra fee"}
               </span>
               <button
                 type="button"
                 onClick={() => setAmenitiesModalOpen(false)}
-                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] font-bold text-xs cursor-pointer shadow-md hover:opacity-95"
+                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-gold to-gold-deep text-ink font-bold text-xs cursor-pointer shadow-md hover:opacity-95"
               >
                 {isAr ? "إغلاق" : "Close"}
               </button>
@@ -952,40 +947,40 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[#0E0A07]/85 backdrop-blur-sm animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-canvas/85 backdrop-blur-sm animate-in fade-in duration-200"
           onClick={() => setPoliciesModalOpen(false)}
         >
           <div
-            className="relative w-full max-w-xl max-h-[85vh] overflow-y-auto rounded-3xl bg-[#16100B] border border-[rgba(212,163,89,0.3)] shadow-2xl text-[#FAF4EB] p-6 space-y-5 text-xs"
+            className="relative w-full max-w-xl max-h-[85vh] overflow-y-auto rounded-3xl bg-surface border border-line shadow-2xl text-fg p-6 space-y-5 text-xs"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-[rgba(212,163,89,0.2)] pb-3">
-              <h3 className="font-heading text-lg font-normal text-[#FAF4EB]">
+            <div className="flex items-center justify-between border-b border-line-soft pb-3">
+              <h3 className="font-heading text-lg font-normal text-fg">
                 {isAr ? "سياسات الإقامة والإلغاء في فلاتيل" : "FLATEL Stay & Cancellation Policies"}
               </h3>
               <button
                 type="button"
                 onClick={() => setPoliciesModalOpen(false)}
-                className="h-7 w-7 rounded-full bg-[#221810] hover:bg-[#2a1e14] text-[#FAF4EB] flex items-center justify-center border border-[rgba(212,163,89,0.25)] cursor-pointer transition-colors"
+                className="h-7 w-7 rounded-full bg-raised hover:bg-raised-hover text-fg flex items-center justify-center border border-line cursor-pointer transition-colors"
                 aria-label={isAr ? "إغلاق" : "Close"}
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="space-y-4 text-[#B8A692] leading-relaxed">
+            <div className="space-y-4 text-fg-muted leading-relaxed">
               <div>
-                <strong className="text-[#FAF4EB] block font-semibold mb-1">
+                <strong className="text-fg block font-semibold mb-1">
                   {isAr ? "الدفع المسبق والرصيد المتبقي" : "Advance Payment & Balance"}
                 </strong>
                 <p>
                   {isAr ? (
                     <>
-                      يتم تأكيد الحجز إلكترونياً بدفع عربون <span className="font-serif tabular-nums text-[#FAF4EB]">٢٠٪</span> فقط عبر الإنترنت. الرصيد المتبقي وقدره <span className="font-serif tabular-nums text-[#FAF4EB]">٨٠٪</span> يسدد عند استلام الشقة نقداً أو عبر UPI.
+                      يتم تأكيد الحجز إلكترونياً بدفع عربون <span className="font-serif tabular-nums text-fg">٢٠٪</span> فقط عبر الإنترنت. الرصيد المتبقي وقدره <span className="font-serif tabular-nums text-fg">٨٠٪</span> يسدد عند استلام الشقة نقداً أو عبر UPI.
                     </>
                   ) : (
                     <>
-                      Reservations are secured with a <span className="font-serif tabular-nums text-[#FAF4EB]">20%</span> online advance deposit. The remaining <span className="font-serif tabular-nums text-[#FAF4EB]">80%</span> balance
+                      Reservations are secured with a <span className="font-serif tabular-nums text-fg">20%</span> online advance deposit. The remaining <span className="font-serif tabular-nums text-fg">80%</span> balance
                       is strictly payable at check-in by Cash or UPI.
                     </>
                   )}
@@ -993,28 +988,28 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
               </div>
 
               <div>
-                <strong className="text-[#FAF4EB] block font-semibold mb-1">
+                <strong className="text-fg block font-semibold mb-1">
                   {isAr ? "الإلغاء والاسترداد" : "Cancellation & Refunds"}
                 </strong>
                 <p>
                   {isAr ? (
                     <>
-                      • إلغاء مجاني (استرداد <span className="font-serif tabular-nums text-[#FAF4EB]">١٠٠٪</span> من العربون): عند الإلغاء قبل <span className="font-serif tabular-nums text-[#FAF4EB]">٤٨ ساعة</span> أو أكثر من موعد تسجيل الوصول (<span className="font-serif tabular-nums text-[#FAF4EB]">١١:٠٠ صباحاً</span>).
+                      • إلغاء مجاني (استرداد <span className="font-serif tabular-nums text-fg">١٠٠٪</span> من العربون): عند الإلغاء قبل <span className="font-serif tabular-nums text-fg">٤٨ ساعة</span> أو أكثر من موعد تسجيل الوصول (<span className="font-serif tabular-nums text-fg">١١:٠٠ صباحاً</span>).
                       <br />
-                      • غير مسترد: عند الإلغاء خلال <span className="font-serif tabular-nums text-[#FAF4EB]">٤٨ ساعة</span> من موعد الوصول يعتبر العربون (<span className="font-serif tabular-nums text-[#FAF4EB]">٢٠٪</span>) غير مسترد كرسوم حجز وتثبيت للوحدة.
+                      • غير مسترد: عند الإلغاء خلال <span className="font-serif tabular-nums text-fg">٤٨ ساعة</span> من موعد الوصول يعتبر العربون (<span className="font-serif tabular-nums text-fg">٢٠٪</span>) غير مسترد كرسوم حجز وتثبيت للوحدة.
                     </>
                   ) : (
                     <>
-                      • Free Cancellation (<span className="font-serif tabular-nums text-[#FAF4EB]">100%</span> Refund of 20% advance deposit): If cancelled <span className="font-serif tabular-nums text-[#FAF4EB]">48 hours</span> or more prior to check-in (<span className="font-serif tabular-nums text-[#FAF4EB]">11:00 AM</span>).
+                      • Free Cancellation (<span className="font-serif tabular-nums text-fg">100%</span> Refund of 20% advance deposit): If cancelled <span className="font-serif tabular-nums text-fg">48 hours</span> or more prior to check-in (<span className="font-serif tabular-nums text-fg">11:00 AM</span>).
                       <br />
-                      • Non-Refundable: Cancellations made within <span className="font-serif tabular-nums text-[#FAF4EB]">48 hours</span> of check-in forfeit the <span className="font-serif tabular-nums text-[#FAF4EB]">20%</span> advance deposit (date reservation hold fee).
+                      • Non-Refundable: Cancellations made within <span className="font-serif tabular-nums text-fg">48 hours</span> of check-in forfeit the <span className="font-serif tabular-nums text-fg">20%</span> advance deposit (date reservation hold fee).
                     </>
                   )}
                 </p>
               </div>
 
               <div>
-                <strong className="text-[#FAF4EB] block font-semibold mb-1">
+                <strong className="text-fg block font-semibold mb-1">
                   {isAr ? "إثبات الهوية الإلزامي" : "Mandatory Photo Identification"}
                 </strong>
                 <p>
@@ -1025,11 +1020,11 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
               </div>
             </div>
 
-            <div className="border-t border-[rgba(212,163,89,0.2)] pt-3 flex justify-end">
+            <div className="border-t border-line-soft pt-3 flex justify-end">
               <button
                 type="button"
                 onClick={() => setPoliciesModalOpen(false)}
-                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] font-bold text-xs cursor-pointer shadow-md hover:opacity-95"
+                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-gold to-gold-deep text-ink font-bold text-xs cursor-pointer shadow-md hover:opacity-95"
               >
                 {isAr ? "إغلاق" : "Close"}
               </button>

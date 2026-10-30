@@ -57,9 +57,9 @@ export default async function ArabicBranchPage({ params }: ArabicBranchPageProps
   const properties = getLocalizedRooms(rawProperties, "ar");
 
   return (
-    <div className="min-h-screen bg-[#0E0A07] text-[#FAF4EB] flex flex-col selection:bg-[#E5C178]/20 selection:text-[#E5C178] font-arabic" dir="rtl">
+    <div className="min-h-screen bg-canvas text-fg flex flex-col selection:bg-gold/20 selection:text-gold font-arabic" dir="rtl">
       <SiteHeader />
-      <main className="flex-1 w-full">
+      <main id="main-content" tabIndex={-1} className="flex-1 w-full">
         <BranchDetailView branch={branch} properties={properties} />
       </main>
       <SiteFooter />

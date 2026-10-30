@@ -29,8 +29,8 @@ assert.equal(nearestBranch([17.3616, 78.4747]).slug, "moghal-pura");
 
 // 5. Flag pin: black body, gold accents, no monospace label, glow when active
 const flag = buildFlagPinHtml({ active: false, id: "x" });
-assert.match(flag, /#E5C178/i);
-assert.match(flag, /#0E0A07|#000|#16100B/i);
+assert.match(flag, /#E5C178|var\(--gold\)/i);
+assert.match(flag, /#0E0A07|#000|#16100B|var\(--canvas\)|var\(--surface\)/i);
 assert.doesNotMatch(flag, /monospace/i);
 assert.match(buildFlagPinHtml({ active: true, id: "x" }), /drop-shadow|glow/i);
 

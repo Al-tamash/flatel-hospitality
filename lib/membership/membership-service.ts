@@ -1,6 +1,11 @@
 import crypto from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { MEMBERSHIP } from "@/lib/membership/membership-content";
+import {
+  MEMBERSHIP,
+  getMembershipTier,
+  isMembershipTier,
+  type MembershipTierId,
+} from "@/lib/membership/membership-content";
 import { notifyMembershipJoined } from "@/lib/notifications/dispatch";
 
 /** Unambiguous characters only (no 0/O, 1/I/L) so a member can read the ID out over the phone. */
@@ -14,6 +19,7 @@ export interface MembershipRecord {
   fullName: string;
   email: string;
   phone: string;
+  tier: MembershipTierId;
   status: "pending" | "active" | "expired" | "cancelled" | "failed";
   amountPaise: number;
   razorpayOrderId: string | null;
@@ -26,6 +32,7 @@ export interface VerifiedMember {
   id: string;
   fullName: string;
   memberCode: string;
+  tier: MembershipTierId;
   validUntil: string;
 }
 
@@ -42,6 +49,8 @@ function mapRow(row: Record<string, unknown>): MembershipRecord {
     fullName: String(row.full_name ?? ""),
     email: String(row.email ?? ""),
     phone: String(row.phone ?? ""),
+    // Rows from before tiers existed are the old single card, which maps to Golden.
+    tier: isMembershipTier(row.tier) ? row.tier : "golden",
     status: row.status as MembershipRecord["status"],
     amountPaise: Number(row.amount_paise ?? 0),
     razorpayOrderId: row.razorpay_order_id ? String(row.razorpay_order_id) : null,
@@ -73,15 +82,21 @@ export function addMonths(from: Date, months: number): Date {
   return result;
 }
 
-/** The table is created by supabase/migrations/20261029_memberships.sql. */
+/**
+ * The table comes from supabase/migrations/20261029_memberships.sql and the `tier` column
+ * from 20261031_membership_tiers.sql; until both are applied, joining reports "not available".
+ */
 function isMissingTable(error: { code?: string; message?: string } | null): boolean {
   if (!error) return false;
-  return error.code === "42P01" || error.code === "PGRST205" || /memberships/i.test(error.message ?? "") && /does not exist|schema cache/i.test(error.message ?? "");
+  if (error.code === "42P01" || error.code === "PGRST205" || error.code === "42703" || error.code === "PGRST204") return true;
+  return /memberships/i.test(error.message ?? "") && /does not exist|schema cache/i.test(error.message ?? "");
 }
 
 export class MembershipService {
   /** Creates a pending membership, refusing a second purchase while one is still active. */
-  static async createPending(input: { fullName: string; email: string; phone: string }): Promise<MembershipRecord> {
+  static async createPending(input: { fullName: string; email: string; phone: string; tier: MembershipTierId }): Promise<MembershipRecord> {
+    if (!isMembershipTier(input.tier)) throw new Error("Choose the Golden or Platinum card.");
+    const tier = getMembershipTier(input.tier);
     const fullName = input.fullName.trim();
     const email = input.email.trim().toLowerCase();
     const phone = input.phone.trim();
@@ -112,7 +127,8 @@ export class MembershipService {
         email,
         phone,
         status: "pending",
-        amount_paise: MEMBERSHIP.price * 100,
+        tier: tier.id,
+        amount_paise: tier.price * 100,
         currency: "INR",
       })
       .select("*")
@@ -300,6 +316,6 @@ export class MembershipService {
     const phoneMatches = Boolean(input.phone) && normalizePhone(member.phone) === normalizePhone(input.phone!);
     if (!emailMatches && !phoneMatches) return null;
 
-    return { id: member.id, fullName: member.fullName, memberCode: code, validUntil: member.validUntil };
+    return { id: member.id, fullName: member.fullName, memberCode: code, tier: member.tier, validUntil: member.validUntil };
   }
 }

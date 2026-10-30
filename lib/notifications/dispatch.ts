@@ -21,6 +21,7 @@ export async function notifyMembershipJoined(member: MembershipRecord): Promise<
         fullName: member.fullName,
         email: member.email,
         memberCode: member.memberCode,
+        tier: member.tier,
         validUntil: member.validUntil,
         siteUrl: getSiteUrl(),
       })
@@ -38,6 +39,7 @@ export async function notifyMembershipEnding(member: MembershipRecord): Promise<
         fullName: member.fullName,
         email: member.email,
         memberCode: member.memberCode,
+        tier: member.tier,
         validUntil: member.validUntil,
         siteUrl: getSiteUrl(),
       })

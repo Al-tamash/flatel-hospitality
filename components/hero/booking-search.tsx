@@ -305,22 +305,22 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
 
   return (
     <>
-      <div ref={containerRef} className={cn("relative w-full max-w-6xl mx-auto z-40", className)}>
+      <div ref={containerRef} className={cn("relative w-full z-40", className)}>
         {/* Inline Validation Banner */}
         {errorMessage && (
           <div
             role="alert"
             id="booking-search-error"
-            className="mb-3 px-4 py-2.5 rounded-xl bg-[rgba(34,24,16,0.9)] border border-[#E5C178] text-[#FAF4EB] text-xs font-sans flex items-center justify-between shadow-lg animate-in fade-in duration-150"
+            className="mb-3 px-4 py-2.5 rounded-xl bg-raised/90 border border-gold text-fg text-xs font-sans flex items-center justify-between shadow-lg animate-in fade-in duration-150"
           >
             <div className="flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-[#E5C178] shrink-0" />
+              <AlertCircle className="w-4 h-4 text-gold shrink-0" />
               <span>{errorMessage}</span>
             </div>
             <button
               type="button"
               onClick={() => setErrorMessage(null)}
-              className="text-[#B8A692] hover:text-[#FAF4EB] p-1 cursor-pointer"
+              className="text-fg-muted hover:text-fg p-1 cursor-pointer"
               aria-label="Dismiss error"
             >
               <X className="w-3.5 h-3.5" />
@@ -333,7 +333,7 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
           id="booking-search-bar"
           onSubmit={handleSearchSubmit}
           className={cn(
-            "w-full rounded-2xl bg-[rgba(34,24,16,0.85)] backdrop-blur-xl border border-[rgba(212,163,89,0.28)] shadow-[0_20px_50px_rgba(0,0,0,0.7)]",
+            "w-full rounded-2xl bg-raised/85 backdrop-blur-xl border border-line shadow-[0_20px_50px_rgba(0,0,0,0.7)]",
             "p-2 sm:p-2.5 transition-all duration-200"
           )}
           aria-label="FLATEL Furnished Flat Booking and Search Bar"
@@ -348,32 +348,32 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
                 onClick={handleOpenBranch}
                 className={cn(
                   "w-full h-full min-h-[50px] lg:min-h-[64px] px-3.5 sm:px-4 py-2 rounded-xl text-left flex items-center justify-between transition-all cursor-pointer group",
-                  "bg-[rgba(22,16,11,0.6)] border border-[rgba(212,163,89,0.2)] lg:bg-transparent lg:border-transparent hover:border-[#E5C178]/50 lg:hover:bg-[rgba(34,24,16,0.6)]",
-                  "focus:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178]",
-                  activePopover === "branch" && "bg-[rgba(22,16,11,0.9)] ring-1 ring-[#E5C178] border-[#E5C178]"
+                  "bg-surface/60 border border-line-soft lg:bg-transparent lg:border-transparent hover:border-gold/50 lg:hover:bg-raised/60",
+                  "focus:outline-none focus-visible:ring-1 focus-visible:ring-gold",
+                  activePopover === "branch" && "bg-surface/90 ring-1 ring-gold border-gold"
                 )}
                 aria-label={`Branch: ${branchDisplay}`}
                 aria-expanded={activePopover === "branch"}
               >
                 <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <div className="w-7 h-7 rounded-lg bg-[#E5C178]/10 border border-[#E5C178]/25 flex items-center justify-center shrink-0 lg:bg-transparent lg:border-0 lg:w-auto lg:h-auto">
-                    <MapPin className="w-4 h-4 text-[#E5C178] shrink-0" />
+                  <div className="w-7 h-7 rounded-lg bg-gold/10 border border-gold/25 flex items-center justify-center shrink-0 lg:bg-transparent lg:border-0 lg:w-auto lg:h-auto">
+                    <MapPin className="w-4 h-4 text-gold shrink-0" />
                   </div>
                   <div className="flex flex-col min-w-0 flex-1 text-start">
-                    <span className="text-xs lg:text-[13px] font-sans font-semibold text-[#D4C4B3] uppercase lg:normal-case leading-none">
+                    <span className="text-xs lg:text-sm font-sans font-semibold text-fg-soft uppercase lg:normal-case leading-none">
                       {isAr ? "الفرع / الموقع" : "Branch / Location"}
                     </span>
-                    <span className="font-sans text-sm sm:text-base font-semibold text-[#FAF4EB] tracking-normal leading-tight mt-1 truncate">
+                    <span className="font-sans text-sm sm:text-base font-semibold text-fg tracking-normal leading-tight mt-1 truncate">
                       {branchDisplay}
                     </span>
                   </div>
                 </div>
-                <ChevronDown className="w-4 h-4 text-[#D4C4B3] shrink-0 ml-2 group-hover:text-[#E5C178] transition-colors" />
+                <ChevronDown className="w-4 h-4 text-fg-soft shrink-0 ml-2 group-hover:text-gold transition-colors" />
               </button>
 
               {/* Desktop Divider */}
               <div
-                className="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 w-px h-8 bg-[rgba(212,163,89,0.18)] pointer-events-none"
+                className="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 w-px h-8 bg-gold/18 pointer-events-none"
                 aria-hidden="true"
               />
             </div>
@@ -386,9 +386,9 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
                 onClick={handleOpenCalendar}
                 className={cn(
                   "w-full h-full min-h-[50px] lg:min-h-[64px] px-3.5 sm:px-4 py-2 rounded-xl text-left flex items-center justify-between transition-all cursor-pointer group",
-                  "bg-[rgba(22,16,11,0.6)] border border-[rgba(212,163,89,0.2)] lg:bg-transparent lg:border-transparent hover:border-[#E5C178]/50 lg:hover:bg-[rgba(34,24,16,0.6)]",
-                  "focus:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178]",
-                  activePopover === "calendar" && "bg-[rgba(22,16,11,0.9)] ring-1 ring-[#E5C178] border-[#E5C178]"
+                  "bg-surface/60 border border-line-soft lg:bg-transparent lg:border-transparent hover:border-gold/50 lg:hover:bg-raised/60",
+                  "focus:outline-none focus-visible:ring-1 focus-visible:ring-gold",
+                  activePopover === "calendar" && "bg-surface/90 ring-1 ring-gold border-gold"
                 )}
                 aria-label={`Dates: ${dateRangeDisplay}`}
                 aria-expanded={activePopover === "calendar"}
@@ -396,16 +396,16 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
                 aria-describedby={errorField === "checkOut" ? "booking-search-error" : undefined}
               >
                 <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <div className="w-7 h-7 rounded-lg bg-[#E5C178]/10 border border-[#E5C178]/25 flex items-center justify-center shrink-0 lg:bg-transparent lg:border-0 lg:w-auto lg:h-auto">
-                    <CalendarIcon className="w-4 h-4 text-[#E5C178] shrink-0" />
+                  <div className="w-7 h-7 rounded-lg bg-gold/10 border border-gold/25 flex items-center justify-center shrink-0 lg:bg-transparent lg:border-0 lg:w-auto lg:h-auto">
+                    <CalendarIcon className="w-4 h-4 text-gold shrink-0" />
                   </div>
 
                   {/* Desktop Unified Date Range */}
                   <div className="hidden lg:flex flex-col min-w-0 flex-1 text-start">
-                    <span className="text-xs lg:text-[13px] font-sans font-semibold text-[#D4C4B3] leading-none">
+                    <span className="text-xs lg:text-sm font-sans font-semibold text-fg-soft leading-none">
                       {isAr ? "تسجيل الوصول - تسجيل المغادرة" : "Check-in - Check-out"}
                     </span>
-                    <span className="font-sans text-sm sm:text-base font-semibold text-[#FAF4EB] tracking-normal leading-tight mt-1 truncate">
+                    <span className="font-sans text-sm sm:text-base font-semibold text-fg tracking-normal leading-tight mt-1 truncate">
                       {dateRangeDisplay}
                     </span>
                   </div>
@@ -413,39 +413,39 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
                   {/* Mobile Dual Date Columns with Night Duration Indicator */}
                   <div className="lg:hidden flex items-center justify-between min-w-0 flex-1 gap-2.5">
                     <div className="flex flex-col min-w-0 flex-1 text-start">
-                      <span className="text-xs font-sans font-semibold text-[#D4C4B3] uppercase leading-none">
+                      <span className="text-xs font-sans font-semibold text-fg-soft uppercase leading-none">
                         {isAr ? "تسجيل الوصول" : "Check-In"}
                       </span>
-                      <span className="font-sans text-sm font-semibold text-[#FAF4EB] tracking-normal leading-tight mt-1 truncate">
+                      <span className="font-sans text-sm font-semibold text-fg tracking-normal leading-tight mt-1 truncate">
                         {checkIn ? format(checkIn, "d MMM, EEE") : (isAr ? "حدد التاريخ" : "Select date")}
                       </span>
                     </div>
 
-                    <div className="h-6 w-px bg-[rgba(212,163,89,0.18)] shrink-0" aria-hidden="true" />
+                    <div className="h-6 w-px bg-gold/18 shrink-0" aria-hidden="true" />
 
                     <div className="flex flex-col min-w-0 flex-1 text-start">
                       <div className="flex items-center justify-between gap-1">
-                        <span className="text-xs font-sans font-semibold text-[#D4C4B3] uppercase leading-none">
+                        <span className="text-xs font-sans font-semibold text-fg-soft uppercase leading-none">
                           {isAr ? "المغادرة" : "Check-Out"}
                         </span>
                         {nightsCount > 0 && (
-                          <span className="text-xs font-mono text-[#E5C178] font-bold">
+                          <span className="text-xs font-mono text-gold font-bold">
                             {nightsCount}{isAr ? " ليالٍ" : "N"}
                           </span>
                         )}
                       </div>
-                      <span className="font-sans text-sm font-semibold text-[#FAF4EB] tracking-normal leading-tight mt-1 truncate">
+                      <span className="font-sans text-sm font-semibold text-fg tracking-normal leading-tight mt-1 truncate">
                         {checkOut ? format(checkOut, "d MMM, EEE") : (isAr ? "حدد التاريخ" : "Select date")}
                       </span>
                     </div>
                   </div>
                 </div>
-                <ChevronDown className="w-4 h-4 text-[#D4C4B3] shrink-0 ml-2 group-hover:text-[#E5C178] transition-colors" />
+                <ChevronDown className="w-4 h-4 text-fg-soft shrink-0 ml-2 group-hover:text-gold transition-colors" />
               </button>
 
               {/* Desktop Divider */}
               <div
-                className="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 w-px h-8 bg-[rgba(212,163,89,0.18)] pointer-events-none"
+                className="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 w-px h-8 bg-gold/18 pointer-events-none"
                 aria-hidden="true"
               />
             </div>
@@ -458,32 +458,32 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
                 onClick={handleOpenFlatOccupancy}
                 className={cn(
                   "w-full h-full min-h-[50px] lg:min-h-[64px] px-3.5 sm:px-4 py-2 rounded-xl text-left flex items-center justify-between transition-all cursor-pointer group",
-                  "bg-[rgba(22,16,11,0.6)] border border-[rgba(212,163,89,0.2)] lg:bg-transparent lg:border-transparent hover:border-[#E5C178]/50 lg:hover:bg-[rgba(34,24,16,0.6)]",
-                  "focus:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178]",
-                  isFlatOccupancyModalOpen && "bg-[rgba(22,16,11,0.9)] ring-1 ring-[#E5C178] border-[#E5C178]"
+                  "bg-surface/60 border border-line-soft lg:bg-transparent lg:border-transparent hover:border-gold/50 lg:hover:bg-raised/60",
+                  "focus:outline-none focus-visible:ring-1 focus-visible:ring-gold",
+                  isFlatOccupancyModalOpen && "bg-surface/90 ring-1 ring-gold border-gold"
                 )}
                 aria-label={`Flat & Occupancy: ${flatOccupancySummary}`}
                 aria-haspopup="dialog"
               >
                 <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <div className="w-7 h-7 rounded-lg bg-[#E5C178]/10 border border-[#E5C178]/25 flex items-center justify-center shrink-0 lg:bg-transparent lg:border-0 lg:w-auto lg:h-auto">
-                    <Home className="w-4 h-4 text-[#E5C178] shrink-0" />
+                  <div className="w-7 h-7 rounded-lg bg-gold/10 border border-gold/25 flex items-center justify-center shrink-0 lg:bg-transparent lg:border-0 lg:w-auto lg:h-auto">
+                    <Home className="w-4 h-4 text-gold shrink-0" />
                   </div>
                   <div className="flex flex-col min-w-0 flex-1 text-start">
-                    <span className="text-xs lg:text-[13px] font-sans font-semibold text-[#D4C4B3] uppercase lg:normal-case leading-none">
+                    <span className="text-xs lg:text-sm font-sans font-semibold text-fg-soft uppercase lg:normal-case leading-none">
                       {isAr ? "الشقة وعدد الضيوف" : "Flat & Occupancy"}
                     </span>
-                    <span className="font-sans text-sm sm:text-base font-semibold text-[#FAF4EB] tracking-normal leading-tight mt-1 truncate">
+                    <span className="font-sans text-sm sm:text-base font-semibold text-fg tracking-normal leading-tight mt-1 truncate">
                       {flatOccupancySummary}
                     </span>
                   </div>
                 </div>
-                <ChevronDown className="w-4 h-4 text-[#D4C4B3] shrink-0 ml-2 group-hover:text-[#E5C178] transition-colors" />
+                <ChevronDown className="w-4 h-4 text-fg-soft shrink-0 ml-2 group-hover:text-gold transition-colors" />
               </button>
 
               {/* Desktop Divider */}
               <div
-                className="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 w-px h-8 bg-[rgba(212,163,89,0.18)] pointer-events-none"
+                className="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 w-px h-8 bg-gold/18 pointer-events-none"
                 aria-hidden="true"
               />
             </div>
@@ -495,10 +495,10 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
                 id="hero-search-flats-submit-button"
                 className={cn(
                   "w-full min-h-[48px] lg:min-h-[56px] px-6 sm:px-7 py-3 rounded-xl cursor-pointer",
-                  "bg-gradient-to-r from-[#E5C178] to-[#C69344] hover:brightness-105 active:scale-[0.98]",
-                  "text-[#140E08] font-sans font-bold text-sm sm:text-base tracking-normal",
-                  "flex items-center justify-center gap-2 transition-all duration-200 shadow-md shadow-[#E5C178]/20",
-                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E5C178]"
+                  "bg-gradient-to-r from-gold to-gold-deep hover:brightness-105 active:scale-[0.98]",
+                  "text-ink font-sans font-bold text-sm sm:text-base tracking-normal",
+                  "flex items-center justify-center gap-2 transition-all duration-200 shadow-md shadow-gold/20",
+                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
                 )}
               >
                 <Search className="w-4 h-4 shrink-0 stroke-[2.5]" />
@@ -552,7 +552,7 @@ export function BookingSearch({ initialBranch = null, className }: BookingSearch
           <div
             role="dialog"
             aria-modal="true"
-            className="lg:hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0E0A07]/88 backdrop-blur-xs animate-in fade-in duration-200"
+            className="lg:hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-canvas/88 backdrop-blur-xs animate-in fade-in duration-200"
             onClick={() => setActivePopover(null)}
           >
             <div onClick={(e) => e.stopPropagation()} className="w-full max-w-[360px]">

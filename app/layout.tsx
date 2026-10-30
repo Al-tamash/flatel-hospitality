@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, DM_Sans, Cairo } from "next/font/google";
 import "./globals.css";
+import { BRAND_HEX } from "@/lib/design-tokens";
 
 const cormorantGaramond = Cormorant_Garamond({
   variable: "--font-serif",
@@ -28,7 +29,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
-  themeColor: "#0E0A07",
+  themeColor: BRAND_HEX.canvas,
 };
 
 export const metadata: Metadata = {
@@ -41,6 +42,7 @@ import { AuthProvider } from "@/context/auth-context";
 import { AuthModal } from "@/components/auth/auth-modal";
 import { RtlSync } from "@/components/ui/rtl-sync";
 import { FloatingContact } from "@/components/floating-contact";
+import { SkipLink } from "@/components/ui/skip-link";
 
 export default function RootLayout({
   children,
@@ -56,6 +58,7 @@ export default function RootLayout({
       <body className="min-h-screen overflow-x-clip bg-background font-sans text-foreground antialiased selection:bg-primary/20 selection:text-primary">
         <AuthProvider>
           <RtlSync />
+          <SkipLink />
           {children}
           <FloatingContact />
           <AuthModal />

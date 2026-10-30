@@ -148,30 +148,30 @@ export default function PoliciesPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#0E0A07] text-[#FAF4EB] flex flex-col font-sans selection:bg-[#E5C178]/20 selection:text-[#E5C178]">
+    <div className="min-h-screen bg-canvas text-fg flex flex-col font-sans selection:bg-gold/20 selection:text-gold">
       <SiteHeader />
 
-      <main className="flex-1 w-full">
+      <main id="main-content" tabIndex={-1} className="flex-1 w-full">
         {/* ========================================================= */}
         {/* HERO SECTION                                              */}
         {/* ========================================================= */}
-        <section className="relative pt-16 pb-14 sm:pt-20 sm:pb-16 border-b border-[rgba(212,163,89,0.18)] bg-[#120D08]/90 overflow-hidden">
+        <section className="relative pt-16 pb-14 sm:pt-20 sm:pb-16 border-b border-line-soft bg-surface/90 overflow-hidden">
           <div
-            className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[450px] bg-[radial-gradient(ellipse_at_center,rgba(229,193,120,0.08),transparent_70%)] -z-10"
+            className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[450px] bg-[radial-gradient(ellipse_at_center,color-mix(in_srgb,var(--gold)_8%,transparent),transparent_70%)] -z-10"
             aria-hidden="true"
           />
 
-          <div className="mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8 text-center">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#16100B] border border-[rgba(212,163,89,0.3)] text-[#E5C178] text-[11px] font-sans font-medium uppercase tracking-[0.18em] mb-4">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#E5C178]" />
+          <div className="container-page text-center">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-surface border border-line text-gold text-xs font-sans font-medium uppercase tracking-[0.18em] mb-4">
+              <ShieldCheck className="w-3.5 h-3.5 text-gold" />
               <span>Flatel Hospitality Guidelines</span>
             </div>
 
-            <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-normal tracking-tight text-[#FAF4EB]">
-              Guest Policies &amp; <span className="text-[#E5C178]">Stay Rules</span>
+            <h1 className="font-heading text-fg heading-page">
+              Guest Policies &amp; <span className="text-gold">Stay Rules</span>
             </h1>
 
-            <p className="mt-3 text-sm sm:text-base text-[#B8A692] max-w-2xl mx-auto leading-relaxed">
+            <p className="mt-3 text-sm sm:text-base text-fg-muted max-w-2xl mx-auto leading-relaxed">
               Transparent, professional hospitality standards crafted to ensure peace of mind, pristine hygiene, and maximum comfort for medical attendants, tourists, and families.
             </p>
           </div>
@@ -180,17 +180,17 @@ export default function PoliciesPage() {
         {/* ========================================================= */}
         {/* QUICK ANCHOR NAVIGATION BAR                               */}
         {/* ========================================================= */}
-        <div className="sticky top-16 sm:top-20 z-20 w-full border-b border-[rgba(212,163,89,0.18)] bg-[#0E0A07]/95 backdrop-blur-md">
-          <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10 py-3">
+        <div className="sticky top-16 sm:top-20 z-20 w-full border-b border-line-soft bg-canvas/95 backdrop-blur-md">
+          <div className="container-page py-3">
             <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
-              <span className="text-[11px] font-sans uppercase tracking-wider text-[#A89887] shrink-0 mr-1 font-semibold">
+              <span className="text-xs font-sans uppercase tracking-wider text-fg-faint shrink-0 mr-1 font-semibold">
                 Jump to:
               </span>
               {GUEST_POLICIES.map((p) => (
                 <a
                   key={p.id}
                   href={`#${p.id}`}
-                  className="shrink-0 inline-flex items-center px-3.5 min-h-[44px] rounded-full text-xs font-medium text-[#B8A692] hover:text-[#FAF4EB] bg-[#16100B] hover:bg-[#221810] border border-[rgba(212,163,89,0.22)] hover:border-[#E5C178]/60 transition-colors"
+                  className="shrink-0 inline-flex items-center px-3.5 min-h-[44px] rounded-full text-xs font-medium text-fg-muted hover:text-fg bg-surface hover:bg-raised border border-line hover:border-gold/60 transition-colors"
                 >
                   {p.badge}
                 </a>
@@ -203,7 +203,7 @@ export default function PoliciesPage() {
         {/* POLICIES GRID                                             */}
         {/* ========================================================= */}
         <section className="py-14 sm:py-18 lg:py-20">
-          <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10">
+          <div className="container-page">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
               {GUEST_POLICIES.map((policy) => {
                 const IconComponent = policy.icon;
@@ -211,30 +211,30 @@ export default function PoliciesPage() {
                   <div
                     key={policy.id}
                     id={policy.id}
-                    className="scroll-mt-28 p-5 sm:p-7 rounded-2xl bg-[rgba(34,24,16,0.75)] border border-[rgba(212,163,89,0.25)] hover:border-[rgba(212,163,89,0.5)] backdrop-blur-md transition-all duration-300 flex flex-col justify-between group shadow-sm hover:shadow-[0_12px_40px_rgba(0,0,0,0.6)]"
+                    className="scroll-mt-28 py-6 sm:py-7 border-t border-line flex flex-col justify-between group"
                   >
                     <div>
                       <div className="flex items-center justify-between gap-3 mb-4">
-                        <div className="w-11 h-11 rounded-xl bg-[#16100B] border border-[rgba(212,163,89,0.25)] text-[#E5C178] flex items-center justify-center shrink-0 group-hover:border-[#E5C178]/60 transition-colors">
-                          <IconComponent className="w-5 h-5 text-[#E5C178]" />
+                        <div className="w-11 h-11 rounded-xl bg-surface border border-line text-gold flex items-center justify-center shrink-0 group-hover:border-gold/60 transition-colors">
+                          <IconComponent className="w-5 h-5 text-gold" />
                         </div>
-                        <span className="text-[11px] uppercase font-semibold tracking-[0.16em] px-2.5 py-1 rounded-full bg-[#16100B] text-[#E5C178] border border-[rgba(212,163,89,0.3)]">
+                        <span className="text-xs uppercase font-semibold tracking-[0.14em] px-2.5 py-1 rounded-full bg-surface text-gold border border-line">
                           {policy.badge}
                         </span>
                       </div>
 
-                      <h2 className="font-serif text-xl sm:text-2xl font-normal text-[#FAF4EB] group-hover:text-[#E5C178] transition-colors">
+                      <h2 className="font-heading text-fg group-hover:text-gold transition-colors heading-sub">
                         {policy.title}
                       </h2>
 
-                      <p className="mt-2 text-xs sm:text-[13px] text-[#B8A692] leading-relaxed">
+                      <p className="mt-2 text-xs sm:text-sm text-fg-muted leading-relaxed">
                         {policy.summary}
                       </p>
 
-                      <div className="mt-4 pt-4 border-t border-[rgba(212,163,89,0.18)] space-y-2">
+                      <div className="mt-4 pt-4 border-t border-line-soft space-y-2">
                         {policy.details.map((detail, idx) => (
-                          <div key={idx} className="flex items-start gap-2.5 text-xs text-[#FAF4EB]/90">
-                            <CheckCircle2 className="w-3.5 h-3.5 text-[#E5C178] shrink-0 mt-0.5" />
+                          <div key={idx} className="flex items-start gap-2.5 text-xs text-fg/90">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-gold shrink-0 mt-0.5" />
                             <span className="leading-relaxed">{detail}</span>
                           </div>
                         ))}
@@ -246,18 +246,18 @@ export default function PoliciesPage() {
             </div>
 
             {/* Quick Contact Box */}
-            <div className="mt-12 sm:mt-16 p-6 sm:p-8 rounded-2xl bg-[rgba(34,24,16,0.85)] border border-[rgba(212,163,89,0.3)] text-center max-w-3xl mx-auto shadow-2xl backdrop-blur-md">
-              <h3 className="font-serif text-2xl sm:text-3xl font-normal text-[#FAF4EB]">
+            <div className="mt-12 sm:mt-16 text-center max-w-3xl mx-auto">
+              <h3 className="font-serif text-2xl sm:text-3xl font-normal text-fg">
                 Have a specific question or policy inquiry?
               </h3>
-              <p className="mt-2 text-xs sm:text-sm text-[#B8A692] max-w-lg mx-auto">
+              <p className="mt-2 text-xs sm:text-sm text-fg-muted max-w-lg mx-auto">
                 Our 24/7 on-site front desk team is available to assist with custom medical check-in windows, long-stay agreements, and group bookings.
               </p>
 
               <div className="mt-6 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
                 <a
                   href={`tel:${CONTACT_PHONE.replace(/[^0-9+]/g, "")}`}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] hover:brightness-110 text-[#140E08] font-bold text-xs sm:text-sm transition-all shadow-md shadow-[#E5C178]/15 cursor-pointer"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-gold to-gold-deep hover:brightness-110 text-ink font-bold text-xs sm:text-sm transition-all shadow-md shadow-gold/15 cursor-pointer"
                 >
                   <Phone className="w-4 h-4" />
                   <span>Call {CONTACT_PHONE}</span>
@@ -266,7 +266,7 @@ export default function PoliciesPage() {
                   href={whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-[rgba(212,163,89,0.35)] hover:border-[#E5C178] text-[#E5C178] bg-[#16100B] hover:bg-[#221810] font-semibold text-xs sm:text-sm transition-all cursor-pointer"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-line hover:border-gold text-gold bg-surface hover:bg-raised font-semibold text-xs sm:text-sm transition-all cursor-pointer"
                 >
                   <span>Chat on WhatsApp</span>
                   <ArrowRight className="w-4 h-4" />

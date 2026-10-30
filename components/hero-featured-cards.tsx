@@ -77,7 +77,7 @@ export function HeroFeaturedCards({ className }: HeroFeaturedCardsProps) {
 
   return (
     <div
-      className={cn("w-full select-none max-w-6xl mx-auto", className)}
+      className={cn("w-full select-none", className)}
       aria-label="FLATEL Stay Categories"
     >
       <div className="flex md:grid md:grid-cols-5 gap-3.5 sm:gap-4 overflow-x-auto md:overflow-visible snap-x snap-mandatory -mx-4 px-4 md:mx-0 md:px-0 pb-1 md:pb-0 no-scrollbar">
@@ -87,36 +87,36 @@ export function HeroFeaturedCards({ className }: HeroFeaturedCardsProps) {
             href={`${localePrefix}${card.href}`}
             className={cn(
               "group relative flex flex-col justify-between rounded-2xl overflow-hidden snap-start shrink-0 w-[44%] sm:w-[30%] md:w-auto",
-              "bg-[rgba(34,24,16,0.65)] backdrop-blur-md border border-[rgba(212,163,89,0.28)]",
-              "hover:border-[#E5C178] hover:shadow-[0_16px_36px_rgba(212,163,89,0.2)]",
+              "bg-raised/65 backdrop-blur-md border border-line",
+              "hover:border-gold hover:shadow-[0_16px_36px_color-mix(in_srgb,var(--gold)_20%,transparent)]",
               "hover:-translate-y-1 transition-all duration-300",
-              "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[#E5C178]"
+              "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-gold"
             )}
           >
             {/* Framed Image Container with concentric inner radius */}
             <div className="p-2 sm:p-2.5 pb-1">
-              <div className="relative aspect-[4/3] w-full rounded-lg overflow-hidden bg-[#16100B]">
+              <div className="relative aspect-[4/3] w-full rounded-lg overflow-hidden bg-surface">
                 <Image
                   src={card.imageUrl}
-                  alt={isAr ? card.titleAr : card.title}
+                  alt=""
                   fill
                   className="object-cover object-center group-hover:scale-106 transition-transform duration-500 ease-out"
                   sizes="(max-width: 768px) 45vw, 20vw"
                 />
                 {/* Subtle soft dark gradient overlay for depth */}
                 <div
-                  className="absolute inset-0 bg-gradient-to-t from-[#0E0A07]/50 via-transparent to-transparent pointer-events-none"
+                  className="absolute inset-0 bg-gradient-to-t from-canvas/50 via-transparent to-transparent pointer-events-none"
                   aria-hidden="true"
                 />
               </div>
             </div>
 
             {/* Clean Editorial Bottom Label (Flattened hierarchy, no nested card) */}
-            <div className="px-3.5 py-3 flex items-center justify-between gap-1.5 border-t border-[rgba(212,163,89,0.18)]">
-              <span className="text-sm sm:text-[15px] font-semibold text-[#FAF4EB] group-hover:text-[#E5C178] transition-colors leading-tight line-clamp-1">
+            <div className="px-3.5 py-3 min-h-[3.75rem] flex items-center justify-between gap-1.5 border-t border-line-soft">
+              <span className="text-sm sm:text-base font-semibold text-fg group-hover:text-gold transition-colors leading-tight line-clamp-2">
                 {isAr ? card.titleAr : card.title}
               </span>
-              <ChevronRight className="w-4 h-4 text-[#E5C178] shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5" />
+              <ChevronRight className="w-4 h-4 text-gold shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5" />
             </div>
           </Link>
         ))}

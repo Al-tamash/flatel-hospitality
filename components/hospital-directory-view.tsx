@@ -225,19 +225,19 @@ export function HospitalDirectoryView() {
 
   return (
     <div className="w-full py-12 sm:py-16 lg:py-20">
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10">
+      <div className="container-page">
         {/* Page Heading */}
         <div className="max-w-3xl mb-10 sm:mb-12">
           <Link
             href={basePath || "/"}
-            className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-[#E5C178] hover:underline mb-3"
+            className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-gold hover:underline mb-3"
           >
             {isAr ? "← العودة إلى الصفحة الرئيسية" : "← Back to Homepage"}
           </Link>
-          <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-medium text-[#FAF4EB] tracking-normal leading-[1.1]">
+          <h1 className="font-heading text-fg heading-page">
             {isAr ? "دليل مستشفيات حيدر أباد والسياحة العلاجية" : "Hyderabad Hospital & Medical Travel Guide"}
           </h1>
-          <p className="mt-3 text-sm sm:text-base md:text-lg text-[#D4C4B3] leading-relaxed">
+          <p className="mt-3 text-sm sm:text-base md:text-lg text-fg-soft leading-relaxed">
             {isAr
               ? "هل تخطط لإقامة علاجية في حيدر أباد؟ تصفح معلومات المستشفيات المحلية واستكشف شقق فلاتيل الفندقية المجهزة بمطابخ خاصة."
               : "Planning a medical stay in Hyderabad? Browse local hospital information and explore furnished Flatel residences with private kitchens."}
@@ -245,22 +245,22 @@ export function HospitalDirectoryView() {
         </div>
 
         {/* Filter and Search Bar */}
-        <div className="p-3.5 sm:p-4 rounded-2xl bg-[rgba(34,24,16,0.65)] backdrop-blur-md border border-[rgba(212,163,89,0.28)] mb-8 flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-raised/65 backdrop-blur-md border border-line mb-8 flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
           <div className="relative flex-1 min-w-0 md:max-w-md">
-            <Search className="w-4 h-4 text-[#D4C4B3] absolute left-3 rtl:left-auto rtl:right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <Search className="w-4 h-4 text-fg-soft absolute left-3 rtl:left-auto rtl:right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
               aria-label={isAr ? "البحث عن المستشفيات بالاسم أو المنطقة أو التخصص" : "Search hospitals by name, area, or specialty"}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={isAr ? "ابحث عن المستشفى بالاسم، المنطقة، أو التخصص..." : "Search hospital by name, area, or specialty..."}
-              className="w-full bg-[rgba(22,16,11,0.7)] border border-[rgba(212,163,89,0.25)] focus:border-[#E5C178] rounded-xl pl-9 rtl:pl-4 rtl:pr-9 pr-8 py-2.5 text-sm sm:text-base text-[#FAF4EB] placeholder-[#FAF4EB]/50 focus:outline-hidden transition-colors"
+              className="w-full bg-surface/70 border border-control focus:border-gold rounded-xl pl-9 rtl:pl-4 rtl:pr-9 pr-8 py-2.5 text-sm sm:text-base text-fg placeholder-fg/50 focus:outline-hidden transition-colors"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery("")}
-                className="absolute right-2.5 rtl:right-auto rtl:left-2.5 top-1/2 -translate-y-1/2 text-[#D4C4B3] hover:text-[#FAF4EB] p-0.5"
+                className="absolute right-2.5 rtl:right-auto rtl:left-2.5 top-1/2 -translate-y-1/2 text-fg-soft hover:text-fg p-0.5"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -278,8 +278,8 @@ export function HospitalDirectoryView() {
                   className={cn(
                     "px-4 py-2 min-h-[44px] rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap transition-colors cursor-pointer inline-flex items-center justify-center",
                     isActive
-                      ? "bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] font-bold"
-                      : "bg-[rgba(22,16,11,0.6)] text-[#D4C4B3] hover:text-[#FAF4EB] border border-[rgba(212,163,89,0.2)]"
+                      ? "bg-gradient-to-r from-gold to-gold-deep text-ink font-bold"
+                      : "bg-surface/60 text-fg-soft hover:text-fg border border-line-soft"
                   )}
                 >
                   {isAr ? tab.labelAr : tab.labelEn}
@@ -291,7 +291,7 @@ export function HospitalDirectoryView() {
 
         {/* Directory Grid */}
         {filteredHospitals.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div data-stagger className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
             {filteredHospitals.map((hospital) => {
               const arData = isAr ? ARABIC_HOSPITAL_TRANSLATIONS[hospital.id] : null;
               const hospitalName = arData?.name || hospital.name;
@@ -302,10 +302,10 @@ export function HospitalDirectoryView() {
               return (
                 <div
                   key={hospital.id}
-                  className="rounded-2xl bg-[#16100B] border border-[rgba(212,163,89,0.28)] hover:border-[#E5C178] transition-colors flex flex-col justify-between overflow-hidden shadow-lg group"
+                  className="rounded-2xl bg-surface border border-line card-lift flex flex-col justify-between overflow-hidden shadow-lg group"
                 >
                   {/* Image & Badges */}
-                  <div className="relative h-36 w-full overflow-hidden bg-[#0E0A07]">
+                  <div className="relative h-36 w-full overflow-hidden bg-canvas">
                     <Image
                       src={hospital.imageUrl}
                       alt={hospitalName}
@@ -313,13 +313,13 @@ export function HospitalDirectoryView() {
                       className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#16100B] via-black/40 to-black/10" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-surface via-black/40 to-black/10" />
                     <div className="absolute top-2.5 left-2.5 rtl:left-auto rtl:right-2.5">
-                      <span className="px-2.5 py-1 rounded text-xs font-semibold uppercase tracking-wider bg-[rgba(22,16,11,0.9)] backdrop-blur-xs text-[#E5C178] border border-[rgba(212,163,89,0.25)]">
+                      <span className="px-2.5 py-1 rounded text-xs font-semibold uppercase tracking-wider bg-surface/90 backdrop-blur-xs text-gold border border-line">
                         {hospitalSpecialty}
                       </span>
                     </div>
-                    <div className="absolute bottom-2 left-2.5 text-xs text-[#E5C178] font-medium flex items-center gap-1.5 drop-shadow-sm">
+                    <div className="absolute bottom-2 left-2.5 text-xs text-gold font-medium flex items-center gap-1.5 drop-shadow-sm">
                       <span className="sr-only">Hospital information</span>
                     </div>
                   </div>
@@ -327,23 +327,23 @@ export function HospitalDirectoryView() {
                   {/* Body Content */}
                   <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-3.5">
                     <div>
-                      <h2 className="font-heading text-lg sm:text-xl font-bold text-[#FAF4EB] group-hover:text-[#E5C178] transition-colors leading-snug tracking-normal">
+                      <h2 className="font-heading text-fg group-hover:text-gold transition-colors heading-sub">
                         {hospitalName}
                       </h2>
-                      <p className="text-xs sm:text-sm text-[#E5C178] font-medium mt-1">
+                      <p className="text-xs sm:text-sm text-gold font-medium mt-1">
                         {hospitalLocality}
                       </p>
-                      <p className="text-xs sm:text-sm text-[#D4C4B3] line-clamp-2 mt-2 flex items-start gap-1.5">
-                        <MapPin className="w-4 h-4 text-[#E5C178] shrink-0 mt-0.5" />
+                      <p className="text-xs sm:text-sm text-fg-soft line-clamp-2 mt-2 flex items-start gap-1.5">
+                        <MapPin className="w-4 h-4 text-gold shrink-0 mt-0.5" />
                         <span>{hospitalAddress}</span>
                       </p>
                     </div>
 
                     {/* Actions */}
-                    <div className="pt-3.5 border-t border-[rgba(212,163,89,0.18)] flex items-center gap-2">
+                    <div className="pt-3.5 border-t border-line-soft flex items-center gap-2">
                       <Link
                         href={`${basePath}/#flats`}
-                        className="flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] hover:brightness-105 text-[#140E08] font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all text-center min-h-[44px]"
+                        className="flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-gold to-gold-deep hover:brightness-105 text-ink font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all text-center min-h-[44px]"
                       >
                         <span>{isAr ? "شقق قريبة" : "Nearby Flats"}</span>
                         <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
@@ -352,10 +352,10 @@ export function HospitalDirectoryView() {
                         href={hospital.googleMapsUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="py-2.5 px-3 rounded-xl bg-[rgba(22,16,11,0.85)] hover:bg-[rgba(45,32,22,0.9)] text-[#FAF4EB] border border-[rgba(212,163,89,0.25)] hover:border-[#E5C178] text-xs sm:text-sm font-semibold flex items-center justify-center gap-1 transition-colors min-h-[44px]"
+                        className="py-2.5 px-3 rounded-xl bg-surface/85 hover:bg-raised-hover/90 text-fg border border-line hover:border-gold text-xs sm:text-sm font-semibold flex items-center justify-center gap-1 transition-colors min-h-[44px]"
                         aria-label={isAr ? `الاتجاهات إلى ${hospitalName}` : `Get directions to ${hospital.name}`}
                       >
-                        <Navigation className="w-3.5 h-3.5 text-[#E5C178]" />
+                        <Navigation className="w-3.5 h-3.5 text-gold" />
                         <span>{isAr ? "الخريطة" : "Map"}</span>
                       </a>
                     </div>
@@ -365,8 +365,8 @@ export function HospitalDirectoryView() {
             })}
           </div>
         ) : (
-          <div className="p-8 text-center rounded-2xl bg-[#16100B] border border-[rgba(212,163,89,0.28)]">
-            <p className="text-base font-semibold text-[#FAF4EB]">
+          <div className="p-8 text-center rounded-2xl bg-surface border border-line">
+            <p className="text-base font-semibold text-fg">
               {isAr ? "لا توجد مستشفيات مطابقة لبحثك" : "No hospitals match your search"}
             </p>
             <button
@@ -375,7 +375,7 @@ export function HospitalDirectoryView() {
                 setSearchQuery("");
                 setSelectedSpecialty("all");
               }}
-              className="mt-3.5 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] font-bold text-sm min-h-[44px] cursor-pointer"
+              className="mt-3.5 px-5 py-2.5 rounded-xl bg-gradient-to-r from-gold to-gold-deep text-ink font-bold text-sm min-h-[44px] cursor-pointer"
             >
               {isAr ? "إعادة ضبط التصفية" : "Reset Filters"}
             </button>
@@ -383,10 +383,10 @@ export function HospitalDirectoryView() {
         )}
 
         {/* Disclaimer Notice */}
-        <div className="mt-12 p-4 sm:p-5 rounded-2xl bg-[rgba(34,24,16,0.65)] backdrop-blur-md border border-[rgba(212,163,89,0.25)] flex items-start gap-3 text-xs sm:text-sm text-[#D4C4B3]">
-          <AlertCircle className="w-5 h-5 text-[#E5C178] shrink-0 mt-0.5" />
+        <div className="mt-12 p-4 sm:p-5 rounded-2xl bg-raised/65 backdrop-blur-md border border-line flex items-start gap-3 text-xs sm:text-sm text-fg-soft">
+          <AlertCircle className="w-5 h-5 text-gold shrink-0 mt-0.5" />
           <p className="leading-relaxed">
-            <strong className="text-[#FAF4EB] font-semibold">
+            <strong className="text-fg font-semibold">
               {isAr ? "إشعار الرعاية الصحية غير السريرية:" : "Non-Clinical Healthcare Notice:"}
             </strong>{" "}
             {isAr

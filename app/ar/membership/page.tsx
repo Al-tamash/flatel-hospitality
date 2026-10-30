@@ -4,19 +4,19 @@ import { SiteFooter } from "@/components/site-footer";
 import { MembershipPageView } from "@/components/membership/membership-page-view";
 
 export const metadata: Metadata = {
-  title: "عضوية فلاتيل — ₹777 لمدة عام | ضيافة فلاتيل",
+  title: "عضوية فلاتيل أو سيغنتشر — الذهبية والبلاتينية | ضيافة فلاتيل",
   description:
-    "انضم إلى عضوية فلاتيل بـ ₹777: خصم ١٠٪ على كل إقامة مباشرة، وليلة مجانية، وخدمة كونسيرج ذات أولوية ومرونة في المواعيد.",
+    "البطاقة الذهبية ₹4,999 والبلاتينية ₹7,777: خصم ١٠٪ أو ١٥٪ على كل حجز في فلاتيل، واستقبال مجاني من المطار، وتسجيل دخول ذو أولوية، وحقيبة ترحيب، ودعم ذو أولوية.",
 };
 
 export default function ArabicMembershipPage() {
   return (
     <div
-      className="min-h-screen bg-[#0E0A07] text-[#FAF4EB] flex flex-col selection:bg-[#E5C178]/20 selection:text-[#E5C178] font-arabic"
+      className="min-h-screen bg-canvas text-fg flex flex-col selection:bg-gold/20 selection:text-gold font-arabic"
       dir="rtl"
     >
       <SiteHeader />
-      <main className="flex-1 w-full">
+      <main id="main-content" tabIndex={-1} className="flex-1 w-full">
         <MembershipPageView locale="ar" />
       </main>
       <SiteFooter />

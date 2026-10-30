@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
       success: true,
       memberCode: member.memberCode,
       fullName: member.fullName,
+      tier: member.tier,
       validUntil: member.validUntil,
     });
   } catch (error: unknown) {

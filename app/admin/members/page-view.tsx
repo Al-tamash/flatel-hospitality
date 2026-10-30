@@ -93,15 +93,15 @@ export default function AdminMembersPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="font-heading text-2xl sm:text-3xl text-[#FAF4EB]">Flatel Members</h1>
-          <p className="mt-1 text-sm text-[#B8A692]">
+          <h1 className="font-heading text-2xl sm:text-3xl text-fg">Flatel Members</h1>
+          <p className="mt-1 text-sm text-fg-muted">
             {activeCount} active · {members.length} shown
           </p>
         </div>
         <button
           type="button"
           onClick={() => void load()}
-          className="inline-flex items-center gap-2 min-h-[40px] px-4 rounded-lg border border-[rgba(212,163,89,0.3)] text-sm text-[#E5C178] hover:border-[#E5C178] cursor-pointer"
+          className="inline-flex items-center gap-2 min-h-[40px] px-4 rounded-lg border border-line text-sm text-gold hover:border-gold cursor-pointer"
         >
           <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin")} />
           Refresh
@@ -110,14 +110,14 @@ export default function AdminMembersPage() {
 
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative flex-1 min-w-[220px]">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#B8A692]" aria-hidden="true" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-fg-muted" aria-hidden="true" />
           <input
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search name, email, phone or Member ID"
             aria-label="Search members"
-            className="w-full min-h-[42px] rounded-xl border border-[rgba(212,163,89,0.25)] bg-[#140E08] pl-9 pr-3 text-sm text-[#FAF4EB] focus:border-[#E5C178] focus:outline-none"
+            className="w-full min-h-[42px] rounded-xl border border-control bg-ink pl-9 pr-3 text-sm text-fg focus:border-gold focus:outline-none"
           />
         </div>
         <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by status">
@@ -130,8 +130,8 @@ export default function AdminMembersPage() {
               className={cn(
                 "min-h-[36px] px-3 rounded-full border text-xs font-semibold cursor-pointer",
                 status === filter.id
-                  ? "border-[#E5C178] bg-[#E5C178]/15 text-[#E5C178]"
-                  : "border-[rgba(212,163,89,0.25)] text-[#D4C4B3] hover:border-[#E5C178]/60"
+                  ? "border-gold bg-gold/15 text-gold"
+                  : "border-line text-fg-soft hover:border-gold/60"
               )}
             >
               {filter.label}
@@ -149,38 +149,40 @@ export default function AdminMembersPage() {
       {note && <p role="status" className="rounded-xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-200">{note}</p>}
       {error && <p role="alert" className="rounded-xl border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">{error}</p>}
 
-      <div className="overflow-x-auto rounded-2xl border border-[rgba(212,163,89,0.22)]">
+      <div className="overflow-x-auto rounded-2xl border border-line">
         <table className="w-full min-w-[760px] text-left text-sm">
-          <thead className="bg-[rgba(34,24,16,0.8)] text-[11px] uppercase tracking-wider text-[#B8A692]">
+          <thead className="bg-raised/80 text-xs uppercase tracking-wider text-fg-muted">
             <tr>
               <th className="px-4 py-3 font-medium">Member</th>
+              <th className="px-4 py-3 font-medium">Card</th>
               <th className="px-4 py-3 font-medium">Member ID</th>
               <th className="px-4 py-3 font-medium">Status</th>
               <th className="px-4 py-3 font-medium">Valid</th>
               <th className="px-4 py-3 font-medium text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[rgba(212,163,89,0.15)]">
+          <tbody className="divide-y divide-line-soft">
             {members.length === 0 && !isLoading && (
               <tr>
-                <td colSpan={5} className="px-4 py-10 text-center text-[#B8A692]">
+                <td colSpan={6}className="px-4 py-10 text-center text-fg-muted">
                   {error ? "—" : "No members match."}
                 </td>
               </tr>
             )}
             {members.map((member) => (
-              <tr key={member.id} className="text-[#FAF4EB]">
+              <tr key={member.id} className="text-fg">
                 <td className="px-4 py-3">
                   <p className="font-medium">{member.fullName}</p>
-                  <p className="text-xs text-[#B8A692]">{member.email} · {member.phone}</p>
+                  <p className="text-xs text-fg-muted">{member.email} · {member.phone}</p>
                 </td>
-                <td className="px-4 py-3 font-mono tracking-wider text-[#E5C178]">{member.memberCode ?? "—"}</td>
+                <td className="px-4 py-3 capitalize">{member.tier}</td>
+                <td className="px-4 py-3 font-mono tracking-wider text-gold">{member.memberCode ?? "—"}</td>
                 <td className="px-4 py-3">
                   <span className={cn("inline-block rounded-full border px-2.5 py-0.5 text-xs font-semibold capitalize", STATUS_STYLE[member.status])}>
                     {member.status === "pending" ? "awaiting payment" : member.status}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-xs text-[#D4C4B3]">
+                <td className="px-4 py-3 text-xs text-fg-soft">
                   {formatDate(member.validFrom)} → {formatDate(member.validUntil)}
                 </td>
                 <td className="px-4 py-3">
@@ -190,7 +192,7 @@ export default function AdminMembersPage() {
                         <button
                           type="button"
                           onClick={() => void act(member, "resend")}
-                          className="inline-flex items-center gap-1.5 min-h-[34px] px-3 rounded-lg border border-[rgba(212,163,89,0.3)] text-xs text-[#E5C178] hover:border-[#E5C178] cursor-pointer"
+                          className="inline-flex items-center gap-1.5 min-h-[34px] px-3 rounded-lg border border-line text-xs text-gold hover:border-gold cursor-pointer"
                         >
                           <Mail className="h-3.5 w-3.5" /> Resend ID
                         </button>

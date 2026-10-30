@@ -30,6 +30,7 @@ import { getPurposeLabel, isPurposeId } from "@/lib/purpose/purpose-services";
 import { buildAddonSummary } from "@/lib/booking/addon-summary";
 import { useFloatingOffset } from "@/components/floating-contact";
 import type { StayPurposeType } from "@/types/booking";
+import { AnimatedNumber } from "@/components/motion/animated-number";
 
 interface BookingSidebarProps {
   room: RoomDetail;
@@ -235,12 +236,12 @@ export function BookingSidebar({
       className={cn(
         "w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl border text-xs font-semibold text-start transition-colors cursor-pointer",
         addonSummary.hasSelection
-          ? "bg-[#E5C178]/10 border-[#E5C178]/60 text-[#FAF4EB] hover:border-[#E5C178]"
-          : "bg-[#16100B] border-[rgba(212,163,89,0.25)] text-[#E5C178] hover:border-[#E5C178]"
+          ? "bg-gold/10 border-gold/60 text-fg hover:border-gold"
+          : "bg-surface border-line text-gold hover:border-gold"
       )}
     >
       <span className="flex items-center gap-1.5 min-w-0">
-        <Sparkles className="w-3.5 h-3.5 text-[#E5C178] shrink-0" />
+        <Sparkles className="w-3.5 h-3.5 text-gold shrink-0" />
         <span className="truncate">{addonSummary.label}</span>
       </span>
     </button>
@@ -312,27 +313,27 @@ export function BookingSidebar({
     <aside
       ref={panelRef}
       id="booking-panel"
-      className="w-full rounded-3xl border border-[rgba(212,163,89,0.28)] bg-[rgba(34,24,16,0.75)] p-5 sm:p-6 shadow-2xl lg:backdrop-blur-md"
+      className="w-full rounded-3xl border border-line bg-raised/75 p-5 sm:p-6 shadow-2xl lg:backdrop-blur-md"
       aria-label="Reservation Summary and Booking Form"
     >
       {/* Top Pricing Header */}
-      <div className="flex items-baseline justify-between border-b border-[rgba(212,163,89,0.2)] pb-4">
+      <div className="flex items-baseline justify-between border-b border-line-soft pb-4">
         <div>
-          <span className="text-xs font-sans font-medium tracking-[0.16em] uppercase text-[#E5C178]">
+          <span className="text-xs font-sans font-medium tracking-[0.14em] uppercase text-gold">
             {currentLocale === "ar" ? "ابتداءً من" : "Starting from"}
           </span>
           <div className="flex items-baseline gap-1 mt-0.5">
-            <span className="font-heading text-2xl sm:text-3xl font-normal tabular-nums text-[#FAF4EB]">
+            <span className="font-heading text-2xl sm:text-3xl font-normal tabular-nums text-fg">
               ₹{room.basePricePerNight.toLocaleString("en-IN")}
             </span>
-            <span className="text-xs text-[#B8A692]">{currentLocale === "ar" ? "/ ليلة" : "/ night"}</span>
+            <span className="text-xs text-fg-muted">{currentLocale === "ar" ? "/ ليلة" : "/ night"}</span>
           </div>
         </div>
         <div className={cn("text-right", currentLocale === "ar" && "text-left")}>
-          <span className="text-xs font-sans font-medium tracking-[0.16em] uppercase text-[#E5C178]">
+          <span className="text-xs font-sans font-medium tracking-[0.14em] uppercase text-gold">
             {currentLocale === "ar" ? "سياسة عربون ٢٠٪" : "20% Advance Policy"}
           </span>
-          <p className="text-xs text-[#B8A692] mt-0.5">
+          <p className="text-xs text-fg-muted mt-0.5">
             {currentLocale === "ar" ? "دفع ٨٠٪ عند الوصول" : "Pay 80% on arrival"}
           </p>
         </div>
@@ -348,23 +349,23 @@ export function BookingSidebar({
               render={
                 <button
                   type="button"
-                  className="flex flex-col items-start justify-center rounded-xl border border-[rgba(212,163,89,0.25)] bg-[#16100B]/80 p-2.5 text-left hover:bg-[#16100B] hover:border-[rgba(212,163,89,0.45)] focus:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] w-full transition-colors"
+                  className="flex flex-col items-start justify-center rounded-xl border border-line bg-surface/80 p-2.5 text-left hover:bg-surface hover:border-line-strong focus:outline-none focus-visible:ring-1 focus-visible:ring-gold w-full transition-colors"
                   aria-label="Select check-in date"
                 />
               }
             >
-              <div className="flex items-center gap-1.5 text-xs uppercase font-sans font-semibold tracking-[0.14em] text-[#FAF4EB]/80">
-                <CalendarIcon className="h-3 w-3 text-[#E5C178]" /> {currentLocale === "ar" ? "تسجيل الوصول" : "Check-In"}
+              <div className="flex items-center gap-1.5 text-xs uppercase font-sans font-semibold tracking-[0.14em] text-fg/80">
+                <CalendarIcon className="h-3 w-3 text-gold" /> {currentLocale === "ar" ? "تسجيل الوصول" : "Check-In"}
               </div>
-              <span className="text-xs font-medium text-[#FAF4EB] mt-1 truncate w-full">
+              <span className="text-xs font-medium text-fg mt-1 truncate w-full">
                 {checkIn ? format(checkIn, "d MMM yyyy") : (currentLocale === "ar" ? "اختر التاريخ" : "Select date")}
               </span>
             </PopoverTrigger>
             <PopoverContent
-              className="w-auto p-3 bg-[#16100B] border border-[rgba(212,163,89,0.3)] shadow-2xl rounded-2xl z-50 text-[#FAF4EB]"
+              className="w-auto p-3 bg-surface border border-line shadow-2xl rounded-2xl z-50 text-fg"
               align="start"
             >
-              <div className="pb-2 mb-2 border-b border-[rgba(212,163,89,0.2)] text-xs font-medium text-[#FAF4EB]">
+              <div className="pb-2 mb-2 border-b border-line-soft text-xs font-medium text-fg">
                 {currentLocale === "ar" ? "اختر تاريخ تسجيل الوصول" : "Select Check-in Date"}
               </div>
               {checkInOpen && (
@@ -392,23 +393,23 @@ export function BookingSidebar({
               render={
                 <button
                   type="button"
-                  className="flex flex-col items-start justify-center rounded-xl border border-[rgba(212,163,89,0.25)] bg-[#16100B]/80 p-2.5 text-left hover:bg-[#16100B] hover:border-[rgba(212,163,89,0.45)] focus:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] w-full transition-colors"
+                  className="flex flex-col items-start justify-center rounded-xl border border-line bg-surface/80 p-2.5 text-left hover:bg-surface hover:border-line-strong focus:outline-none focus-visible:ring-1 focus-visible:ring-gold w-full transition-colors"
                   aria-label="Select check-out date"
                 />
               }
             >
-              <div className="flex items-center gap-1.5 text-xs uppercase font-sans font-semibold tracking-[0.14em] text-[#FAF4EB]/80">
-                <CalendarIcon className="h-3 w-3 text-[#E5C178]" /> {currentLocale === "ar" ? "تسجيل المغادرة" : "Check-Out"}
+              <div className="flex items-center gap-1.5 text-xs uppercase font-sans font-semibold tracking-[0.14em] text-fg/80">
+                <CalendarIcon className="h-3 w-3 text-gold" /> {currentLocale === "ar" ? "تسجيل المغادرة" : "Check-Out"}
               </div>
-              <span className="text-xs font-medium text-[#FAF4EB] mt-1 truncate w-full">
+              <span className="text-xs font-medium text-fg mt-1 truncate w-full">
                 {checkOut ? format(checkOut, "d MMM yyyy") : (currentLocale === "ar" ? "اختر التاريخ" : "Select date")}
               </span>
             </PopoverTrigger>
             <PopoverContent
-              className="w-auto p-3 bg-[#16100B] border border-[rgba(212,163,89,0.3)] shadow-2xl rounded-2xl z-50 text-[#FAF4EB]"
+              className="w-auto p-3 bg-surface border border-line shadow-2xl rounded-2xl z-50 text-fg"
               align="end"
             >
-              <div className="pb-2 mb-2 border-b border-[rgba(212,163,89,0.2)] text-xs font-medium text-[#FAF4EB]">
+              <div className="pb-2 mb-2 border-b border-line-soft text-xs font-medium text-fg">
                 {currentLocale === "ar" ? "اختر تاريخ تسجيل المغادرة" : "Select Check-out Date"}
               </div>
               {checkOutOpen && (
@@ -436,22 +437,22 @@ export function BookingSidebar({
             render={
               <button
                 type="button"
-                className="flex items-center justify-between w-full rounded-xl border border-[rgba(212,163,89,0.25)] bg-[#16100B]/80 px-3.5 py-2.5 text-left hover:bg-[#16100B] hover:border-[rgba(212,163,89,0.45)] focus:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] transition-colors"
+                className="flex items-center justify-between w-full rounded-xl border border-line bg-surface/80 px-3.5 py-2.5 text-left hover:bg-surface hover:border-line-strong focus:outline-none focus-visible:ring-1 focus-visible:ring-gold transition-colors"
                 aria-label="Select guests"
               />
             }
           >
             <div>
-              <div className="flex items-center gap-1.5 text-xs uppercase font-sans font-semibold tracking-[0.14em] text-[#FAF4EB]/80">
-                <Users className="h-3 w-3 text-[#E5C178]" /> {currentLocale === "ar" ? "الضيوف" : "Guests"}
+              <div className="flex items-center gap-1.5 text-xs uppercase font-sans font-semibold tracking-[0.14em] text-fg/80">
+                <Users className="h-3 w-3 text-gold" /> {currentLocale === "ar" ? "الضيوف" : "Guests"}
               </div>
-              <span className="text-xs font-medium text-[#FAF4EB] mt-0.5 block">
+              <span className="text-xs font-medium text-fg mt-0.5 block">
                 {currentLocale === "ar"
                   ? `${adults} ${adults === 1 ? "بالغ" : "بالغين"}${childrenCount > 0 ? `، ${childrenCount} ${childrenCount === 1 ? "طفل" : "أطفال"}` : ""}`
                   : `${adults} Adult${adults > 1 ? "s" : ""}${childrenCount > 0 ? `, ${childrenCount} Child` : ""}`}
               </span>
             </div>
-            <span className="text-xs text-[#E5C178] font-sans font-medium">
+            <span className="text-xs text-gold font-sans font-medium">
               {currentLocale === "ar"
                 ? (room.maxChildren !== null
                     ? `حتى ${room.maxAdults} بالغين · حتى ${room.maxChildren} أطفال، والإضافي ₹٣٠٠ لليلة`
@@ -462,14 +463,14 @@ export function BookingSidebar({
             </span>
           </PopoverTrigger>
           <PopoverContent
-            className="w-72 p-4 bg-[#16100B] border border-[rgba(212,163,89,0.3)] shadow-2xl rounded-2xl z-50 space-y-4 text-[#FAF4EB]"
+            className="w-72 p-4 bg-surface border border-line shadow-2xl rounded-2xl z-50 space-y-4 text-fg"
             align="start"
           >
-            <div className="border-b border-[rgba(212,163,89,0.2)] pb-2">
-              <p className="text-xs font-semibold text-[#FAF4EB]">
+            <div className="border-b border-line-soft pb-2">
+              <p className="text-xs font-semibold text-fg">
                 {currentLocale === "ar" ? "سعة الشقة الفندقية" : "Apartment Occupancy"}
               </p>
-              <p className="text-[10px] text-[#B8A692] leading-relaxed mt-0.5">
+              <p className="text-xs text-fg-muted leading-relaxed mt-0.5">
                 {currentLocale === "ar"
                   ? `تتسع ${room.title} لما يصل إلى ${room.maxAdults} بالغين (${room.baseAdults} أساسي + ${room.maxExtraGuests} إضافي). ${
                       room.maxChildren !== null
@@ -487,10 +488,10 @@ export function BookingSidebar({
             {/* Adults Stepper */}
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-[#FAF4EB]">
+                <p className="text-xs font-medium text-fg">
                   {currentLocale === "ar" ? "البالغين" : "Adults"}
                 </p>
-                <p className="text-[10px] text-[#B8A692]">
+                <p className="text-xs text-fg-muted">
                   {currentLocale === "ar" ? `الحد الأقصى ${room.maxAdults}` : `Max ${room.maxAdults}`}
                 </p>
               </div>
@@ -499,19 +500,19 @@ export function BookingSidebar({
                   type="button"
                   onClick={() => setAdults((prev) => Math.max(1, prev - 1))}
                   disabled={adults <= 1}
-                  className="h-7 w-7 rounded-lg border border-[rgba(212,163,89,0.25)] bg-[#221810] hover:bg-[#2a1e14] hover:border-[#E5C178]/50 flex items-center justify-center text-[#FAF4EB] disabled:opacity-40 cursor-pointer"
+                  className="h-7 w-7 rounded-lg border border-line bg-raised hover:bg-raised-hover hover:border-gold/50 flex items-center justify-center text-fg disabled:opacity-40 cursor-pointer"
                   aria-label="Decrease adults"
                 >
                   <Minus className="h-3 w-3" />
                 </button>
-                <span className="w-5 text-center text-sm font-semibold text-[#FAF4EB] font-sans">
+                <span className="w-5 text-center text-sm font-semibold text-fg font-sans">
                   {adults}
                 </span>
                 <button
                   type="button"
                   onClick={() => setAdults((prev) => Math.min(room.maxAdults, prev + 1))}
                   disabled={adults >= room.maxAdults}
-                  className="h-7 w-7 rounded-lg border border-[rgba(212,163,89,0.25)] bg-[#221810] hover:bg-[#2a1e14] hover:border-[#E5C178]/50 flex items-center justify-center text-[#FAF4EB] disabled:opacity-40 cursor-pointer"
+                  className="h-7 w-7 rounded-lg border border-line bg-raised hover:bg-raised-hover hover:border-gold/50 flex items-center justify-center text-fg disabled:opacity-40 cursor-pointer"
                   aria-label="Increase adults"
                 >
                   <Plus className="h-3 w-3" />
@@ -522,10 +523,10 @@ export function BookingSidebar({
             {/* Children Stepper */}
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-[#FAF4EB]">
+                <p className="text-xs font-medium text-fg">
                   {currentLocale === "ar" ? "الأطفال (٠–١٢ سنة)" : "Children (0–12 yrs)"}
                 </p>
-                <p className="text-[10px] text-[#B8A692]">
+                <p className="text-xs text-fg-muted">
                   {currentLocale === "ar"
                     ? (room.maxChildren !== null
                         ? `الحد الأقصى ${room.maxChildren} · الطفل الإضافي ₹٣٠٠ لليلة`
@@ -540,12 +541,12 @@ export function BookingSidebar({
                   type="button"
                   onClick={() => setChildrenCount((prev) => Math.max(0, prev - 1))}
                   disabled={childrenCount <= 0}
-                  className="h-7 w-7 rounded-lg border border-[rgba(212,163,89,0.25)] bg-[#221810] hover:bg-[#2a1e14] hover:border-[#E5C178]/50 flex items-center justify-center text-[#FAF4EB] disabled:opacity-40 cursor-pointer"
+                  className="h-7 w-7 rounded-lg border border-line bg-raised hover:bg-raised-hover hover:border-gold/50 flex items-center justify-center text-fg disabled:opacity-40 cursor-pointer"
                   aria-label="Decrease children"
                 >
                   <Minus className="h-3 w-3" />
                 </button>
-                <span className="w-5 text-center text-sm font-semibold text-[#FAF4EB] font-sans">
+                <span className="w-5 text-center text-sm font-semibold text-fg font-sans">
                   {childrenCount}
                 </span>
                 <button
@@ -562,7 +563,7 @@ export function BookingSidebar({
                       ? childrenCount >= room.maxChildren
                       : childrenCount >= 10
                   }
-                  className="h-7 w-7 rounded-lg border border-[rgba(212,163,89,0.25)] bg-[#221810] hover:bg-[#2a1e14] hover:border-[#E5C178]/50 flex items-center justify-center text-[#FAF4EB] disabled:opacity-40 cursor-pointer"
+                  className="h-7 w-7 rounded-lg border border-line bg-raised hover:bg-raised-hover hover:border-gold/50 flex items-center justify-center text-fg disabled:opacity-40 cursor-pointer"
                   aria-label="Increase children"
                 >
                   <Plus className="h-3 w-3" />
@@ -575,7 +576,7 @@ export function BookingSidebar({
               variant="outline"
               size="sm"
               onClick={() => setGuestsOpen(false)}
-              className="w-full text-xs font-medium border border-[rgba(212,163,89,0.3)] bg-[#221810] hover:bg-[#2a1e14] text-[#FAF4EB]"
+              className="w-full text-xs font-medium border border-line bg-raised hover:bg-raised-hover text-fg"
             >
               {currentLocale === "ar" ? "تم" : "Done"}
             </Button>
@@ -601,17 +602,17 @@ export function BookingSidebar({
         {/* ======================================================== */}
         {/* STAY PURPOSE & MONETIZATION ADD-ONS                       */}
         {/* ======================================================== */}
-        <div className="pt-3 border-t border-[rgba(212,163,89,0.2)] space-y-2.5">
+        <div className="pt-3 border-t border-line-soft space-y-2.5">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-xs uppercase font-sans tracking-[0.14em] text-[#B8A692] font-semibold flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-[#E5C178]" />
+            <span className="text-xs uppercase font-sans tracking-[0.14em] text-fg-muted font-semibold flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-gold" />
               <span>{currentLocale === "ar" ? "الغرض من الإقامة (اختياري)" : "Stay Purpose (Optional)"}</span>
             </span>
             {selectedPurposeId && selectedPurposeId !== "accommodation_only" && (
               <button
                 type="button"
                 onClick={() => onSelectPurpose?.("accommodation_only")}
-                className="text-[11px] text-[#B8A692] hover:text-[#FAF4EB] underline cursor-pointer"
+                className="text-xs text-fg-muted hover:text-fg underline cursor-pointer"
               >
                 {currentLocale === "ar" ? "إعادة ضبط" : "Reset"}
               </button>
@@ -627,7 +628,7 @@ export function BookingSidebar({
                 onSelectPurpose?.(val);
               }}
               aria-label="Select stay purpose"
-              className="w-full rounded-xl border border-[rgba(212,163,89,0.25)] bg-[#16100B] px-3 py-2 text-xs font-medium text-[#FAF4EB] focus:border-[#E5C178] focus:outline-none cursor-pointer"
+              className="w-full rounded-xl border border-control bg-surface px-3 py-2 text-xs font-medium text-fg focus:border-gold focus:outline-none cursor-pointer"
             >
               <option value="accommodation_only">{currentLocale === "ar" ? "إقامة قياسية (سكن فقط)" : "Standard Stay (Accommodation Only)"}</option>
               <option value="medical">{currentLocale === "ar" ? "رعاية صحية ومرافقة مرضى (ميدستاي)" : "Hospital & Medical (Medistay)"}</option>
@@ -644,22 +645,22 @@ export function BookingSidebar({
         {/* ======================================================== */}
         {/* DETAILED BOOKING SUMMARY & PRD FORMULA BREAKDOWN        */}
         {/* ======================================================== */}
-        <div className="pt-4 border-t border-[rgba(212,163,89,0.2)] space-y-2.5 text-xs">
-          <div className="flex justify-between text-[#B8A692]">
+        <div className="pt-4 border-t border-line-soft space-y-2.5 text-xs">
+          <div className="flex justify-between text-fg-muted">
             <span>
               ₹{room.basePricePerNight.toLocaleString("en-IN")} × {totalNights}{" "}
               {currentLocale === "ar"
                 ? (totalNights === 1 ? "ليلة" : "ليالٍ")
                 : (totalNights > 1 ? "nights" : "night")}
             </span>
-            <span className="font-serif text-sm font-medium text-[#FAF4EB] tabular-nums">
+            <span className="font-serif text-sm font-medium text-fg tabular-nums">
               ₹{fareResult.standardBaseRent.toLocaleString("en-IN")}
             </span>
           </div>
 
           {/* Duration Discount (10% for 7-14N, 15% for 15-27N, 25% for 28+N) */}
           {fareResult.discountRate > 0 && (
-            <div className="flex justify-between text-[#E5C178] font-medium bg-[#E5C178]/10 px-2.5 py-1 rounded-lg border border-[#E5C178]/25 font-sans">
+            <div className="flex justify-between text-gold font-medium bg-gold/10 px-2.5 py-1 rounded-lg border border-gold/25 font-sans">
               <span>
                 {currentLocale === "ar"
                   ? `خصم الإقامة الطويلة (${fareResult.discountRate * 100}%-)`
@@ -671,25 +672,25 @@ export function BookingSidebar({
 
           {/* Extra guest fees: adults above base capacity (₹500/night each) and children above the included allowance (₹300/night each) */}
           {fareResult.extraAdults > 0 && (
-            <div className="flex justify-between text-[#B8A692]">
+            <div className="flex justify-between text-fg-muted">
               <span>
                 {currentLocale === "ar"
                   ? `نزلاء إضافيون (${fareResult.extraAdults} × ₹500 × ${totalNights} ليالٍ)`
                   : `Extra Adults (${fareResult.extraAdults} × ₹500 × ${totalNights}n)`}
               </span>
-              <span className="font-serif text-sm font-medium text-[#FAF4EB] tabular-nums">
+              <span className="font-serif text-sm font-medium text-fg tabular-nums">
                 ₹{(fareResult.extraGuestsTotal - (fareResult.extraKidsTotal ?? 0)).toLocaleString("en-IN")}
               </span>
             </div>
           )}
           {(fareResult.extraKids ?? 0) > 0 && (
-            <div className="flex justify-between text-[#B8A692]">
+            <div className="flex justify-between text-fg-muted">
               <span>
                 {currentLocale === "ar"
                   ? `أطفال إضافيون (${fareResult.extraKids} × ₹300 × ${totalNights} ليالٍ)`
                   : `Extra Children (${fareResult.extraKids} × ₹300 × ${totalNights}n)`}
               </span>
-              <span className="font-serif text-sm font-medium text-[#FAF4EB] tabular-nums">
+              <span className="font-serif text-sm font-medium text-fg tabular-nums">
                 ₹{(fareResult.extraKidsTotal ?? 0).toLocaleString("en-IN")}
               </span>
             </div>
@@ -697,50 +698,48 @@ export function BookingSidebar({
 
           {/* Paid add-ons (chosen in the services section) */}
           {activeAddons.length > 0 && (
-            <div className="flex justify-between text-[#B8A692] pt-1 border-t border-[rgba(212,163,89,0.15)]">
+            <div className="flex justify-between text-fg-muted pt-1 border-t border-line-soft">
               <span>
                 {currentLocale === "ar"
                   ? `الخدمات الإضافية (${activeAddons.length})`
                   : `Add-ons (${activeAddons.length})`}
               </span>
-              <span className="font-serif text-sm font-medium text-[#FAF4EB] tabular-nums">
+              <span className="font-serif text-sm font-medium text-fg tabular-nums">
                 ₹{fareResult.addonsTotal.toLocaleString("en-IN")}
               </span>
             </div>
           )}
 
           {/* Grand Total */}
-          <div className="flex justify-between items-baseline pt-2 border-t border-[rgba(212,163,89,0.2)] text-sm font-semibold text-[#FAF4EB]">
+          <div className="flex justify-between items-baseline pt-2 border-t border-line-soft text-sm font-semibold text-fg">
             <span>{currentLocale === "ar" ? "المجموع الإجمالي" : "Gross Total"}</span>
-            <span className="font-heading text-xl font-normal text-[#E5C178] tabular-nums">
-              ₹{fareResult.grossTotal.toLocaleString("en-IN")}
-            </span>
+            <AnimatedNumber prefix="₹" value={fareResult.grossTotal} className="font-heading text-xl font-normal text-gold tabular-nums" />
           </div>
 
           {/* ======================================================== */}
           {/* PAYMENT SPLIT: 20% ADVANCE NOW vs 80% REMAINING BALANCE  */}
           {/* ======================================================== */}
-          <div className="rounded-2xl border border-[rgba(212,163,89,0.3)] bg-[rgba(229,193,120,0.06)] p-3.5 space-y-2.5 mt-3">
+          <div className="rounded-2xl border border-line bg-gold/6 p-3.5 space-y-2.5 mt-3">
             <div className="flex items-center justify-between text-xs">
               <div className="flex items-center gap-1.5">
-                <CreditCard className="h-3.5 w-3.5 text-[#E5C178]" />
-                <span className="font-medium text-[#FAF4EB]">
+                <CreditCard className="h-3.5 w-3.5 text-gold" />
+                <span className="font-medium text-fg">
                   {currentLocale === "ar" ? "عربون حجز أونلاين (٢٠٪)" : "20% Online Advance Deposit"}
                 </span>
               </div>
-              <span className="font-heading text-lg font-normal text-[#FAF4EB] tabular-nums">
+              <span className="font-heading text-lg font-normal text-fg tabular-nums">
                 ₹{fareResult.advancePayable.toLocaleString("en-IN")}
               </span>
             </div>
 
-            <div className="flex items-center justify-between text-xs pt-2 border-t border-[rgba(212,163,89,0.2)] text-[#B8A692]">
+            <div className="flex items-center justify-between text-xs pt-2 border-t border-line-soft text-fg-muted">
               <div className="flex items-center gap-1.5">
-                <Building className="h-3.5 w-3.5 text-[#B8A692]" />
+                <Building className="h-3.5 w-3.5 text-fg-muted" />
                 <span>
                   {currentLocale === "ar" ? "المتبقي ٨٠٪ عند الوصول (نقداً / UPI)" : "80% Balance Due on Arrival (Cash / UPI)"}
                 </span>
               </div>
-              <span className="font-serif text-sm font-medium text-[#FAF4EB]/90 tabular-nums">
+              <span className="font-serif text-sm font-medium text-fg/90 tabular-nums">
                 ₹{fareResult.balanceDueOnArrival.toLocaleString("en-IN")}
               </span>
             </div>
@@ -762,9 +761,9 @@ export function BookingSidebar({
         <Button
           type="submit"
           disabled={isOverCapacity}
-          className="w-full h-12 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] hover:opacity-95 text-[#140E08] font-bold text-sm tracking-wide transition-all shadow-lg shadow-[rgba(229,193,120,0.2)] active:scale-[0.99] mt-3 flex items-center justify-center gap-2 cursor-pointer"
+          className="w-full h-12 rounded-xl bg-gradient-to-r from-gold to-gold-deep hover:opacity-95 text-ink font-bold text-sm tracking-wide transition-all shadow-lg shadow-gold/20 active:scale-[0.99] mt-3 flex items-center justify-center gap-2 cursor-pointer"
         >
-          <ShieldCheck className="w-4 h-4 text-[#140E08]" />
+          <ShieldCheck className="w-4 h-4 text-ink" />
           <span>
             {currentLocale === "ar"
               ? `احجز الآن — ادفع ₹${fareResult.advancePayable.toLocaleString("en-IN")} كعربون`
@@ -773,8 +772,8 @@ export function BookingSidebar({
         </Button>
 
         {/* Transparent Policy Reassurance */}
-        <div className="pt-2 text-center text-xs text-[#B8A692] flex items-center justify-center gap-1.5 leading-relaxed">
-          <ShieldCheck className="w-3.5 h-3.5 text-[#E5C178] shrink-0" />
+        <div className="pt-2 text-center text-xs text-fg-muted flex items-center justify-center gap-1.5 leading-relaxed">
+          <ShieldCheck className="w-3.5 h-3.5 text-gold shrink-0" />
           <span>
             {currentLocale === "ar"
               ? "ادفع ٢٠٪ الآن · والباقي ٨٠٪ عند تسجيل الوصول · إلغاء مجاني حتى ٤٨ ساعة"
@@ -787,10 +786,10 @@ export function BookingSidebar({
           href={whatsappUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="w-full mt-2 py-2.5 px-3 rounded-xl border border-[rgba(212,163,89,0.3)] hover:border-[#E5C178] bg-[#16100B]/60 text-xs text-[#FAF4EB] hover:text-[#E5C178] font-medium flex items-center justify-center gap-2 transition-colors cursor-pointer group"
+          className="w-full mt-2 py-2.5 px-3 rounded-xl border border-line hover:border-gold bg-surface/60 text-xs text-fg hover:text-gold font-medium flex items-center justify-center gap-2 transition-colors cursor-pointer group"
           aria-label="Ask questions on WhatsApp"
         >
-          <MessageSquare className="w-3.5 h-3.5 text-[#25D366] group-hover:scale-110 transition-transform" />
+          <MessageSquare className="w-3.5 h-3.5 text-whatsapp group-hover:scale-110 transition-transform" />
           <span>
             {currentLocale === "ar"
               ? "لديك استفسار؟ تحدث مع موظف الاستقبال عبر واتساب"
@@ -803,27 +802,25 @@ export function BookingSidebar({
       <div
         ref={mobileBarRef}
         className={cn(
-          "lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[rgba(22,16,11,0.96)] backdrop-blur-md border-t border-[rgba(212,163,89,0.25)] px-4 py-3 flex items-center justify-between shadow-2xl transition-all duration-300",
+          "lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-surface/96 backdrop-blur-md border-t border-line px-4 py-3 flex items-center justify-between shadow-2xl transition-all duration-300",
           isPanelInView ? "translate-y-full opacity-0 pointer-events-none" : "translate-y-0 opacity-100"
         )}
       >
         <div className="min-w-0 pr-3">
           <div className="flex items-center gap-1.5">
-            <span className="text-[11px] text-[#B8A692] uppercase tracking-wider truncate font-sans font-medium">
+            <span className="text-xs text-fg-muted uppercase tracking-wider truncate font-sans font-medium">
               {checkIn && checkOut
                 ? (currentLocale === "ar" ? `إجمالي ${totalNights} ليالٍ` : `${totalNights}N Total`)
                 : (currentLocale === "ar" ? "ابتداءً من" : "Starting from")}
             </span>
             {activePurposeLabel && (
-              <span className="text-[11px] font-sans font-medium text-[#E5C178] bg-[#E5C178]/10 px-1.5 py-0.5 rounded border border-[#E5C178]/25 truncate max-w-[130px]">
+              <span className="text-xs font-sans font-medium text-gold bg-gold/10 px-1.5 py-0.5 rounded border border-gold/25 truncate max-w-[130px]">
                 {activePurposeLabel.split("—")[0].trim()}
               </span>
             )}
           </div>
-          <div className="font-heading text-lg font-semibold text-[#FAF4EB] tabular-nums">
-            ₹{fareResult.grossTotal.toLocaleString("en-IN")}
-          </div>
-          <div className="text-[11px] text-[#E5C178] font-sans font-medium tabular-nums">
+          <div className="font-heading text-lg font-semibold text-fg tabular-nums"><AnimatedNumber prefix="₹" value={fareResult.grossTotal} /></div>
+          <div className="text-xs text-gold font-sans font-medium tabular-nums">
             {currentLocale === "ar"
               ? `العربون: ₹${fareResult.advancePayable.toLocaleString("en-IN")} (٢٠٪)`
               : `Advance: ₹${fareResult.advancePayable.toLocaleString("en-IN")} (20%)`}
@@ -832,7 +829,7 @@ export function BookingSidebar({
         <Button
           type="button"
           onClick={() => setIsMobileSheetOpen(true)}
-          className="bg-gradient-to-r from-[#E5C178] to-[#C69344] hover:opacity-95 text-[#140E08] font-bold text-xs h-10 px-4 rounded-xl shadow-md cursor-pointer shrink-0"
+          className="bg-gradient-to-r from-gold to-gold-deep hover:opacity-95 text-ink font-bold text-xs h-10 px-4 rounded-xl shadow-md cursor-pointer shrink-0"
         >
           <span>
             {checkIn && checkOut
@@ -850,28 +847,28 @@ export function BookingSidebar({
           role="dialog"
           aria-modal="true"
           aria-labelledby="mobile-booking-sheet-title"
-          className="lg:hidden fixed inset-0 z-50 flex flex-col justify-end bg-[#0E0A07]/85 backdrop-blur-sm animate-in fade-in duration-200"
+          className="lg:hidden fixed inset-0 z-50 flex flex-col justify-end bg-canvas/85 backdrop-blur-sm animate-in fade-in duration-200"
           onClick={() => setIsMobileSheetOpen(false)}
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-h-[88vh] overflow-y-auto rounded-t-3xl bg-[#16100B] border-t border-[rgba(212,163,89,0.3)] p-5 shadow-2xl text-[#FAF4EB] animate-in slide-in-from-bottom duration-200 space-y-4"
+            className="w-full max-h-[88vh] overflow-y-auto rounded-t-3xl bg-surface border-t border-line p-5 shadow-2xl text-fg animate-in slide-in-from-bottom duration-200 space-y-4"
           >
             {/* Sheet Handle & Close */}
-            <div className="w-10 h-1 rounded-full bg-[rgba(212,163,89,0.3)] mx-auto" />
-            <div className="flex items-center justify-between pb-3 border-b border-[rgba(212,163,89,0.2)]">
+            <div className="w-10 h-1 rounded-full bg-gold/30 mx-auto" />
+            <div className="flex items-center justify-between pb-3 border-b border-line-soft">
               <div>
-                <span className="text-[11px] font-sans font-medium tracking-[0.18em] uppercase text-[#E5C178]">
+                <span className="text-xs font-sans font-medium tracking-[0.18em] uppercase text-gold">
                   {currentLocale === "ar" ? "لوحة الحجز السريع" : "Mobile Booking Panel"}
                 </span>
-                <h3 id="mobile-booking-sheet-title" className="font-heading text-xl font-normal text-[#FAF4EB]">
+                <h3 id="mobile-booking-sheet-title" className="font-heading text-xl font-normal text-fg">
                   {room.title}
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setIsMobileSheetOpen(false)}
-                className="h-11 w-11 rounded-xl border border-[rgba(212,163,89,0.25)] bg-[#221810] text-[#B8A692] hover:text-[#FAF4EB] flex items-center justify-center cursor-pointer text-sm font-bold transition-colors"
+                className="h-11 w-11 rounded-xl border border-line bg-raised text-fg-muted hover:text-fg flex items-center justify-center cursor-pointer text-sm font-bold transition-colors"
                 aria-label="Close booking panel"
               >
                 ✕
@@ -883,37 +880,37 @@ export function BookingSidebar({
               <button
                 type="button"
                 onClick={() => setCheckInOpen(true)}
-                className="flex flex-col items-start p-2.5 rounded-xl bg-[#221810] border border-[rgba(212,163,89,0.25)] text-left"
+                className="flex flex-col items-start p-2.5 rounded-xl bg-raised border border-line text-left"
               >
-                <span className="text-[11px] uppercase font-sans font-semibold tracking-wider text-[#FAF4EB]/80">
+                <span className="text-xs uppercase font-sans font-semibold tracking-wider text-fg/80">
                   {currentLocale === "ar" ? "تسجيل الوصول" : "Check-In"}
                 </span>
-                <span className="text-xs font-medium text-[#FAF4EB] mt-0.5 truncate">
+                <span className="text-xs font-medium text-fg mt-0.5 truncate">
                   {checkIn ? format(checkIn, "d MMM yyyy") : (currentLocale === "ar" ? "اختر التاريخ" : "Select date")}
                 </span>
               </button>
               <button
                 type="button"
                 onClick={() => setCheckOutOpen(true)}
-                className="flex flex-col items-start p-2.5 rounded-xl bg-[#221810] border border-[rgba(212,163,89,0.25)] text-left"
+                className="flex flex-col items-start p-2.5 rounded-xl bg-raised border border-line text-left"
               >
-                <span className="text-[11px] uppercase font-sans font-semibold tracking-wider text-[#FAF4EB]/80">
+                <span className="text-xs uppercase font-sans font-semibold tracking-wider text-fg/80">
                   {currentLocale === "ar" ? "تسجيل المغادرة" : "Check-Out"}
                 </span>
-                <span className="text-xs font-medium text-[#FAF4EB] mt-0.5 truncate">
+                <span className="text-xs font-medium text-fg mt-0.5 truncate">
                   {checkOut ? format(checkOut, "d MMM yyyy") : (currentLocale === "ar" ? "اختر التاريخ" : "Select date")}
                 </span>
               </button>
             </div>
 
             {/* Guests in Sheet */}
-            <div className="p-3 rounded-xl bg-[#221810] border border-[rgba(212,163,89,0.25)] space-y-2.5">
+            <div className="p-3 rounded-xl bg-raised border border-line space-y-2.5">
               <div className="flex items-center justify-between text-xs">
                 <div>
-                  <span className="font-medium text-[#FAF4EB] block">
+                  <span className="font-medium text-fg block">
                     {currentLocale === "ar" ? "البالغين (١٣+ سنة)" : "Adults (13+ yrs)"}
                   </span>
-                  <span className="text-[10px] text-[#B8A692]">
+                  <span className="text-xs text-fg-muted">
                     {currentLocale === "ar" ? `الحد الأقصى ${room.maxAdults} بالغين` : `Max ${room.maxAdults} adults`}
                   </span>
                 </div>
@@ -922,28 +919,28 @@ export function BookingSidebar({
                     type="button"
                     onClick={() => setAdults((prev) => Math.max(1, prev - 1))}
                     disabled={adults <= 1}
-                    className="h-8 w-8 rounded-lg border border-[rgba(212,163,89,0.25)] bg-[#16100B] flex items-center justify-center text-[#FAF4EB] disabled:opacity-30 cursor-pointer"
+                    className="h-8 w-8 rounded-lg border border-line bg-surface flex items-center justify-center text-fg disabled:opacity-30 cursor-pointer"
                   >
                     <Minus className="h-3 w-3" />
                   </button>
-                  <span className="w-5 text-center font-sans font-semibold text-sm text-[#FAF4EB]">{adults}</span>
+                  <span className="w-5 text-center font-sans font-semibold text-sm text-fg">{adults}</span>
                   <button
                     type="button"
                     onClick={() => setAdults((prev) => Math.min(room.maxAdults, prev + 1))}
                     disabled={adults >= room.maxAdults}
-                    className="h-8 w-8 rounded-lg border border-[rgba(212,163,89,0.25)] bg-[#16100B] flex items-center justify-center text-[#FAF4EB] disabled:opacity-30 cursor-pointer"
+                    className="h-8 w-8 rounded-lg border border-line bg-surface flex items-center justify-center text-fg disabled:opacity-30 cursor-pointer"
                   >
                     <Plus className="h-3 w-3" />
                   </button>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between text-xs pt-2 border-t border-[rgba(212,163,89,0.2)]">
+              <div className="flex items-center justify-between text-xs pt-2 border-t border-line-soft">
                 <div>
-                  <span className="font-medium text-[#FAF4EB] block">
+                  <span className="font-medium text-fg block">
                     {currentLocale === "ar" ? "الأطفال (٠–١٢ سنة)" : "Children (0–12 yrs)"}
                   </span>
-                  <span className="text-[10px] text-[#B8A692]">
+                  <span className="text-xs text-fg-muted">
                     {currentLocale === "ar" ? "الأطفال الإضافيون ₹٣٠٠ لليلة" : "Extra children ₹300/night"}
                   </span>
                 </div>
@@ -952,15 +949,15 @@ export function BookingSidebar({
                     type="button"
                     onClick={() => setChildrenCount((prev) => Math.max(0, prev - 1))}
                     disabled={childrenCount <= 0}
-                    className="h-8 w-8 rounded-lg border border-[rgba(212,163,89,0.25)] bg-[#16100B] flex items-center justify-center text-[#FAF4EB] disabled:opacity-30 cursor-pointer"
+                    className="h-8 w-8 rounded-lg border border-line bg-surface flex items-center justify-center text-fg disabled:opacity-30 cursor-pointer"
                   >
                     <Minus className="h-3 w-3" />
                   </button>
-                  <span className="w-5 text-center font-sans font-semibold text-sm text-[#FAF4EB]">{childrenCount}</span>
+                  <span className="w-5 text-center font-sans font-semibold text-sm text-fg">{childrenCount}</span>
                   <button
                     type="button"
                     onClick={() => setChildrenCount((prev) => prev + 1)}
-                    className="h-8 w-8 rounded-lg border border-[rgba(212,163,89,0.25)] bg-[#16100B] flex items-center justify-center text-[#FAF4EB] cursor-pointer"
+                    className="h-8 w-8 rounded-lg border border-line bg-surface flex items-center justify-center text-fg cursor-pointer"
                   >
                     <Plus className="h-3 w-3" />
                   </button>
@@ -971,14 +968,14 @@ export function BookingSidebar({
             {/* Stay Purpose in Sheet */}
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-[11px] font-sans font-medium tracking-[0.18em] uppercase text-[#B8A692]">
+                <span className="text-xs font-sans font-medium tracking-[0.18em] uppercase text-fg-muted">
                   {currentLocale === "ar" ? "الغرض من الإقامة" : "Stay Purpose (Step 2)"}
                 </span>
                 {selectedPurposeId && (
                   <button
                     type="button"
                     onClick={() => onSelectPurpose && onSelectPurpose("accommodation_only")}
-                    className="text-[10px] text-[#B8A692] hover:text-[#FAF4EB] underline cursor-pointer"
+                    className="text-xs text-fg-muted hover:text-fg underline cursor-pointer"
                   >
                     {currentLocale === "ar" ? "إقامة فقط" : "Accommodation only"}
                   </button>
@@ -990,7 +987,7 @@ export function BookingSidebar({
                   const val = e.target.value as StayPurposeType;
                   onSelectPurpose?.(val);
                 }}
-                className="w-full rounded-xl border border-[rgba(212,163,89,0.25)] bg-[#16100B] px-3 py-2 text-xs font-medium text-[#FAF4EB] focus:border-[#E5C178] focus:outline-none"
+                className="w-full rounded-xl border border-control bg-surface px-3 py-2 text-xs font-medium text-fg focus:border-gold focus:outline-none"
               >
                 <option value="accommodation_only">{currentLocale === "ar" ? "إقامة قياسية (سكن فقط)" : "Standard Stay (Accommodation Only)"}</option>
                 <option value="medical">{currentLocale === "ar" ? "رعاية صحية ومرافقة مرضى (ميدستاي)" : "Hospital & Medical (Medistay)"}</option>
@@ -1004,32 +1001,32 @@ export function BookingSidebar({
             </div>
 
             {/* Sheet Fare Breakdown */}
-            <div className="p-3.5 rounded-xl bg-[#221810] border border-[rgba(212,163,89,0.25)] space-y-1.5 text-xs">
-              <div className="flex justify-between text-[#B8A692]">
+            <div className="p-3.5 rounded-xl bg-raised border border-line space-y-1.5 text-xs">
+              <div className="flex justify-between text-fg-muted">
                 <span>
                   {currentLocale === "ar"
                     ? `الإيجار الأساسي (${totalNights} ليالٍ)`
                     : `Base Rent (${totalNights}N)`}
                 </span>
-                <span className="font-serif text-sm font-medium text-[#FAF4EB] tabular-nums">₹{fareResult.baseRent.toLocaleString("en-IN")}</span>
+                <span className="font-serif text-sm font-medium text-fg tabular-nums">₹{fareResult.baseRent.toLocaleString("en-IN")}</span>
               </div>
               {fareResult.extraGuestsTotal > 0 && (
-                <div className="flex justify-between text-[#B8A692]">
+                <div className="flex justify-between text-fg-muted">
                   <span>{currentLocale === "ar" ? "رسوم النزلاء الإضافيين" : "Extra Guest Charges"}</span>
-                  <span className="font-serif text-sm font-medium text-[#FAF4EB] tabular-nums">₹{fareResult.extraGuestsTotal.toLocaleString("en-IN")}</span>
+                  <span className="font-serif text-sm font-medium text-fg tabular-nums">₹{fareResult.extraGuestsTotal.toLocaleString("en-IN")}</span>
                 </div>
               )}
               {fareResult.addonsTotal > 0 && (
-                <div className="flex justify-between text-[#B8A692]">
+                <div className="flex justify-between text-fg-muted">
                   <span>{currentLocale === "ar" ? "الخدمات الإضافية" : "Add-ons"}</span>
-                  <span className="font-serif text-sm font-medium text-[#FAF4EB] tabular-nums">₹{fareResult.addonsTotal.toLocaleString("en-IN")}</span>
+                  <span className="font-serif text-sm font-medium text-fg tabular-nums">₹{fareResult.addonsTotal.toLocaleString("en-IN")}</span>
                 </div>
               )}
-              <div className="pt-2 border-t border-[rgba(212,163,89,0.2)] flex justify-between font-semibold text-sm">
+              <div className="pt-2 border-t border-line-soft flex justify-between font-semibold text-sm">
                 <span>{currentLocale === "ar" ? "المجموع الإجمالي" : "Gross Total"}</span>
-                <span className="font-heading text-base font-normal text-[#E5C178] tabular-nums">₹{fareResult.grossTotal.toLocaleString("en-IN")}</span>
+                <AnimatedNumber prefix="₹" value={fareResult.grossTotal} className="font-heading text-base font-normal text-gold tabular-nums" />
               </div>
-              <div className="flex justify-between text-[11px] text-[#E5C178] pt-1">
+              <div className="flex justify-between text-xs text-gold pt-1">
                 <span>{currentLocale === "ar" ? "٢٠٪ عربون الحجز المستحق أونلاين:" : "20% Online Advance Due:"}</span>
                 <span className="font-serif font-bold tabular-nums">₹{fareResult.advancePayable.toLocaleString("en-IN")}</span>
               </div>
@@ -1047,7 +1044,7 @@ export function BookingSidebar({
               type="button"
               onClick={handleProceedToBook}
               disabled={isOverCapacity}
-              className="w-full h-12 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] font-bold text-sm cursor-pointer shadow-lg active:scale-[0.99]"
+              className="w-full h-12 rounded-xl bg-gradient-to-r from-gold to-gold-deep text-ink font-bold text-sm cursor-pointer shadow-lg active:scale-[0.99]"
             >
               <ShieldCheck className="w-4 h-4 mr-2" />
               <span>

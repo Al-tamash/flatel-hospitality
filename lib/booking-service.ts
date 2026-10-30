@@ -10,7 +10,7 @@ import { InventoryService } from "@/lib/inventory-service";
 import { CalendarService } from "@/lib/calendar-service";
 import { getMasterAddonById } from "@/lib/mock-rooms";
 import { MembershipService } from "@/lib/membership/membership-service";
-import { MEMBERSHIP } from "@/lib/membership/membership-content";
+import { getMembershipTier } from "@/lib/membership/membership-content";
 import { MAX_CART_FLATS, type CartItem } from "@/lib/booking/cart";
 import { notifyBookingConfirmed } from "@/lib/notifications/dispatch";
 
@@ -332,7 +332,7 @@ export class BookingService {
       selectedKids: data.kidsCount,
       extraPersonFee: room.extraPersonFeePerNight,
       selectedPaidAddons: verifiedAddons,
-      memberDiscountRate: verifiedMember ? MEMBERSHIP.stayDiscountPercent / 100 : undefined,
+      memberDiscountRate: verifiedMember ? getMembershipTier(verifiedMember.tier).discountPercent / 100 : undefined,
     });
 
     const bookingId = crypto.randomUUID();

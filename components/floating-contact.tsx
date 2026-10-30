@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { usePathname } from "next/navigation";
-import { Phone } from "lucide-react";
+import { MessageCircle, Phone, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CONTACT_PHONE, WHATSAPP_CONFIG } from "@/lib/constants";
 import { getLocaleFromPath } from "@/lib/i18n";
@@ -47,6 +47,17 @@ export function FloatingContact() {
   const isAr = locale === "ar";
   const [scrollLocked, setScrollLocked] = React.useState(false);
   const [flatTitle, setFlatTitle] = React.useState<string | undefined>(undefined);
+  // On phones the two buttons fold into one, so they stop covering page content
+  const [expanded, setExpanded] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!expanded) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setExpanded(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [expanded]);
 
   // Hide while a modal or lightbox locks page scroll
   React.useEffect(() => {
@@ -70,31 +81,46 @@ export function FloatingContact() {
   const side = floatingSide(locale);
   const whatsappUrl = WHATSAPP_CONFIG.getUrl(buildWhatsAppGreeting({ locale, flatTitle }));
   const button =
-    "h-12 w-12 rounded-full bg-[#16100B] border border-[#E5C178]/70 text-[#E5C178] flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.6)] hover:bg-[#221810] hover:border-[#E5C178] hover:scale-105 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E5C178] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0E0A07]";
+    "h-12 w-12 rounded-full bg-surface border border-gold/70 text-gold flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.6)] hover:bg-raised hover:border-gold hover:scale-105 transition-all cursor-pointer";
 
   return (
-    <div
-      className={cn("fixed z-30 flex flex-col gap-3", side === "right" ? "right-4" : "left-4")}
+    <aside
+      aria-label={isAr ? "تواصل سريع" : "Quick contact"}
+      className={cn("fixed z-30 flex flex-col gap-3 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-700 fill-mode-backwards", side === "right" ? "right-4" : "left-4")}
       style={{ bottom: `calc(1rem + var(${OFFSET_VAR}, 0px))` }}
     >
-      <a
-        href={whatsappUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={button}
-        aria-label={isAr ? "تواصل عبر واتساب" : "Chat on WhatsApp"}
-        title={isAr ? "تواصل عبر واتساب" : "Chat on WhatsApp"}
+      <div id="floating-contact-actions" className={cn("flex-col gap-3", expanded ? "flex" : "hidden sm:flex")}>
+        <a
+          href={whatsappUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={button}
+          onClick={() => setExpanded(false)}
+          aria-label={isAr ? "تواصل عبر واتساب" : "Chat on WhatsApp"}
+          title={isAr ? "تواصل عبر واتساب" : "Chat on WhatsApp"}
+        >
+          <WhatsAppIcon className="w-5 h-5" />
+        </a>
+        <a
+          href={`tel:${CONTACT_PHONE.replace(/\s+/g, "")}`}
+          className={button}
+          onClick={() => setExpanded(false)}
+          aria-label={isAr ? "اتصل بفلاتيل" : "Call Flatel"}
+          title={isAr ? "اتصل بفلاتيل" : "Call Flatel"}
+        >
+          <Phone className="w-5 h-5" />
+        </a>
+      </div>
+      <button
+        type="button"
+        className={cn(button, "sm:hidden")}
+        aria-expanded={expanded}
+        aria-controls="floating-contact-actions"
+        aria-label={isAr ? (expanded ? "إغلاق خيارات التواصل" : "تواصل معنا") : expanded ? "Close contact options" : "Contact us"}
+        onClick={() => setExpanded((open) => !open)}
       >
-        <WhatsAppIcon className="w-5 h-5" />
-      </a>
-      <a
-        href={`tel:${CONTACT_PHONE.replace(/\s+/g, "")}`}
-        className={button}
-        aria-label={isAr ? "اتصل بفلاتيل" : "Call Flatel"}
-        title={isAr ? "اتصل بفلاتيل" : "Call Flatel"}
-      >
-        <Phone className="w-5 h-5" />
-      </a>
-    </div>
+        {expanded ? <X className="w-5 h-5" aria-hidden="true" /> : <MessageCircle className="w-5 h-5" aria-hidden="true" />}
+      </button>
+    </aside>
   );
 }

@@ -9,6 +9,7 @@ import { FaqSection } from "@/components/faq-section";
 import { FounderStrip } from "@/components/home/founder-strip";
 import { MembershipStrip } from "@/components/home/membership-strip";
 import { SiteFooter } from "@/components/site-footer";
+import { Reveal } from "@/components/motion/reveal";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -23,31 +24,31 @@ export default function ArabicHomePage() {
       {/* 1. Header with Language Switcher */}
       <SiteHeader />
 
-      <main className="flex-1 w-full">
+      <main id="main-content" tabIndex={-1} className="flex-1 w-full">
         {/* 2. Hero Section with Arabic Editorial & RTL Layout */}
         <HeroSection />
 
         {/* 3. Featured Flats */}
-        <FeaturedFlats />
+        <Reveal><FeaturedFlats /></Reveal>
 
         {/* 4. Prime Branches */}
-        <BranchHub />
+        <Reveal><BranchHub /></Reveal>
 
         {/* 5. Inclusions & Amenities */}
-        <AmenitiesSection />
+        <Reveal><AmenitiesSection /></Reveal>
 
         {/* 6. Healthcare & Hospitals Guide */}
-        <NearbyHospitals />
+        <Reveal><NearbyHospitals /></Reveal>
 
         {/* 7. Booking Steps */}
-        <BookingSteps />
+        <Reveal><BookingSteps /></Reveal>
 
         {/* 8. Frequently Asked Questions */}
-        <MembershipStrip locale="ar" />
+        <Reveal><MembershipStrip locale="ar" /></Reveal>
 
-        <FounderStrip locale="ar" />
+        <Reveal><FounderStrip locale="ar" /></Reveal>
 
-        <FaqSection />
+        <Reveal><FaqSection /></Reveal>
       </main>
 
       {/* Footer */}

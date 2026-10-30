@@ -68,7 +68,7 @@ export default async function ArabicPropertyPage({ params }: ArabicPropertyPageP
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col selection:bg-primary/20 selection:text-primary font-arabic" dir="rtl">
       <SiteHeader />
-      <main className="flex-1 w-full">
+      <main id="main-content" tabIndex={-1} className="flex-1 w-full">
         <RoomDetailView room={room} requestedId={slug} />
       </main>
       <SiteFooter />

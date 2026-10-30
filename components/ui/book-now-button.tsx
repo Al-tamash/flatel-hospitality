@@ -37,18 +37,18 @@ export function BookNowButton({
     "inline-flex items-center justify-center font-sans tracking-[0.08em] uppercase transition-all duration-200 select-none cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-gold-primary disabled:pointer-events-none disabled:opacity-50 active:translate-y-[0.5px] min-h-[44px]";
 
   const sizeStyles = {
-    sm: "h-10 px-4 text-[11px] font-bold rounded-xl",
-    default: "h-11 px-6 text-[12px] font-bold rounded-xl",
-    lg: "h-12 px-8 text-[13px] font-bold rounded-xl",
+    sm: "h-10 px-4 text-xs font-bold rounded-xl",
+    default: "h-11 px-6 text-xs font-bold rounded-xl",
+    lg: "h-12 px-8 text-sm font-bold rounded-xl",
   };
 
   const variantStyles = {
     primary:
-      "bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] font-bold border border-[#FFF4C2]/35 shadow-md shadow-[#E5C178]/20 hover:brightness-105 active:scale-[0.98]",
+      "bg-gradient-to-r from-gold to-gold-deep text-ink font-bold border border-gold-bright/35 shadow-md shadow-gold/20 hover:brightness-105 active:scale-[0.98]",
     secondary:
-      "bg-[rgba(34,24,16,0.65)] backdrop-blur-md text-[#FAF4EB] border border-[rgba(212,163,89,0.28)] hover:border-[#E5C178] hover:text-[#E5C178] active:bg-[#16100B]",
+      "bg-raised/65 backdrop-blur-md text-fg border border-line hover:border-gold hover:text-gold active:bg-surface",
     outline:
-      "border border-[rgba(212,163,89,0.5)] text-[#E5C178] hover:bg-[rgba(212,163,89,0.1)] active:bg-[rgba(212,163,89,0.2)]",
+      "border border-line-strong text-gold hover:bg-gold/10 active:bg-gold/20",
   };
 
   const classes = cn(

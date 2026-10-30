@@ -126,13 +126,13 @@ export default function AdminCalendarPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <p className="text-[11px] font-medium tracking-[0.18em] uppercase text-[#E5C178] mb-1">
+          <p className="text-xs font-medium tracking-[0.18em] uppercase text-gold mb-1">
             Availability Engine
           </p>
-          <h1 className="font-serif text-2xl sm:text-3xl font-normal text-[#FAF4EB] tracking-tight">
+          <h1 className="font-serif text-2xl sm:text-3xl font-normal text-fg">
             Calendar Blackout & Maintenance
           </h1>
-          <p className="text-xs sm:text-sm text-[#B8A692] mt-1">
+          <p className="text-xs sm:text-sm text-fg-muted mt-1">
             Manually lock dates for routine maintenance, deep cleaning, or offline private owner bookings.
           </p>
         </div>
@@ -140,9 +140,9 @@ export default function AdminCalendarPage() {
           type="button"
           onClick={fetchData}
           disabled={isLoading}
-          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#16100B] hover:bg-[#221810] border border-[rgba(212,163,89,0.25)] text-xs text-[#FAF4EB] transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-surface hover:bg-raised border border-line text-xs text-fg transition-colors cursor-pointer"
         >
-          <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin text-[#E5C178]" : "text-[#E5C178]"}`} />
+          <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin text-gold" : "text-gold"}`} />
           <span>Refresh</span>
         </button>
       </div>
@@ -163,25 +163,25 @@ export default function AdminCalendarPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Create Blackout Form */}
-        <div className="rounded-2xl bg-[rgba(34,24,16,0.75)] border border-[rgba(212,163,89,0.25)] backdrop-blur-md p-5 shadow-xl h-fit">
-          <h3 className="font-serif text-lg font-normal text-[#FAF4EB] flex items-center gap-2 mb-4">
-            <CalendarX className="w-4 h-4 text-[#E5C178]" />
+        <div className="rounded-2xl bg-raised/75 border border-line backdrop-blur-md p-5 shadow-xl h-fit">
+          <h3 className="font-serif text-lg font-normal text-fg flex items-center gap-2 mb-4">
+            <CalendarX className="w-4 h-4 text-gold" />
             <span>Block Specific Dates</span>
           </h3>
 
           <form onSubmit={handleAddBlock} className="space-y-3.5 text-xs">
             <div>
-              <label htmlFor="calendar-unit" className="text-[11px] font-medium tracking-[0.18em] uppercase text-[#B8A692] block mb-1.5">
+              <label htmlFor="calendar-unit" className="text-xs font-medium tracking-[0.18em] uppercase text-fg-muted block mb-1.5">
                 Select Flat Unit
               </label>
               <select
                 id="calendar-unit"
                 value={selectedUnit}
                 onChange={(e) => setSelectedUnit(e.target.value)}
-                className="w-full bg-[#16100B]/90 border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:ring-1 focus:ring-[#E5C178] focus:outline-none transition-colors"
+                className="w-full bg-surface/90 border border-control rounded-xl px-3 py-2 text-fg focus:border-gold focus:ring-1 focus:ring-gold focus:outline-none transition-colors"
               >
                 {units.map((u) => (
-                  <option key={u.id} value={u.slug} className="bg-[#16100B] text-[#FAF4EB]">
+                  <option key={u.id} value={u.slug} className="bg-surface text-fg">
                     {u.title} ({u.category} • {u.branchSlug === "barkas-salala" ? "Barkas" : "Moghal Pura"})
                   </option>
                 ))}
@@ -190,7 +190,7 @@ export default function AdminCalendarPage() {
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-              <label htmlFor="calendar-start-date" className="text-[11px] font-medium tracking-[0.18em] uppercase text-[#B8A692] block mb-1.5">
+              <label htmlFor="calendar-start-date" className="text-xs font-medium tracking-[0.18em] uppercase text-fg-muted block mb-1.5">
                   Start Date
                 </label>
                 <input
@@ -200,11 +200,11 @@ export default function AdminCalendarPage() {
                   min={getLocalDateInputValue()}
                   value={dateStart}
                   onChange={(e) => setDateStart(e.target.value)}
-                  className="w-full bg-[#16100B]/90 border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:ring-1 focus:ring-[#E5C178] focus:outline-none transition-colors"
+                  className="w-full bg-surface/90 border border-control rounded-xl px-3 py-2 text-fg focus:border-gold focus:ring-1 focus:ring-gold focus:outline-none transition-colors"
                 />
               </div>
               <div>
-                <label htmlFor="calendar-end-date" className="text-[11px] font-medium tracking-[0.18em] uppercase text-[#B8A692] block mb-1.5">
+                <label htmlFor="calendar-end-date" className="text-xs font-medium tracking-[0.18em] uppercase text-fg-muted block mb-1.5">
                   End Date
                 </label>
                 <input
@@ -214,13 +214,13 @@ export default function AdminCalendarPage() {
                   min={dateStart || getLocalDateInputValue()}
                   value={dateEnd}
                   onChange={(e) => setDateEnd(e.target.value)}
-                  className="w-full bg-[#16100B]/90 border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:ring-1 focus:ring-[#E5C178] focus:outline-none transition-colors"
+                  className="w-full bg-surface/90 border border-control rounded-xl px-3 py-2 text-fg focus:border-gold focus:ring-1 focus:ring-gold focus:outline-none transition-colors"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="calendar-reason" className="text-[11px] font-medium tracking-[0.18em] uppercase text-[#B8A692] block mb-1.5">
+              <label htmlFor="calendar-reason" className="text-xs font-medium tracking-[0.18em] uppercase text-fg-muted block mb-1.5">
                 Reason / Maintenance Note
               </label>
               <input
@@ -231,14 +231,14 @@ export default function AdminCalendarPage() {
                 placeholder="Enter the reason for blocking these dates"
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
-                className="w-full bg-[#16100B]/90 border border-[rgba(212,163,89,0.25)] rounded-xl px-3 py-2 text-[#FAF4EB] focus:border-[#E5C178] focus:ring-1 focus:ring-[#E5C178] focus:outline-none transition-colors"
+                className="w-full bg-surface/90 border border-control rounded-xl px-3 py-2 text-fg focus:border-gold focus:ring-1 focus:ring-gold focus:outline-none transition-colors"
               />
             </div>
 
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full mt-2 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] hover:brightness-110 text-[#140E08] font-bold text-xs transition-all shadow-md shadow-[#E5C178]/15 disabled:opacity-50 cursor-pointer"
+              className="w-full mt-2 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-gold to-gold-deep hover:brightness-110 text-ink font-bold text-xs transition-all shadow-md shadow-gold/15 disabled:opacity-50 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>{isSubmitting ? "Locking Dates..." : "Block Dates in Database"}</span>
@@ -247,44 +247,44 @@ export default function AdminCalendarPage() {
         </div>
 
         {/* Existing Blackout List */}
-        <div className="lg:col-span-2 rounded-2xl bg-[rgba(34,24,16,0.75)] border border-[rgba(212,163,89,0.25)] backdrop-blur-md p-5 shadow-xl">
+        <div className="lg:col-span-2 rounded-2xl bg-raised/75 border border-line backdrop-blur-md p-5 shadow-xl">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-serif text-lg font-normal text-[#FAF4EB] flex items-center gap-2">
-              <Clock className="w-4 h-4 text-[#E5C178]" />
+            <h3 className="font-serif text-lg font-normal text-fg flex items-center gap-2">
+              <Clock className="w-4 h-4 text-gold" />
               <span>Active Date Blocks <span className="font-serif oldstyle-nums">({blocks.length})</span></span>
             </h3>
-            <span className="text-xs text-[#B8A692]">
+            <span className="text-xs text-fg-muted">
               These dates are rejected by the booking availability engine.
             </span>
           </div>
 
           <div className="space-y-3">
             {blocks.length === 0 ? (
-              <div className="p-8 text-center text-[#B8A692] text-xs">
+              <div className="p-8 text-center text-fg-muted text-xs">
                 No active calendar blackouts. All flats are open for booking.
               </div>
             ) : (
               blocks.map((block) => (
                 <div
                   key={block.id}
-                  className="p-4 rounded-xl bg-[#16100B] border border-[rgba(212,163,89,0.18)] flex items-center justify-between gap-4"
+                  className="p-4 rounded-xl bg-surface border border-line-soft flex items-center justify-between gap-4"
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-[#E5C178] text-xs uppercase font-mono px-2 py-0.5 rounded-md bg-[#221810] border border-[rgba(212,163,89,0.25)]">
+                      <span className="font-bold text-gold text-xs uppercase font-mono px-2 py-0.5 rounded-md bg-raised border border-line">
                         {block.unit_id}
                       </span>
-                      <span className="text-xs text-[#FAF4EB] font-serif oldstyle-nums font-semibold">
+                      <span className="text-xs text-fg font-serif oldstyle-nums font-semibold">
                         {block.blocked_date}
                       </span>
                     </div>
-                    <p className="text-[11px] text-[#B8A692]">{block.reason || "Maintenance"}</p>
+                    <p className="text-xs text-fg-muted">{block.reason || "Maintenance"}</p>
                   </div>
 
                   <button
                     type="button"
                     onClick={() => handleDeleteBlock(block.id)}
-                    className="p-2 rounded-lg bg-[#221810] hover:bg-rose-500/20 text-[#B8A692] hover:text-rose-400 border border-[rgba(212,163,89,0.15)] transition-colors cursor-pointer"
+                    className="p-2 rounded-lg bg-raised hover:bg-rose-500/20 text-fg-muted hover:text-rose-400 border border-line-soft transition-colors cursor-pointer"
                     title="Remove Blackout"
                     aria-label={`Remove blackout for ${block.unit_id} on ${block.blocked_date}`}
                   >

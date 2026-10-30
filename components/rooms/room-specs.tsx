@@ -55,16 +55,16 @@ export function RoomSpecs({
         return (
           <div
             key={item.label}
-            className="flex items-center gap-3 rounded-xl border border-[rgba(212,163,89,0.28)] bg-[rgba(34,24,16,0.65)] backdrop-blur-md p-3 sm:p-3.5 transition-all hover:border-[#E5C178]/60 shadow-xs"
+            className="flex items-center gap-3 py-2"
           >
-            <div className="h-8 w-8 rounded-lg border border-[rgba(212,163,89,0.3)] bg-[#16100B] flex items-center justify-center text-[#E5C178] shrink-0">
+            <div className="h-8 w-8 rounded-lg border border-line bg-surface flex items-center justify-center text-gold shrink-0">
               <Icon className="h-4 w-4" />
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] uppercase tracking-[0.14em] font-sans font-medium text-[#E5C178]">
+              <p className="text-xs uppercase tracking-[0.14em] font-sans font-medium text-gold">
                 {item.label}
               </p>
-              <p className="text-xs sm:text-[13px] font-medium text-[#FAF4EB] mt-0.5 leading-snug break-words tabular-nums">
+              <p className="text-xs sm:text-sm font-medium text-fg mt-0.5 leading-snug break-words tabular-nums">
                 {item.value}
               </p>
             </div>

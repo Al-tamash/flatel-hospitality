@@ -56,25 +56,25 @@ export function BookingSteps({ className }: { className?: string }) {
     <section
       id="how-it-works"
       className={cn(
-        "relative w-full bg-[#0E0A07] text-[#FAF4EB] py-16 sm:py-20 lg:py-24 select-none overflow-hidden",
+        "relative w-full bg-canvas text-fg py-16 sm:py-20 lg:py-24 select-none overflow-hidden",
         className
       )}
       aria-labelledby="how-it-works-heading"
     >
       {/* Luxury Radial Ambient Glow */}
       <div
-        className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[500px] bg-[radial-gradient(ellipse_at_center,rgba(212,163,89,0.12),transparent_70%)]"
+        className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[500px] bg-[radial-gradient(ellipse_at_center,color-mix(in_srgb,var(--gold)_12%,transparent),transparent_70%)]"
         aria-hidden="true"
       />
 
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10 relative z-10">
+      <div className="container-page relative z-10">
         {/* ========================================================== */}
         {/* 1. TOP HEADER                                              */}
         {/* ========================================================== */}
         <div className="text-center mb-10 sm:mb-12">
           <h2
             id="how-it-works-heading"
-            className="text-xs sm:text-sm font-sans font-semibold tracking-[0.14em] text-[#E5C178] uppercase"
+            className="text-xs sm:text-sm font-sans font-semibold tracking-[0.14em] text-gold uppercase"
           >
             {isAr ? "كيفية الحجز وضمانات الإقامة" : "HOW IT WORKS & STAY GUARANTEES"}
           </h2>
@@ -83,7 +83,7 @@ export function BookingSteps({ className }: { className?: string }) {
         {/* ========================================================== */}
         {/* 2. FOUR DISTINCT GUARANTEE BADGES (STREAMLINED TRUST ROW)   */}
         {/* ========================================================== */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 items-start justify-items-center mb-12 sm:mb-14 max-w-4xl mx-auto">
+        <div data-stagger className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 items-start justify-items-center mb-12 sm:mb-14 max-w-4xl mx-auto">
           {FLATEL_GUARANTEES.map((item) => {
             const Icon = item.icon;
             return (
@@ -92,15 +92,15 @@ export function BookingSteps({ className }: { className?: string }) {
                 className="flex flex-col items-center text-center group cursor-default"
               >
                 {/* Circular Gold Badge */}
-                <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-full border border-[rgba(212,163,89,0.35)] bg-[rgba(34,24,16,0.65)] flex items-center justify-center text-[#E5C178] shadow-lg shadow-[#E5C178]/10 transition-all duration-300 group-hover:scale-105 group-hover:border-[#E5C178] group-hover:shadow-[#E5C178]/25 group-hover:bg-[rgba(45,32,22,0.8)]">
+                <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-full border border-line bg-raised/65 flex items-center justify-center text-gold shadow-lg shadow-gold/10 transition-all duration-300 group-hover:scale-105 group-hover:border-gold group-hover:shadow-gold/25 group-hover:bg-raised-hover/80">
                   <Icon className="w-6 h-6 sm:w-7 sm:h-7 stroke-[1.75]" />
                 </div>
 
                 {/* Step Label */}
-                <span className="text-xs sm:text-[13px] font-sans font-bold text-[#FAF4EB] tracking-[0.12em] uppercase mt-3 leading-snug group-hover:text-[#E5C178] transition-colors">
+                <span className="text-xs sm:text-sm font-sans font-bold text-fg tracking-[0.14em] uppercase mt-3 leading-snug group-hover:text-gold transition-colors">
                   {isAr ? item.labelAr : item.label}
                 </span>
-                <span className="text-xs sm:text-[13px] text-[#D4C4B3] mt-1 font-medium leading-relaxed">
+                <span className="text-xs sm:text-sm text-fg-soft mt-1 font-medium leading-relaxed">
                   {isAr ? item.subAr : item.sub}
                 </span>
               </div>
@@ -111,10 +111,10 @@ export function BookingSteps({ className }: { className?: string }) {
         {/* ========================================================== */}
         {/* 3. GOLD BORDER CARD: SELECT. RESERVE. RELAX. (REFERENCE)   */}
         {/* ========================================================== */}
-        <div className="rounded-3xl border border-[rgba(212,163,89,0.35)] bg-[#16100B] p-7 sm:p-9 lg:p-11 shadow-2xl relative overflow-hidden">
+        <div className="border-y border-line py-9 sm:py-11 relative overflow-hidden">
           {/* Subtle Ambient Shimmer */}
           <div
-            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(212,163,89,0.12),transparent_60%)]"
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,color-mix(in_srgb,var(--gold)_12%,transparent),transparent_60%)]"
             aria-hidden="true"
           />
 
@@ -122,21 +122,21 @@ export function BookingSteps({ className }: { className?: string }) {
             {/* -------------------------------------------------------- */}
             {/* LEFT: SELECT. RESERVE. RELAX.                            */}
             {/* -------------------------------------------------------- */}
-            <div className={cn("flex flex-col items-center shrink-0", isAr ? "md:items-end text-center md:text-right" : "md:items-start text-center md:text-left")}>
-              <span className="font-heading font-medium text-4xl sm:text-5xl lg:text-[52px] text-[#E5C178] tracking-normal leading-[1.05]">
+            <div data-stagger className={cn("flex flex-col items-center shrink-0", isAr ? "md:items-end text-center md:text-right" : "md:items-start text-center md:text-left")}>
+              <span className="font-heading font-medium text-4xl sm:text-5xl lg:text-5xl text-gold tracking-normal leading-[1.05]">
                 {isAr ? "اختر." : "SELECT."}
               </span>
-              <span className="font-heading font-medium text-4xl sm:text-5xl lg:text-[52px] text-[#E5C178] tracking-normal leading-[1.05]">
+              <span className="font-heading font-medium text-4xl sm:text-5xl lg:text-5xl text-gold tracking-normal leading-[1.05]">
                 {isAr ? "احجز." : "RESERVE."}
               </span>
-              <span className="font-heading font-medium text-4xl sm:text-5xl lg:text-[52px] text-[#E5C178] tracking-normal leading-[1.05]">
+              <span className="font-heading font-medium text-4xl sm:text-5xl lg:text-5xl text-gold tracking-normal leading-[1.05]">
                 {isAr ? "استرخِ." : "RELAX."}
               </span>
             </div>
 
             {/* VERTICAL DIVIDER LINE (DESKTOP) */}
             <div
-              className="hidden md:block w-[1px] h-32 bg-[rgba(212,163,89,0.25)] self-center shrink-0"
+              className="hidden md:block w-[1px] h-32 bg-gold/25 self-center shrink-0"
               aria-hidden="true"
             />
 
@@ -144,52 +144,52 @@ export function BookingSteps({ className }: { className?: string }) {
             {/* MIDDLE: 3 SIMPLE STEPS TO BOOK                           */}
             {/* -------------------------------------------------------- */}
             <div className={cn("flex-1 w-full max-w-lg", isAr ? "text-right" : "text-left")}>
-              <div className="text-xs sm:text-sm font-sans font-bold text-[#E5C178] tracking-[0.14em] uppercase mb-4">
+              <div className="text-xs sm:text-sm font-sans font-bold text-gold tracking-[0.14em] uppercase mb-4">
                 {isAr ? "احجز في ٣ خطوات بسيطة" : "BOOK IN 3 SIMPLE STEPS"}
               </div>
 
               {/* 3 Steps List with Circular Gold Checkmarks */}
-              <div className="space-y-4 text-sm sm:text-base text-[#FAF4EB] font-medium leading-relaxed">
+              <div className="space-y-4 text-sm sm:text-base text-fg font-medium leading-relaxed">
                 <div className="flex items-center gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-[#E5C178] shrink-0" />
+                  <CheckCircle2 className="w-5 h-5 text-gold shrink-0" />
                   <span>
                     {isAr ? (
                       <>
-                        <strong className="text-[#E5C178] font-bold">١. اختر شقتك:</strong> تصفح تفاصيل الشقق الفندقية وصورها
+                        <strong className="text-gold font-bold">١. اختر شقتك:</strong> تصفح تفاصيل الشقق الفندقية وصورها
                       </>
                     ) : (
                       <>
-                        <strong className="text-[#E5C178] font-bold">1. Select Your Residence:</strong> Browse residence details and photos
+                        <strong className="text-gold font-bold">1. Select Your Residence:</strong> Browse residence details and photos
                       </>
                     )}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-[#E5C178] shrink-0" />
+                  <CheckCircle2 className="w-5 h-5 text-gold shrink-0" />
                   <span>
                     {isAr ? (
                       <>
-                        <strong className="text-[#E5C178] font-bold">٢. ثبّت حجزك بعربون ٢٠٪:</strong> ادفع ٢٠٪ فقط عبر البطاقة البنكية أو رمز الاستجابة السريعة
+                        <strong className="text-gold font-bold">٢. ثبّت حجزك بعربون ٢٠٪:</strong> ادفع ٢٠٪ فقط عبر البطاقة البنكية أو رمز الاستجابة السريعة
                       </>
                     ) : (
                       <>
-                        <strong className="text-[#E5C178] font-bold">2. Reserve with 20% Deposit:</strong> Pay only 20% advance via UPI QR or Card
+                        <strong className="text-gold font-bold">2. Reserve with 20% Deposit:</strong> Pay only 20% advance via UPI QR or Card
                       </>
                     )}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-[#E5C178] shrink-0" />
+                  <CheckCircle2 className="w-5 h-5 text-gold shrink-0" />
                   <span>
                     {isAr ? (
                       <>
-                        <strong className="text-[#E5C178] font-bold">٣. الوصول وسداد الباقي:</strong> استلم شقتك وسدد المبلغ المتبقي عند مكتب الاستقبال
+                        <strong className="text-gold font-bold">٣. الوصول وسداد الباقي:</strong> استلم شقتك وسدد المبلغ المتبقي عند مكتب الاستقبال
                       </>
                     ) : (
                       <>
-                        <strong className="text-[#E5C178] font-bold">3. Arrive &amp; Settle Balance:</strong> Check in with the property team and pay the remaining balance at the desk
+                        <strong className="text-gold font-bold">3. Arrive &amp; Settle Balance:</strong> Check in with the property team and pay the remaining balance at the desk
                       </>
                     )}
                   </span>
@@ -197,9 +197,9 @@ export function BookingSteps({ className }: { className?: string }) {
               </div>
 
               {/* Bottom Quick Booking Reassurance & Action */}
-              <div className="mt-5 pt-4 border-t border-[rgba(212,163,89,0.18)] flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm">
-                <span className="text-[#D4C4B3] flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-[#E5C178]" />
+              <div className="mt-5 pt-4 border-t border-line-soft flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm">
+                <span className="text-fg-soft flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-gold" />
                   <span>
                     {isAr
                       ? "إلغاء مجاني حتى ٤٨ ساعة قبل الموعد · استرداد ١٠٠٪ للعربون"
@@ -209,7 +209,7 @@ export function BookingSteps({ className }: { className?: string }) {
 
                 <Link
                   href={`${localePrefix}/policies`}
-                  className="text-xs sm:text-sm font-semibold text-[#E5C178] hover:underline inline-flex items-center gap-1.5 transition-colors cursor-pointer"
+                  className="text-xs sm:text-sm font-semibold text-gold hover:underline inline-flex items-center gap-1.5 transition-colors cursor-pointer"
                 >
                   <span>{isAr ? "عرض شروط وسياسات الحجز" : "View Cancellation Terms"}</span>
                   <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
@@ -225,7 +225,7 @@ export function BookingSteps({ className }: { className?: string }) {
                 viewBox="0 0 160 210"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                className="w-32 h-44 xl:w-36 xl:h-48 text-[#E5C178] opacity-85 select-none pointer-events-none drop-shadow-[0_2px_12px_rgba(212,163,89,0.2)]"
+                className="w-32 h-44 xl:w-36 xl:h-48 text-gold opacity-85 select-none pointer-events-none drop-shadow-[0_2px_12px_color-mix(in_srgb,var(--gold)_20%,transparent)]"
                 aria-hidden="true"
               >
                 {/* Main Curved Botanical Stem */}
@@ -290,13 +290,13 @@ export function BookingSteps({ className }: { className?: string }) {
 
                 <defs>
                   <linearGradient id="leafGoldStroke" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="#FAF4EB" />
-                    <stop offset="60%" stopColor="#E5C178" />
-                    <stop offset="100%" stopColor="#C69344" />
+                    <stop offset="0%" stopColor="var(--fg)" />
+                    <stop offset="60%" stopColor="var(--gold)" />
+                    <stop offset="100%" stopColor="var(--gold-deep)" />
                   </linearGradient>
                   <linearGradient id="leafGoldFill" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="#E5C178" stopOpacity="0.18" />
-                    <stop offset="100%" stopColor="#E5C178" stopOpacity="0.02" />
+                    <stop offset="0%" stopColor="var(--gold)" stopOpacity="0.18" />
+                    <stop offset="100%" stopColor="var(--gold)" stopOpacity="0.02" />
                   </linearGradient>
                 </defs>
               </svg>

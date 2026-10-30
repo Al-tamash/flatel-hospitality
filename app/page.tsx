@@ -9,6 +9,7 @@ import { FaqSection } from "@/components/faq-section";
 import { FounderStrip } from "@/components/home/founder-strip";
 import { MembershipStrip } from "@/components/home/membership-strip";
 import { SiteFooter } from "@/components/site-footer";
+import { Reveal } from "@/components/motion/reveal";
 
 export default function Home() {
   return (
@@ -17,31 +18,31 @@ export default function Home() {
       <SiteHeader />
 
       {/* Main Content Sections - Structured for Conversion Psychology */}
-      <main className="flex-1 w-full">
+      <main id="main-content" tabIndex={-1} className="flex-1 w-full">
         {/* 2. Hero Section with Search Engine & 4 Stay Purpose Cards */}
         <HeroSection />
 
         {/* 3. Featured Flats Section (1 to 4 BHK with Purpose & Branch Filters) */}
-        <FeaturedFlats />
+        <Reveal><FeaturedFlats /></Reveal>
 
         {/* 4. Two Prime Branches Showcase (Barkas Salala & Moghal Pura with Maps & Landmarks) */}
-        <BranchHub />
+        <Reveal><BranchHub /></Reveal>
 
         {/* 5. Signature Inclusions & Master Amenities (Living Experience + 29 Inclusions) */}
-        <AmenitiesSection />
+        <Reveal><AmenitiesSection /></Reveal>
 
         {/* 6. Nearby hospitals and healthcare information */}
-        <NearbyHospitals />
+        <Reveal><NearbyHospitals /></Reveal>
 
         {/* 7. Reservation steps and practical stay information */}
-        <BookingSteps />
+        <Reveal><BookingSteps /></Reveal>
 
         {/* 8. Frequently asked questions and guest support */}
-        <MembershipStrip locale="en" />
+        <Reveal><MembershipStrip locale="en" /></Reveal>
 
-        <FounderStrip locale="en" />
+        <Reveal><FounderStrip locale="en" /></Reveal>
 
-        <FaqSection />
+        <Reveal><FaqSection /></Reveal>
       </main>
 
       {/* 11. Homepage Footer */}

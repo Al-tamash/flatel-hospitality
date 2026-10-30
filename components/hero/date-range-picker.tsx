@@ -130,7 +130,7 @@ export function DateRangePicker({
   return (
     <div
       className={cn(
-        "w-full rounded-2xl bg-[rgba(34,24,16,0.95)] backdrop-blur-xl border border-[rgba(212,163,89,0.28)] text-[#FAF4EB] shadow-[0_24px_60px_rgba(0,0,0,0.9)] select-none",
+        "w-full rounded-2xl bg-raised/95 backdrop-blur-xl border border-line text-fg shadow-[0_24px_60px_rgba(0,0,0,0.9)] select-none",
         isMobileModal
           ? "p-4 max-w-full"
           : "p-3.5 sm:p-4 max-w-[340px] sm:max-w-[360px]",
@@ -138,7 +138,7 @@ export function DateRangePicker({
       )}
     >
       {/* 1. SELECTION STATUS HEADER */}
-      <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-[rgba(212,163,89,0.18)] text-xs">
+      <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-line-soft text-xs">
         <button
           type="button"
           onClick={() => {
@@ -147,15 +147,15 @@ export function DateRangePicker({
           className={cn(
             "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer",
             selectionStep === "checkIn"
-              ? "bg-[#E5C178]/15 text-[#E5C178] font-semibold border border-[#E5C178]/40"
-              : "text-[#B8A692] hover:text-[#FAF4EB] border border-transparent"
+              ? "bg-gold/15 text-gold font-semibold border border-gold/40"
+              : "text-fg-muted hover:text-fg border border-transparent"
           )}
         >
-          <span className="text-[10px] uppercase tracking-wider text-[#E5C178]">{isAr ? "الوصول:" : "In:"}</span>
+          <span className="text-xs uppercase tracking-wider text-gold">{isAr ? "الوصول:" : "In:"}</span>
           <span>{checkIn ? format(checkIn, "d MMM") : (isAr ? "اختر التاريخ" : "Select date")}</span>
         </button>
 
-        <ArrowRight className={cn("w-3.5 h-3.5 text-[#E5C178]/60 shrink-0", isAr && "rotate-180")} />
+        <ArrowRight className={cn("w-3.5 h-3.5 text-gold/60 shrink-0", isAr && "rotate-180")} />
 
         <button
           type="button"
@@ -165,14 +165,14 @@ export function DateRangePicker({
           className={cn(
             "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer",
             selectionStep === "checkOut"
-              ? "bg-[#E5C178]/15 text-[#E5C178] font-semibold border border-[#E5C178]/40"
-              : "text-[#B8A692] hover:text-[#FAF4EB] border border-transparent"
+              ? "bg-gold/15 text-gold font-semibold border border-gold/40"
+              : "text-fg-muted hover:text-fg border border-transparent"
           )}
         >
-          <span className="text-[10px] uppercase tracking-wider text-[#E5C178]">{isAr ? "المغادرة:" : "Out:"}</span>
+          <span className="text-xs uppercase tracking-wider text-gold">{isAr ? "المغادرة:" : "Out:"}</span>
           <span>{checkOut ? format(checkOut, "d MMM") : (isAr ? "اختر التاريخ" : "Select date")}</span>
           {nightsCount > 0 && (
-            <span className="text-[10px] font-mono text-[#E5C178] ml-0.5 font-bold">
+            <span className="text-xs font-mono text-gold ml-0.5 font-bold">
               ({nightsCount}{isAr ? " ليالٍ" : "N"})
             </span>
           )}
@@ -186,22 +186,22 @@ export function DateRangePicker({
           onClick={prevMonth}
           disabled={!canGoPrev}
           className={cn(
-            "h-7 w-7 flex items-center justify-center rounded-sm border border-[rgba(212,163,89,0.25)] bg-[rgba(22,16,11,0.7)] text-[#FAF4EB] hover:text-[#E5C178] hover:border-[#E5C178]/50 transition-colors focus:outline-none cursor-pointer",
-            !canGoPrev && "opacity-20 cursor-not-allowed hover:text-[#FAF4EB] hover:border-[rgba(212,163,89,0.25)]"
+            "h-7 w-7 flex items-center justify-center rounded-sm border border-line bg-surface/70 text-fg hover:text-gold hover:border-gold/50 transition-colors focus:outline-none cursor-pointer",
+            !canGoPrev && "opacity-20 cursor-not-allowed hover:text-fg hover:border-line"
           )}
           aria-label="Previous month"
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
 
-        <span className="font-heading text-base sm:text-lg font-medium tracking-wide text-[#FAF4EB]">
+        <span className="font-heading text-base sm:text-lg font-medium tracking-wide text-fg">
           {format(currentMonth, "MMMM yyyy")}
         </span>
 
         <button
           type="button"
           onClick={nextMonth}
-          className="h-7 w-7 flex items-center justify-center rounded-sm border border-[rgba(212,163,89,0.25)] bg-[rgba(22,16,11,0.7)] text-[#FAF4EB] hover:text-[#E5C178] hover:border-[#E5C178]/50 transition-colors focus:outline-none cursor-pointer"
+          className="h-7 w-7 flex items-center justify-center rounded-sm border border-line bg-surface/70 text-fg hover:text-gold hover:border-gold/50 transition-colors focus:outline-none cursor-pointer"
           aria-label="Next month"
         >
           <ChevronRight className="w-4 h-4" />
@@ -213,7 +213,7 @@ export function DateRangePicker({
         {weekDayLabels.map((day, idx) => (
           <span
             key={`${day}-${idx}`}
-            className="text-[10.5px] font-sans font-medium text-[#B8A692] uppercase tracking-wider"
+            className="text-xs font-sans font-medium text-fg-muted uppercase tracking-wider"
           >
             {day}
           </span>
@@ -251,9 +251,9 @@ export function DateRangePicker({
               key={day.toISOString()}
               className={cn(
                 "relative h-8 w-full flex items-center justify-center",
-                isRangeMiddle && "bg-[#E5C178]/15",
-                isCheckInDay && (checkOut || hoveredDate) && "rounded-l-full bg-gradient-to-r from-transparent to-[#E5C178]/15",
-                isCheckOutDay && checkIn && "rounded-r-full bg-gradient-to-l from-transparent to-[#E5C178]/15"
+                isRangeMiddle && "bg-gold/15",
+                isCheckInDay && (checkOut || hoveredDate) && "rounded-l-full bg-gradient-to-r from-transparent to-gold/15",
+                isCheckOutDay && checkIn && "rounded-r-full bg-gradient-to-l from-transparent to-gold/15"
               )}
             >
               <button
@@ -268,10 +268,10 @@ export function DateRangePicker({
                 disabled={isPast}
                 className={cn(
                   "h-7 w-7 sm:h-7.5 sm:w-7.5 rounded-full flex items-center justify-center text-xs font-sans font-medium transition-all cursor-pointer",
-                  isPast && "text-[#B8A692]/25 cursor-not-allowed",
-                  !isPast && !isSelected && "text-[#FAF4EB] hover:bg-[#E5C178]/20 hover:text-[#E5C178]",
-                  isSelected && "bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] font-bold shadow-xs scale-105 z-10",
-                  today && isSameDay(day, today) && !isSelected && "border border-[#E5C178]/60 text-[#E5C178]"
+                  isPast && "text-fg-muted/25 cursor-not-allowed",
+                  !isPast && !isSelected && "text-fg hover:bg-gold/20 hover:text-gold",
+                  isSelected && "bg-gradient-to-r from-gold to-gold-deep text-ink font-bold shadow-xs scale-105 z-10",
+                  today && isSameDay(day, today) && !isSelected && "border border-gold/60 text-gold"
                 )}
                 aria-label={format(day, "EEEE, MMMM d, yyyy")}
                 aria-pressed={isSelected}
@@ -284,20 +284,20 @@ export function DateRangePicker({
       </div>
 
       {/* 5. BOTTOM ACTIONS */}
-      <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t border-[rgba(212,163,89,0.18)]">
+      <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t border-line-soft">
         <button
           type="button"
           onClick={handleReset}
-          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-sans text-[#B8A692] hover:text-[#FAF4EB] transition-colors rounded-sm focus:outline-none cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-sans text-fg-muted hover:text-fg transition-colors rounded-sm focus:outline-none cursor-pointer"
         >
-          <RotateCcw className="w-3.5 h-3.5 text-[#B8A692]" />
+          <RotateCcw className="w-3.5 h-3.5 text-fg-muted" />
           <span>{isAr ? "إعادة ضبط" : "Reset"}</span>
         </button>
 
         <button
           type="button"
           onClick={handleDone}
-          className="px-4 py-1.5 min-h-[32px] rounded-lg bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] hover:brightness-105 text-xs font-sans font-bold tracking-wider uppercase transition-all duration-150 focus:outline-none shadow-xs cursor-pointer"
+          className="px-4 py-1.5 min-h-[32px] rounded-lg bg-gradient-to-r from-gold to-gold-deep text-ink hover:brightness-105 text-xs font-sans font-bold tracking-wider uppercase transition-all duration-150 focus:outline-none shadow-xs cursor-pointer"
         >
           {isAr ? "تأكيد" : "Done"}
         </button>

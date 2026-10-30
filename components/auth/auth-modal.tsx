@@ -111,18 +111,18 @@ function AuthModalContent() {
       role="dialog"
       aria-modal="true"
       aria-labelledby="auth-modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-[#0E0A07]/85 p-3 font-sans backdrop-blur-md animate-in fade-in duration-200 sm:p-6"
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-canvas/85 p-3 font-sans backdrop-blur-md animate-in fade-in duration-200 sm:p-6"
       onClick={(event) => {
         if (event.target === event.currentTarget) closeAuthModal();
       }}
     >
-      <div className="relative my-auto flex max-h-[calc(100dvh-1.5rem)] sm:max-h-[calc(100dvh-3rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl border border-[rgba(212,163,89,0.3)] bg-[rgba(34,24,16,0.95)] shadow-[0_25px_60px_rgba(0,0,0,0.85)]">
-        <div className="h-1.5 w-full shrink-0 bg-gradient-to-r from-[#C69344] via-[#E5C178] to-[#C69344]" />
+      <div className="relative my-auto flex animate-in zoom-in-95 duration-200 max-h-[calc(100dvh-1.5rem)] sm:max-h-[calc(100dvh-3rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl border border-line bg-raised/95 shadow-[0_25px_60px_rgba(0,0,0,0.85)]">
+        <div className="h-1.5 w-full shrink-0 bg-gradient-to-r from-gold-deep via-gold to-gold-deep" />
 
         <button
           type="button"
           onClick={closeAuthModal}
-          className="absolute right-4 top-4 z-10 rounded-lg p-1.5 text-[#B8A692] transition-colors hover:bg-[#221810] hover:text-[#FAF4EB] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#E5C178]"
+          className="absolute right-4 top-4 z-10 rounded-lg p-1.5 text-fg-muted transition-colors hover:bg-raised hover:text-fg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
           aria-label="Close dialog"
         >
           <X className="h-4 w-4" />
@@ -130,13 +130,13 @@ function AuthModalContent() {
 
         <div className="overflow-y-auto p-5 sm:p-7">
           <div className="mb-5 text-center">
-            <div className="mb-2.5 inline-flex h-11 w-11 items-center justify-center rounded-xl border border-[rgba(212,163,89,0.3)] bg-[#16100B] text-[#E5C178]">
+            <div className="mb-2.5 inline-flex h-11 w-11 items-center justify-center rounded-xl border border-line bg-surface text-gold">
               {authMode === "signup" ? <UserPlus className="h-5 w-5" /> : <ShieldCheck className="h-5 w-5" />}
             </div>
-            <h2 id="auth-modal-title" className="font-serif text-xl font-normal tracking-tight text-[#FAF4EB] sm:text-2xl">
+            <h2 id="auth-modal-title" className="font-heading text-fg heading-sub">
               {authMode === "signup" ? "Create Your Account" : "Log In to Your Account"}
             </h2>
-            <p className="mx-auto mt-1 max-w-xs text-sm leading-5 text-[#B8A692]">
+            <p className="mx-auto mt-1 max-w-xs text-sm leading-5 text-fg-muted">
               {authMode === "signup"
                 ? "Create an account to manage your bookings and guest details."
                 : "Welcome back. Log in to view your bookings."}
@@ -144,11 +144,11 @@ function AuthModalContent() {
           </div>
 
           {authModalReason && (
-            <div className="mb-4 flex items-start gap-2.5 rounded-xl border border-[rgba(212,163,89,0.3)] bg-[#E5C178]/10 p-3 text-sm text-[#FAF4EB]">
-              <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-[#E5C178]" />
+            <div className="mb-4 flex items-start gap-2.5 rounded-xl border border-line bg-gold/10 p-3 text-sm text-fg">
+              <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
               <div>
-                <span className="block font-semibold text-[#E5C178]">Reservation requirement</span>
-                <span className="mt-0.5 block text-[#B8A692]">{authModalReason}</span>
+                <span className="block font-semibold text-gold">Reservation requirement</span>
+                <span className="mt-0.5 block text-fg-muted">{authModalReason}</span>
               </div>
             </div>
           )}
@@ -166,12 +166,12 @@ function AuthModalContent() {
             </div>
           )}
 
-          <div className="mb-4 grid grid-cols-2 rounded-xl border border-[rgba(212,163,89,0.25)] bg-[#16100B] p-1 text-sm font-semibold">
+          <div className="mb-4 grid grid-cols-2 rounded-xl border border-line bg-surface p-1 text-sm font-semibold">
             <button
               type="button"
               aria-pressed={authMode === "login"}
               onClick={() => switchMode("login")}
-              className={`flex min-h-10 items-center justify-center gap-2 rounded-lg transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#E5C178] ${authMode === "login" ? "bg-[#E5C178] text-[#140E08]" : "text-[#B8A692] hover:text-[#FAF4EB]"}`}
+              className={`flex min-h-10 items-center justify-center gap-2 rounded-lg transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold ${authMode === "login" ? "bg-gold text-ink" : "text-fg-muted hover:text-fg"}`}
             >
               <LogIn className="h-4 w-4" />
               <span>Log In</span>
@@ -180,7 +180,7 @@ function AuthModalContent() {
               type="button"
               aria-pressed={authMode === "signup"}
               onClick={() => switchMode("signup")}
-              className={`flex min-h-10 items-center justify-center gap-2 rounded-lg transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#E5C178] ${authMode === "signup" ? "bg-[#E5C178] text-[#140E08]" : "text-[#B8A692] hover:text-[#FAF4EB]"}`}
+              className={`flex min-h-10 items-center justify-center gap-2 rounded-lg transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold ${authMode === "signup" ? "bg-gold text-ink" : "text-fg-muted hover:text-fg"}`}
             >
               <UserPlus className="h-4 w-4" />
               <span>Create Account</span>
@@ -190,9 +190,9 @@ function AuthModalContent() {
           {authMode === "login" ? (
             <form onSubmit={handleEmailSignIn} className="space-y-4">
               <div>
-                <label htmlFor="auth-login-email" className="mb-1.5 block text-sm font-medium text-[#B8A692]">Email address</label>
+                <label htmlFor="auth-login-email" className="mb-1.5 block text-sm font-medium text-fg-muted">Email address</label>
                 <div className="relative">
-                  <Mail aria-hidden="true" className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#8C7E72]" />
+                  <Mail aria-hidden="true" className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-fg-faint" />
                   <input
                     id="auth-login-email"
                     type="email"
@@ -201,14 +201,14 @@ function AuthModalContent() {
                     placeholder="you@example.com"
                     value={email}
                     onChange={(event) => setEmail(event.target.value)}
-                    className="w-full rounded-xl border border-[rgba(212,163,89,0.25)] bg-[#16100B]/90 py-3 pl-10 pr-3 text-base text-[#FAF4EB] placeholder-[#8C7E72] focus:border-[#E5C178] focus:outline-none focus:ring-1 focus:ring-[#E5C178]"
+                    className="w-full rounded-xl border border-control bg-surface/90 py-3 pl-10 pr-3 text-base text-fg placeholder-fg-faint focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
                   />
                 </div>
               </div>
               <div>
-                <label htmlFor="auth-login-password" className="mb-1.5 block text-sm font-medium text-[#B8A692]">Password</label>
+                <label htmlFor="auth-login-password" className="mb-1.5 block text-sm font-medium text-fg-muted">Password</label>
                 <div className="relative">
-                  <Lock aria-hidden="true" className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#8C7E72]" />
+                  <Lock aria-hidden="true" className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-fg-faint" />
                   <input
                     id="auth-login-password"
                     type="password"
@@ -217,14 +217,14 @@ function AuthModalContent() {
                     placeholder="Enter your password"
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
-                    className="w-full rounded-xl border border-[rgba(212,163,89,0.25)] bg-[#16100B]/90 py-3 pl-10 pr-3 text-base text-[#FAF4EB] placeholder-[#8C7E72] focus:border-[#E5C178] focus:outline-none focus:ring-1 focus:ring-[#E5C178]"
+                    className="w-full rounded-xl border border-control bg-surface/90 py-3 pl-10 pr-3 text-base text-fg placeholder-fg-faint focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
                   />
                 </div>
               </div>
               <button
                 type="submit"
                 disabled={isLoading}
-                className="mt-2 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] px-4 text-sm font-bold text-[#140E08] shadow-md shadow-[#E5C178]/15 transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FAF4EB] disabled:cursor-wait disabled:opacity-50"
+                className="mt-2 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-gold to-gold-deep px-4 text-sm font-bold text-ink shadow-md shadow-gold/15 transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fg disabled:cursor-wait disabled:opacity-50"
               >
                 <span>{isLoading ? "Signing in…" : "Log In to FLATEL"}</span>
                 {!isLoading && <ArrowRight aria-hidden="true" className="h-4 w-4" />}
@@ -233,7 +233,7 @@ function AuthModalContent() {
           ) : (
             <form onSubmit={handleEmailSignUp} className="space-y-4">
               <div>
-                <label htmlFor="auth-signup-name" className="mb-1.5 block text-sm font-medium text-[#B8A692]">Full name</label>
+                <label htmlFor="auth-signup-name" className="mb-1.5 block text-sm font-medium text-fg-muted">Full name</label>
                 <input
                   id="auth-signup-name"
                   type="text"
@@ -244,13 +244,13 @@ function AuthModalContent() {
                   placeholder="Your full name"
                   value={fullName}
                   onChange={(event) => setFullName(event.target.value)}
-                  className="w-full rounded-xl border border-[rgba(212,163,89,0.25)] bg-[#16100B]/90 px-3 py-3 text-base text-[#FAF4EB] placeholder-[#8C7E72] focus:border-[#E5C178] focus:outline-none focus:ring-1 focus:ring-[#E5C178]"
+                  className="w-full rounded-xl border border-control bg-surface/90 px-3 py-3 text-base text-fg placeholder-fg-faint focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
                 />
               </div>
               <div>
-                <label htmlFor="auth-signup-email" className="mb-1.5 block text-sm font-medium text-[#B8A692]">Email address</label>
+                <label htmlFor="auth-signup-email" className="mb-1.5 block text-sm font-medium text-fg-muted">Email address</label>
                 <div className="relative">
-                  <Mail aria-hidden="true" className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#8C7E72]" />
+                  <Mail aria-hidden="true" className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-fg-faint" />
                   <input
                     id="auth-signup-email"
                     type="email"
@@ -259,14 +259,14 @@ function AuthModalContent() {
                     placeholder="you@example.com"
                     value={email}
                     onChange={(event) => setEmail(event.target.value)}
-                    className="w-full rounded-xl border border-[rgba(212,163,89,0.25)] bg-[#16100B]/90 py-3 pl-10 pr-3 text-base text-[#FAF4EB] placeholder-[#8C7E72] focus:border-[#E5C178] focus:outline-none focus:ring-1 focus:ring-[#E5C178]"
+                    className="w-full rounded-xl border border-control bg-surface/90 py-3 pl-10 pr-3 text-base text-fg placeholder-fg-faint focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
                   />
                 </div>
               </div>
               <div>
-                <label htmlFor="auth-signup-password" className="mb-1.5 block text-sm font-medium text-[#B8A692]">Password <span className="text-[#8C7E72]">(at least 6 characters)</span></label>
+                <label htmlFor="auth-signup-password" className="mb-1.5 block text-sm font-medium text-fg-muted">Password <span className="text-fg-faint">(at least 6 characters)</span></label>
                 <div className="relative">
-                  <Lock aria-hidden="true" className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#8C7E72]" />
+                  <Lock aria-hidden="true" className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-fg-faint" />
                   <input
                     id="auth-signup-password"
                     type="password"
@@ -276,15 +276,15 @@ function AuthModalContent() {
                     placeholder="Create a password"
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
-                    className="w-full rounded-xl border border-[rgba(212,163,89,0.25)] bg-[#16100B]/90 py-3 pl-10 pr-3 text-base text-[#FAF4EB] placeholder-[#8C7E72] focus:border-[#E5C178] focus:outline-none focus:ring-1 focus:ring-[#E5C178]"
+                    className="w-full rounded-xl border border-control bg-surface/90 py-3 pl-10 pr-3 text-base text-fg placeholder-fg-faint focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
                   />
                 </div>
               </div>
-              <p className="text-sm leading-5 text-[#B8A692]">You can add your mobile number when you make a reservation.</p>
+              <p className="text-sm leading-5 text-fg-muted">You can add your mobile number when you make a reservation.</p>
               <button
                 type="submit"
                 disabled={isLoading}
-                className="mt-2 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] px-4 text-sm font-bold text-[#140E08] shadow-md shadow-[#E5C178]/15 transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FAF4EB] disabled:cursor-wait disabled:opacity-50"
+                className="mt-2 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-gold to-gold-deep px-4 text-sm font-bold text-ink shadow-md shadow-gold/15 transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fg disabled:cursor-wait disabled:opacity-50"
               >
                 <span>{isLoading ? "Creating account…" : "Create Account"}</span>
                 {!isLoading && <ArrowRight aria-hidden="true" className="h-4 w-4" />}
@@ -292,18 +292,18 @@ function AuthModalContent() {
             </form>
           )}
 
-          <div className="mt-5 border-t border-[rgba(212,163,89,0.18)] pt-4 text-center text-sm text-[#B8A692]">
+          <div className="mt-5 border-t border-line-soft pt-4 text-center text-sm text-fg-muted">
             {authMode === "login" ? (
               <p>
                 Don&apos;t have an account?{" "}
-                <button type="button" onClick={() => switchMode("signup")} className="font-semibold text-[#E5C178] underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#E5C178]">
+                <button type="button" onClick={() => switchMode("signup")} className="font-semibold text-gold underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold">
                   Create an account
                 </button>
               </p>
             ) : (
               <p>
                 Already have an account?{" "}
-                <button type="button" onClick={() => switchMode("login")} className="font-semibold text-[#E5C178] underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#E5C178]">
+                <button type="button" onClick={() => switchMode("login")} className="font-semibold text-gold underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold">
                   Log in
                 </button>
               </p>

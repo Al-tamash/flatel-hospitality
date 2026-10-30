@@ -121,31 +121,31 @@ export function RoomAmenities({ className }: RoomAmenitiesProps) {
   }, [modalOpen]);
 
   return (
-    <div className={cn("rounded-2xl border border-[rgba(212,163,89,0.28)] bg-[rgba(34,24,16,0.65)] backdrop-blur-md p-5 sm:p-6 space-y-3.5 shadow-sm", className)}>
+    <div className={cn("rounded-2xl border border-line bg-raised/65 backdrop-blur-md p-5 sm:p-6 space-y-3.5 shadow-sm", className)}>
       {/* Header: Title + See all (Matching Agoda reference) */}
       <div className="flex items-center justify-between">
-        <h3 className="font-heading text-xl sm:text-2xl font-normal text-[#FAF4EB] tracking-[-0.01em]">
+        <h3 className="font-heading text-xl sm:text-2xl font-normal text-fg">
           Facilities &amp; Inclusions
         </h3>
         <button
           type="button"
           onClick={() => setModalOpen(true)}
-          className="text-xs font-sans font-medium text-[#E5C178] hover:underline cursor-pointer"
+          className="text-xs font-sans font-medium text-gold hover:underline cursor-pointer"
         >
           See all facilities (+16 more)
         </button>
       </div>
 
       {/* Agoda-style Compact Inclusions List with 3D miniature illustrations */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs text-[#FAF4EB]">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs text-fg">
         {QUICK_FACILITIES.map((facility) => {
           const illustration = getAmenityIllustration(facility);
           return (
             <div
               key={facility}
-              className="flex items-center gap-2 p-1.5 rounded-lg bg-[#16100B] border border-[rgba(212,163,89,0.22)] hover:border-[#E5C178]/50 transition-colors"
+              className="flex items-center gap-2 p-1.5 rounded-lg bg-surface border border-line hover:border-gold/50 transition-colors"
             >
-              <div className="relative w-6 h-6 rounded-md bg-[rgba(34,24,16,0.7)] border border-[rgba(212,163,89,0.28)] flex items-center justify-center shrink-0 overflow-hidden p-0.5">
+              <div className="relative w-6 h-6 rounded-md bg-raised/70 border border-line flex items-center justify-center shrink-0 overflow-hidden p-0.5">
                 <Image
                   src={illustration}
                   alt={facility}
@@ -165,27 +165,27 @@ export function RoomAmenities({ className }: RoomAmenitiesProps) {
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[#0E0A07]/90 backdrop-blur-md animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-canvas/90 backdrop-blur-md animate-in fade-in duration-200"
           onClick={() => setModalOpen(false)}
         >
           <div
-            className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-2xl bg-[#16100B] border border-[rgba(212,163,89,0.28)] shadow-2xl text-[#FAF4EB] p-6 space-y-6"
+            className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-2xl bg-surface border border-line shadow-2xl text-fg p-6 space-y-6"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-[rgba(212,163,89,0.18)] pb-4">
+            <div className="flex items-center justify-between border-b border-line-soft pb-4">
               <div>
-                <h4 className="font-heading text-2xl font-normal text-[#FAF4EB] tracking-[-0.01em]">
+                <h4 className="font-heading text-2xl font-normal text-fg">
                   Full Apartment Inventory &amp; Amenities
                 </h4>
-                <p className="text-xs text-[#B8A692] font-sans mt-0.5">
+                <p className="text-xs text-fg-muted font-sans mt-0.5">
                   Complete list of verified in-suite inclusions and property conveniences.
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setModalOpen(false)}
-                className="h-8 w-8 rounded-full bg-[rgba(34,24,16,0.85)] hover:bg-[#25221B] text-[#FAF4EB] flex items-center justify-center border border-[rgba(212,163,89,0.3)] cursor-pointer transition-colors"
+                className="h-8 w-8 rounded-full bg-raised/85 hover:bg-raised text-fg flex items-center justify-center border border-line cursor-pointer transition-colors"
                 aria-label="Close"
               >
                 <X className="w-4 h-4" />
@@ -196,7 +196,7 @@ export function RoomAmenities({ className }: RoomAmenitiesProps) {
             <div className="space-y-6">
               {DETAILED_INVENTORY.map((cat) => (
                 <div key={cat.category} className="space-y-2.5">
-                  <h5 className="text-[11px] font-sans font-medium uppercase tracking-[0.18em] text-[#E5C178]">
+                  <h5 className="text-xs font-sans font-medium uppercase tracking-[0.18em] text-gold">
                     {cat.category}
                   </h5>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -205,9 +205,9 @@ export function RoomAmenities({ className }: RoomAmenitiesProps) {
                       return (
                         <div
                           key={it.name}
-                          className="flex items-center gap-2.5 p-2 rounded-lg bg-[rgba(34,24,16,0.7)] border border-[rgba(212,163,89,0.18)] text-xs text-[#FAF4EB]"
+                          className="flex items-center gap-2.5 p-2 rounded-lg bg-raised/70 border border-line-soft text-xs text-fg"
                         >
-                          <div className="relative w-6 h-6 rounded-md bg-[#16100B] border border-[rgba(212,163,89,0.25)] flex items-center justify-center shrink-0 overflow-hidden p-0.5">
+                          <div className="relative w-6 h-6 rounded-md bg-surface border border-line flex items-center justify-center shrink-0 overflow-hidden p-0.5">
                             <Image
                               src={itemIllustration}
                               alt={it.name}
@@ -225,11 +225,11 @@ export function RoomAmenities({ className }: RoomAmenitiesProps) {
               ))}
             </div>
 
-            <div className="border-t border-[rgba(212,163,89,0.18)] pt-4 flex justify-end">
+            <div className="border-t border-line-soft pt-4 flex justify-end">
               <button
                 type="button"
                 onClick={() => setModalOpen(false)}
-                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] hover:brightness-105 text-[#140E08] font-sans font-semibold text-xs cursor-pointer shadow-sm active:scale-[0.98]"
+                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-gold to-gold-deep hover:brightness-105 text-ink font-sans font-semibold text-xs cursor-pointer shadow-sm active:scale-[0.98]"
               >
                 Close
               </button>

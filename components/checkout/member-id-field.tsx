@@ -93,7 +93,7 @@ export function MemberIdField({ locale, email, phone, stayStart, applied, onAppl
   };
 
   return (
-    <div className="rounded-lg border border-[rgba(212,163,89,0.18)] p-3">
+    <div className="rounded-lg border border-line-soft p-3">
       <label htmlFor="memberCode" className="text-sm font-medium text-foreground">
         {isAr ? "رقم عضوية فلاتيل (اختياري)" : "Flatel Member ID (optional)"}
       </label>
@@ -109,14 +109,14 @@ export function MemberIdField({ locale, email, phone, stayStart, applied, onAppl
             setStatus({ state: "idle" });
           }}
           placeholder="FL-AB12CD"
-          className="min-h-12 w-full rounded-lg border border-border bg-secondary px-4 text-base text-foreground font-mono uppercase tracking-wider placeholder:text-[#B8A692] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          className="min-h-12 w-full rounded-lg border border-border bg-secondary px-4 text-base text-foreground font-mono uppercase tracking-wider placeholder:text-fg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         />
         <button
           type="button"
           onClick={apply}
           disabled={!code.trim() || status.state === "checking" || disabled}
           className={cn(
-            "min-h-12 shrink-0 rounded-lg border border-[rgba(212,163,89,0.4)] px-4 text-sm font-semibold text-primary hover:border-primary",
+            "min-h-12 shrink-0 rounded-lg border border-line-strong px-4 text-sm font-semibold text-primary hover:border-primary",
             "disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           )}
         >

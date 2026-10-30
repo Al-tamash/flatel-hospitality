@@ -47,10 +47,10 @@ export function PurposeServices({
   return (
     <div id="purpose-services" className="space-y-4 scroll-mt-28">
       <div>
-        <h3 className="font-heading text-lg sm:text-xl font-normal text-[#FAF4EB]">
+        <h2 className="font-heading text-fg heading-sub">
           {isAr ? "ما سبب زيارتك إلى حيدر أباد؟" : "What brings you to Hyderabad?"}
-        </h3>
-        <p className="text-xs text-[#B8A692] mt-0.5">
+        </h2>
+        <p className="text-xs text-fg-muted mt-0.5">
           {isAr
             ? "اختر الغرض من إقامتك لعرض الخدمات المجانية والإضافية المناسبة لك."
             : "Pick your reason for travelling to see the free and add-on services that come with it."}
@@ -70,8 +70,8 @@ export function PurposeServices({
               className={cn(
                 "px-3.5 min-h-[40px] rounded-full text-xs font-semibold border transition-colors cursor-pointer",
                 active
-                  ? "bg-[#E5C178] text-[#140E08] border-[#E5C178]"
-                  : "bg-[rgba(34,24,16,0.65)] text-[#FAF4EB] border-[rgba(212,163,89,0.3)] hover:border-[#E5C178]"
+                  ? "bg-gold text-ink border-gold"
+                  : "bg-raised/65 text-fg border-line hover:border-gold"
               )}
             >
               {getPurposeChipLabel(id, locale)}
@@ -82,23 +82,23 @@ export function PurposeServices({
 
       {purpose && services && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 animate-in fade-in duration-200">
-          <div className="rounded-2xl border border-[rgba(212,163,89,0.25)] bg-[rgba(34,24,16,0.65)] p-4 space-y-3">
-            <h4 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-[#E5C178]">
+          <div className="border-t border-line pt-4 space-y-3">
+            <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-gold">
               <Gift className="w-4 h-4" />
               <span>
                 {isAr
                   ? `مجاناً مع إقامة ${getPurposeChipLabel(purpose, locale)}`
                   : `Free with your ${getPurposeChipLabel(purpose, locale)} stay`}
               </span>
-            </h4>
+            </h3>
             <ul className="space-y-2">
               {services.free.map((service) => (
-                <li key={service.name} className="flex items-start gap-2 text-xs text-[#FAF4EB]">
-                  <Check className="w-3.5 h-3.5 text-[#E5C178] shrink-0 mt-0.5" />
+                <li key={service.name} className="flex items-start gap-2 text-xs text-fg">
+                  <Check className="w-3.5 h-3.5 text-gold shrink-0 mt-0.5" />
                   <span>
                     {(isAr && ARABIC_COMPLIMENTARY_NAMES[service.name]) || service.name}
                     {service.disclaimer && (
-                      <span className="block text-[11px] text-[#B8A692] mt-0.5">{getServiceDisclaimer(service, locale)}</span>
+                      <span className="block text-xs text-fg-muted mt-0.5">{getServiceDisclaimer(service, locale)}</span>
                     )}
                   </span>
                 </li>
@@ -109,12 +109,12 @@ export function PurposeServices({
           {services.paid.length > 0 && (
             <div
               id="purpose-addons"
-              className="rounded-2xl border border-[rgba(212,163,89,0.25)] bg-[rgba(34,24,16,0.65)] p-4 space-y-3 scroll-mt-28"
+              className="border-t border-line pt-4 space-y-3 scroll-mt-28"
             >
-              <h4 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-[#E5C178]">
+              <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-gold">
                 <Plus className="w-4 h-4" />
                 <span>{isAr ? "خدمات إضافية" : "Add-on services"}</span>
-              </h4>
+              </h3>
               <ul className="space-y-2">
                 {services.paid.map((addon) => {
                   const checked = selectedAddonIds.includes(addon.id);
@@ -124,8 +124,8 @@ export function PurposeServices({
                         className={cn(
                           "flex items-center justify-between gap-3 p-2.5 rounded-xl border text-xs cursor-pointer transition-colors",
                           checked
-                            ? "bg-[#E5C178]/15 border-[#E5C178] text-[#FAF4EB]"
-                            : "bg-[#16100B] border-[rgba(212,163,89,0.2)] text-[#D4C4B3] hover:border-[#E5C178]/50"
+                            ? "bg-gold/15 border-gold text-fg"
+                            : "bg-surface border-line-soft text-fg-soft hover:border-gold/50"
                         )}
                       >
                         <span className="flex items-center gap-2 min-w-0">
@@ -133,13 +133,13 @@ export function PurposeServices({
                             type="checkbox"
                             checked={checked}
                             onChange={() => onToggleAddon(addon.id)}
-                            className="w-4 h-4 accent-[#E5C178] shrink-0 cursor-pointer"
+                            className="w-4 h-4 accent-gold shrink-0 cursor-pointer"
                           />
                           <span className="font-medium">
                             {(isAr && ARABIC_ADDONS_TRANSLATION[addon.id]) || addon.name}
                           </span>
                         </span>
-                        <span className="font-bold text-[#E5C178] tabular-nums shrink-0">+{priceLabel(addon)}</span>
+                        <span className="font-bold text-gold tabular-nums shrink-0">+{priceLabel(addon)}</span>
                       </label>
                     </li>
                   );

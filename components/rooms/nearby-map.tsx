@@ -44,21 +44,22 @@ export function NearbyMap({ branchSlug, googleMapsUrl }: NearbyMapProps) {
   }, [map, L, pin]);
 
   return (
-    <div className="relative h-[240px] lg:h-[320px] rounded-2xl overflow-hidden border border-[rgba(212,163,89,0.28)] bg-[#0E0A07]">
+    <div className="relative h-[240px] lg:h-[320px] rounded-2xl overflow-hidden border border-line bg-canvas">
       <div
         ref={containerRef}
         className="absolute inset-0 z-0"
+        role="region"
         aria-label={isAr ? `خريطة موقع ${pin?.nameAr ?? ""}` : `Map of ${pin?.name ?? "the branch"}`}
       />
 
       {map && tilesLoading && !tileError && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-          <Loader2 className="w-5 h-5 animate-spin text-[#E5C178]" />
+          <Loader2 className="w-5 h-5 animate-spin text-gold" />
         </div>
       )}
 
       {tileError && (
-        <p className="absolute inset-x-3 top-3 z-20 p-2.5 rounded-lg bg-[rgba(22,16,11,0.95)] border border-[rgba(212,163,89,0.4)] text-[11px] text-[#D4C4B3]">
+        <p className="absolute inset-x-3 top-3 z-20 p-2.5 rounded-lg bg-surface/95 border border-line-strong text-xs text-fg-soft">
           {isAr
             ? "تعذّر تحميل الخريطة حالياً. استخدم رابط خرائط Google للتوجيه."
             : "The map couldn’t load right now. Use the Google Maps link for directions."}
@@ -70,10 +71,10 @@ export function NearbyMap({ branchSlug, googleMapsUrl }: NearbyMapProps) {
           href={googleMapsUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="absolute bottom-3 start-3 z-20 inline-flex items-center gap-1.5 px-3 min-h-[36px] rounded-full bg-[rgba(14,10,7,0.9)] border border-[rgba(212,163,89,0.4)] hover:border-[#E5C178] text-xs font-semibold text-[#FAF4EB] transition-colors"
+          className="absolute bottom-3 start-3 z-20 inline-flex items-center gap-1.5 px-3 min-h-[36px] rounded-full bg-canvas/90 border border-line-strong hover:border-gold text-xs font-semibold text-fg transition-colors"
         >
           <span>{isAr ? "افتح في خرائط Google" : "Open in Google Maps"}</span>
-          <ExternalLink className="w-3.5 h-3.5 text-[#E5C178]" />
+          <ExternalLink className="w-3.5 h-3.5 text-gold" />
         </a>
       )}
     </div>

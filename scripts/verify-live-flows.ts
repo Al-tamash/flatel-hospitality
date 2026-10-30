@@ -114,7 +114,10 @@ async function main() {
 
   // ---------------------------------------------------------------- membership purchase
   console.log("== Membership purchase");
-  const created = await call(membershipCreate, post("/api/membership/create", { fullName: "Verify Member", email: TEST_EMAIL, phone: TEST_PHONE }));
+  const created = await call(membershipCreate, post("/api/membership/create", { fullName: "Verify Member", email: TEST_EMAIL, phone: TEST_PHONE, tier: "golden" }));
+  check("Golden order is for ₹4,999", created.json.amount === 4999, JSON.stringify(created.json));
+  const noTier = await call(membershipCreate, post("/api/membership/create", { fullName: "No Tier", email: "delivered+notier@resend.dev", phone: TEST_PHONE }));
+  check("membership without a card choice is refused", noTier.status === 400 && !noTier.json.success);
   check("membership order created", created.status === 200 && created.json.success && String(created.json.orderId).startsWith("order_"), JSON.stringify(created.json));
   const membershipId: string = created.json.membershipId;
   const orderId: string = created.json.orderId;
@@ -131,7 +134,7 @@ async function main() {
   const again = await call(membershipVerifyPayment, post("/api/membership/verify-payment", { membershipId, orderId, paymentId: "pay_verify_1", signature: sign(orderId, "pay_verify_1") }));
   check("repeating the callback is safe (same Member ID)", again.json.memberCode === memberCode);
 
-  const duplicate = await call(membershipCreate, post("/api/membership/create", { fullName: "Verify Member", email: TEST_EMAIL, phone: TEST_PHONE }));
+  const duplicate = await call(membershipCreate, post("/api/membership/create", { fullName: "Verify Member", email: TEST_EMAIL, phone: TEST_PHONE, tier: "platinum" }));
   check("a second purchase while active is refused", duplicate.status === 400 && /already/i.test(String(duplicate.json.error)));
 
   const goodLookup = await call(membershipVerify, post("/api/membership/verify", { code: memberCode, email: TEST_EMAIL }));
@@ -219,10 +222,11 @@ async function main() {
   check("Razorpay webhook confirms a combined booking", hook.json.received === true && hook.json.flats === 2, JSON.stringify(hook.json));
 
   // membership confirmed through the webhook too
-  const hookMember = await call(membershipCreate, post("/api/membership/create", { fullName: "Webhook Member", email: "delivered+webhook@resend.dev", phone: TEST_PHONE }));
-  const hookMemberPay = await call(webhook, webhookRequest("payment.captured", { id: "pay_verify_5", order_id: hookMember.json.orderId, amount: 77700, notes: { membershipId: hookMember.json.membershipId } }));
+  const hookMember = await call(membershipCreate, post("/api/membership/create", { fullName: "Webhook Member", email: "delivered+webhook@resend.dev", phone: TEST_PHONE, tier: "platinum" }));
+  check("Platinum order is for ₹7,777", hookMember.json.amount === 7777, JSON.stringify(hookMember.json));
+  const hookMemberPay = await call(webhook, webhookRequest("payment.captured", { id: "pay_verify_5", order_id: hookMember.json.orderId, amount: 777700, notes: { membershipId: hookMember.json.membershipId } }));
   check("Razorpay webhook activates a membership", hookMemberPay.json.received === true && hookMemberPay.json.membershipStatus === "active", JSON.stringify(hookMemberPay.json));
-  const badAmount = await call(membershipCreate, post("/api/membership/create", { fullName: "Amount Member", email: "delivered+amount@resend.dev", phone: TEST_PHONE }));
+  const badAmount = await call(membershipCreate, post("/api/membership/create", { fullName: "Amount Member", email: "delivered+amount@resend.dev", phone: TEST_PHONE, tier: "golden" }));
   const badAmountPay = await call(webhook, webhookRequest("payment.captured", { id: "pay_verify_6", order_id: badAmount.json.orderId, amount: 100, notes: { membershipId: badAmount.json.membershipId } }));
   check("webhook rejects a membership payment of the wrong amount", badAmountPay.status >= 400, JSON.stringify(badAmountPay.json));
   const unsigned = await call(webhook, new NextRequest("http://localhost/api/webhooks/razorpay", { method: "POST", headers: { "x-razorpay-signature": "0".repeat(64) }, body: "{}" }));

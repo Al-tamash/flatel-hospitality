@@ -315,7 +315,7 @@ export function FlatOccupancyModal({
     >
       {/* Dark Ambient Backdrop */}
       <div
-        className="fixed inset-0 bg-[#0B0805]/85 backdrop-blur-md transition-opacity"
+        className="fixed inset-0 bg-canvas/85 backdrop-blur-md transition-opacity"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -324,7 +324,7 @@ export function FlatOccupancyModal({
       <div
         onClick={(e) => e.stopPropagation()}
         className={cn(
-          "relative w-full max-w-2xl bg-[#140E0A] border border-[rgba(212,163,89,0.3)] shadow-[0_25px_60px_rgba(0,0,0,0.9)] text-[#FAF4EB]",
+          "relative w-full max-w-2xl bg-surface border border-line shadow-[0_25px_60px_rgba(0,0,0,0.9)] text-fg",
           "flex flex-col overflow-hidden transition-all duration-300",
           // Mobile bottom-sheet curve & max-height
           "rounded-t-3xl sm:rounded-3xl max-h-[92vh] sm:max-h-[88vh]"
@@ -332,16 +332,16 @@ export function FlatOccupancyModal({
       >
         {/* Subtle Luxury Glow Ring */}
         <div
-          className="absolute -top-32 left-1/2 -translate-x-1/2 w-96 h-48 bg-[#E5C178]/15 blur-3xl pointer-events-none rounded-full"
+          className="absolute -top-32 left-1/2 -translate-x-1/2 w-96 h-48 bg-gold/15 blur-3xl pointer-events-none rounded-full"
           aria-hidden="true"
         />
 
         {/* Modal Header */}
-        <div className="relative px-5 sm:px-7 pt-5 sm:pt-6 pb-4 border-b border-[rgba(212,163,89,0.18)] bg-[rgba(22,16,11,0.95)] backdrop-blur-md shrink-0">
+        <div className="relative px-5 sm:px-7 pt-5 sm:pt-6 pb-4 border-b border-line-soft bg-surface/95 backdrop-blur-md shrink-0">
           <div className="flex items-center justify-between gap-3">
             <h2
               id="select-flat-type-title"
-              className="text-xl sm:text-2xl font-serif font-semibold text-[#FAF4EB] tracking-normal"
+              className="font-heading text-fg heading-sub"
             >
               {isAr ? "اختر نوع الشقة" : "Select Flat Type"}
             </h2>
@@ -349,7 +349,7 @@ export function FlatOccupancyModal({
               <button
                 type="button"
                 onClick={handleReset}
-                className="text-xs text-[#E5C178] hover:text-[#FAF4EB] flex items-center gap-1 cursor-pointer transition-colors"
+                className="text-xs text-gold hover:text-fg flex items-center gap-1 cursor-pointer transition-colors"
               >
                 <RotateCcw className="w-3 h-3" />
                 <span>{isAr ? "إعادة ضبط" : "Reset"}</span>
@@ -357,14 +357,14 @@ export function FlatOccupancyModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="w-8 h-8 rounded-full border border-[rgba(212,163,89,0.25)] bg-[rgba(22,16,11,0.7)] text-[#D4C4B3] hover:text-[#FAF4EB] hover:border-[#E5C178] flex items-center justify-center transition-colors cursor-pointer"
+                className="w-8 h-8 rounded-full border border-line bg-surface/70 text-fg-soft hover:text-fg hover:border-gold flex items-center justify-center transition-colors cursor-pointer"
                 aria-label={isAr ? "إغلاق نافذة اختيار الشقة" : "Close flat type selector"}
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
           </div>
-          <p className="mt-1 text-xs text-[#B8A692]">
+          <p className="mt-1 text-xs text-fg-muted">
             {isAr
               ? "يمكنك اختيار أكثر من نوع شقة — اضغط + على كل نوع تريده."
               : "Need more space? Tap + on more than one flat type to combine them."}
@@ -374,19 +374,19 @@ export function FlatOccupancyModal({
         {/* Scrollable Flat Cards Container */}
         <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 space-y-3.5 sm:space-y-4 overscroll-contain">
           {flatsStatus === "loading" && !flats && (
-            <p role="status" className="py-10 text-center text-sm text-[#D4C4B3]">
+            <p role="status" className="py-10 text-center text-sm text-fg-soft">
               {isAr ? "جارٍ تحميل الشقق…" : "Loading current flats…"}
             </p>
           )}
           {flatsStatus === "error" && !flats && (
             <div role="alert" className="py-10 text-center space-y-3">
-              <p className="text-sm text-[#D4C4B3]">
+              <p className="text-sm text-fg-soft">
                 {isAr ? "تعذر تحميل الشقق الآن." : "We couldn't load the flats right now."}
               </p>
               <button
                 type="button"
                 onClick={onRetryFlats}
-                className="px-4 min-h-[40px] rounded-lg border border-[rgba(212,163,89,0.4)] text-sm font-semibold text-[#E5C178] hover:border-[#E5C178] cursor-pointer"
+                className="px-4 min-h-[40px] rounded-lg border border-line-strong text-sm font-semibold text-gold hover:border-gold cursor-pointer"
               >
                 {isAr ? "حاول مرة أخرى" : "Try again"}
               </button>
@@ -407,8 +407,8 @@ export function FlatOccupancyModal({
                 className={cn(
                   "relative rounded-2xl transition-all duration-200 select-none",
                   isSelected
-                    ? "bg-[rgba(30,21,14,0.95)] border-2 border-[#E5C178] shadow-[0_0_20px_rgba(229,193,120,0.3)] ring-1 ring-[#E5C178]/50"
-                    : "bg-[rgba(22,16,11,0.65)] border border-[rgba(212,163,89,0.22)] hover:border-[#E5C178]/50 hover:bg-[rgba(28,20,13,0.85)]"
+                    ? "bg-raised/95 border-2 border-gold shadow-[0_0_20px_color-mix(in_srgb,var(--gold)_30%,transparent)] ring-1 ring-gold/50"
+                    : "bg-surface/65 border border-line hover:border-gold/50 hover:bg-raised/85"
                 )}
               >
                 {/* Card Top Banner: Title, Price, Stepper */}
@@ -420,8 +420,8 @@ export function FlatOccupancyModal({
                         className={cn(
                           "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors",
                           isSelected
-                            ? "bg-[#E5C178]/20 border border-[#E5C178] text-[#E5C178]"
-                            : "bg-[rgba(34,24,16,0.8)] border border-[rgba(212,163,89,0.2)] text-[#D4C4B3]"
+                            ? "bg-gold/20 border border-gold text-gold"
+                            : "bg-raised/80 border border-line-soft text-fg-soft"
                         )}
                       >
                         <Home className="w-5 h-5 stroke-[2]" />
@@ -429,16 +429,16 @@ export function FlatOccupancyModal({
 
                       <div className="flex flex-col min-w-0">
                         <div className="flex items-baseline gap-2 flex-wrap">
-                          <h3 className="font-serif text-base sm:text-lg font-bold text-[#FAF4EB] tracking-wide">
+                          <h3 className="font-serif text-base sm:text-lg font-bold text-fg tracking-wide">
                             {flat.title}
                           </h3>
-                          <span className="font-mono text-sm sm:text-base font-bold text-[#E5C178]">
+                          <span className="font-mono text-sm sm:text-base font-bold text-gold">
                             ₹{flat.pricePerNight.toLocaleString("en-IN")}
                           </span>
-                          <span className="text-xs text-[#B8A692]">{isAr ? "/ ليلة" : "/ night"}</span>
+                          <span className="text-xs text-fg-muted">{isAr ? "/ ليلة" : "/ night"}</span>
                         </div>
 
-                        <span className="text-xs text-[#D4C4B3] mt-0.5 leading-relaxed">
+                        <span className="text-xs text-fg-soft mt-0.5 leading-relaxed">
                           {isAr
                             ? `السعة الأساسية: ${flat.baseAdults} بالغين و ${flat.baseKids} أطفال`
                             : `Base Capacity: ${flat.baseAdults} Adults & ${flat.baseKids} ${flat.baseKids === 1 ? "Child" : "Children"}`}
@@ -448,7 +448,7 @@ export function FlatOccupancyModal({
 
                     {/* Right: Number of Flats Stepper */}
                     <div className="flex flex-col items-end shrink-0">
-                      <span className="text-[11px] font-sans font-semibold text-[#D4C4B3] uppercase tracking-wider mb-1">
+                      <span className="text-xs font-sans font-semibold text-fg-soft uppercase tracking-wider mb-1">
                         {isAr ? "عدد الشقق" : "Number of Flats"}
                       </span>
                       <div className="flex items-center gap-1.5 sm:gap-2">
@@ -457,16 +457,16 @@ export function FlatOccupancyModal({
                           onClick={() => updateFlatUnits(flat.id, -1)}
                           disabled={state.units <= 0}
                           className={cn(
-                            "w-8 h-8 rounded-lg border border-[rgba(212,163,89,0.25)] bg-[rgba(22,16,11,0.8)] text-[#FAF4EB] flex items-center justify-center transition-colors cursor-pointer",
-                            "hover:border-[#E5C178] hover:text-[#E5C178] active:scale-95",
-                            state.units <= 0 && "opacity-30 cursor-not-allowed hover:border-[rgba(212,163,89,0.25)] hover:text-[#FAF4EB]"
+                            "w-8 h-8 rounded-lg border border-line bg-surface/80 text-fg flex items-center justify-center transition-colors cursor-pointer",
+                            "hover:border-gold hover:text-gold active:scale-95",
+                            state.units <= 0 && "opacity-30 cursor-not-allowed hover:border-line hover:text-fg"
                           )}
                           aria-label={`Decrease number of ${flat.title} flats`}
                         >
                           <Minus className="w-3.5 h-3.5" />
                         </button>
 
-                        <span className="w-6 text-center font-mono text-sm sm:text-base font-bold text-[#FAF4EB]">
+                        <span className="w-6 text-center font-mono text-sm sm:text-base font-bold text-fg">
                           {state.units}
                         </span>
 
@@ -475,9 +475,9 @@ export function FlatOccupancyModal({
                           onClick={() => updateFlatUnits(flat.id, 1)}
                           disabled={state.units >= flat.availableUnits}
                           className={cn(
-                            "w-8 h-8 rounded-lg border border-[rgba(212,163,89,0.25)] bg-[rgba(22,16,11,0.8)] text-[#FAF4EB] flex items-center justify-center transition-colors cursor-pointer",
-                            "hover:border-[#E5C178] hover:text-[#E5C178] active:scale-95",
-                            state.units >= flat.availableUnits && "opacity-30 cursor-not-allowed hover:border-[rgba(212,163,89,0.25)] hover:text-[#FAF4EB]"
+                            "w-8 h-8 rounded-lg border border-line bg-surface/80 text-fg flex items-center justify-center transition-colors cursor-pointer",
+                            "hover:border-gold hover:text-gold active:scale-95",
+                            state.units >= flat.availableUnits && "opacity-30 cursor-not-allowed hover:border-line hover:text-fg"
                           )}
                           aria-label={`Increase number of ${flat.title} flats`}
                         >
@@ -485,7 +485,7 @@ export function FlatOccupancyModal({
                         </button>
                       </div>
 
-                      <span className="text-[10px] text-[#B8A692] mt-1 font-mono">
+                      <span className="text-xs text-fg-muted mt-1 font-mono">
                         {isAr
                           ? `متاح ${flat.availableUnits} شقق`
                           : flat.availableUnits === 1
@@ -497,23 +497,23 @@ export function FlatOccupancyModal({
 
                   {/* Expanded Guest Controls when Flat is Selected (units > 0) */}
                   {isSelected && (
-                    <div className="mt-3.5 pt-3.5 border-t border-[rgba(212,163,89,0.18)] space-y-3.5 animate-in fade-in duration-150">
+                    <div className="mt-3.5 pt-3.5 border-t border-line-soft space-y-3.5 animate-in fade-in duration-150">
                       {/* Actual Guests Arriving (Included in Base) */}
                       <div>
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-xs font-sans font-semibold text-[#E5C178] uppercase tracking-wider">
+                          <span className="text-xs font-sans font-semibold text-gold uppercase tracking-wider">
                             {isAr ? "النزلاء الفعليون (مشمولون في السعر الأساسي)" : "Actual Guests Arriving (Included in Base)"}
                           </span>
                         </div>
 
                         <div className="grid grid-cols-2 gap-2 sm:gap-3">
                           {/* Base Adults */}
-                          <div className="p-2 sm:p-2.5 rounded-xl bg-[rgba(22,16,11,0.7)] border border-[rgba(212,163,89,0.2)] flex items-center justify-between">
+                          <div className="p-2 sm:p-2.5 rounded-xl bg-surface/70 border border-line-soft flex items-center justify-between">
                             <div className="flex flex-col">
-                              <span className="text-xs font-sans font-medium text-[#FAF4EB]">
+                              <span className="text-xs font-sans font-medium text-fg">
                                 {isAr ? "البالغين" : "Adults"}
                               </span>
-                              <span className="text-[10px] text-[#B8A692]">
+                              <span className="text-xs text-fg-muted">
                                 {isAr ? `حد أقصى ${maxBaseAdultsForUnits}` : `Max ${maxBaseAdultsForUnits}`}
                               </span>
                             </div>
@@ -522,19 +522,19 @@ export function FlatOccupancyModal({
                                 type="button"
                                 onClick={() => updateBaseAdults(flat.id, -1)}
                                 disabled={state.baseAdults <= 1}
-                                className="w-7 h-7 rounded-md border border-[rgba(212,163,89,0.2)] text-[#FAF4EB] flex items-center justify-center hover:border-[#E5C178] cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                                className="w-7 h-7 rounded-md border border-line-soft text-fg flex items-center justify-center hover:border-gold cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                                 aria-label="Decrease base adults"
                               >
                                 <Minus className="w-3 h-3" />
                               </button>
-                              <span className="w-5 text-center font-mono text-sm font-bold text-[#FAF4EB]">
+                              <span className="w-5 text-center font-mono text-sm font-bold text-fg">
                                 {state.baseAdults}
                               </span>
                               <button
                                 type="button"
                                 onClick={() => updateBaseAdults(flat.id, 1)}
                                 disabled={state.baseAdults >= maxBaseAdultsForUnits}
-                                className="w-7 h-7 rounded-md border border-[rgba(212,163,89,0.2)] text-[#FAF4EB] flex items-center justify-center hover:border-[#E5C178] cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                                className="w-7 h-7 rounded-md border border-line-soft text-fg flex items-center justify-center hover:border-gold cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                                 aria-label="Increase base adults"
                               >
                                 <Plus className="w-3 h-3" />
@@ -543,12 +543,12 @@ export function FlatOccupancyModal({
                           </div>
 
                           {/* Base Children */}
-                          <div className="p-2 sm:p-2.5 rounded-xl bg-[rgba(22,16,11,0.7)] border border-[rgba(212,163,89,0.2)] flex items-center justify-between">
+                          <div className="p-2 sm:p-2.5 rounded-xl bg-surface/70 border border-line-soft flex items-center justify-between">
                             <div className="flex flex-col">
-                              <span className="text-xs font-sans font-medium text-[#FAF4EB]">
+                              <span className="text-xs font-sans font-medium text-fg">
                                 {isAr ? "الأطفال" : "Children"}
                               </span>
-                              <span className="text-[10px] text-[#B8A692]">
+                              <span className="text-xs text-fg-muted">
                                 {isAr ? `حد أقصى ${maxBaseKidsForUnits}` : `Max ${maxBaseKidsForUnits}`}
                               </span>
                             </div>
@@ -557,19 +557,19 @@ export function FlatOccupancyModal({
                                 type="button"
                                 onClick={() => updateBaseKids(flat.id, -1)}
                                 disabled={state.baseKids <= 0}
-                                className="w-7 h-7 rounded-md border border-[rgba(212,163,89,0.2)] text-[#FAF4EB] flex items-center justify-center hover:border-[#E5C178] cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                                className="w-7 h-7 rounded-md border border-line-soft text-fg flex items-center justify-center hover:border-gold cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                                 aria-label="Decrease base children"
                               >
                                 <Minus className="w-3 h-3" />
                               </button>
-                              <span className="w-5 text-center font-mono text-sm font-bold text-[#FAF4EB]">
+                              <span className="w-5 text-center font-mono text-sm font-bold text-fg">
                                 {state.baseKids}
                               </span>
                               <button
                                 type="button"
                                 onClick={() => updateBaseKids(flat.id, 1)}
                                 disabled={state.baseKids >= maxBaseKidsForUnits}
-                                className="w-7 h-7 rounded-md border border-[rgba(212,163,89,0.2)] text-[#FAF4EB] flex items-center justify-center hover:border-[#E5C178] cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                                className="w-7 h-7 rounded-md border border-line-soft text-fg flex items-center justify-center hover:border-gold cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                                 aria-label="Increase base children"
                               >
                                 <Plus className="w-3 h-3" />
@@ -580,45 +580,45 @@ export function FlatOccupancyModal({
                       </div>
 
                       {/* Additional Occupancy (Chargeable) Accordion */}
-                      <div className="rounded-xl border border-[rgba(212,163,89,0.2)] bg-[rgba(22,16,11,0.5)] overflow-hidden">
+                      <div className="rounded-xl border border-line-soft bg-surface/50 overflow-hidden">
                         <button
                           type="button"
                           onClick={() => toggleAdditionalAccordion(flat.id)}
-                          className="w-full px-3 py-2 flex items-center justify-between text-left rtl:text-right hover:bg-[rgba(34,24,16,0.6)] transition-colors cursor-pointer"
+                          className="w-full px-3 py-2 flex items-center justify-between text-left rtl:text-right hover:bg-raised/60 transition-colors cursor-pointer"
                           aria-expanded={state.isAdditionalOpen}
                         >
-                          <span className="text-xs font-sans font-semibold text-[#D4C4B3] flex items-center gap-1.5">
+                          <span className="text-xs font-sans font-semibold text-fg-soft flex items-center gap-1.5">
                             {isAr ? "نزلاء إضافيون (برسوم إضافية)" : "Additional Occupancy (Chargeable)"}
                             {(state.extraAdults > 0 || state.extraKids > 0) && (
-                              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-[#E5C178]/20 text-[#E5C178]">
+                              <span className="text-xs font-mono px-1.5 py-0.2 rounded bg-gold/20 text-gold">
                                 +{state.extraAdults + state.extraKids}
                               </span>
                             )}
                           </span>
                           {state.isAdditionalOpen ? (
-                            <ChevronUp className="w-4 h-4 text-[#E5C178]" />
+                            <ChevronUp className="w-4 h-4 text-gold" />
                           ) : (
-                            <ChevronDown className="w-4 h-4 text-[#D4C4B3]" />
+                            <ChevronDown className="w-4 h-4 text-fg-soft" />
                           )}
                         </button>
 
                         {state.isAdditionalOpen && (
-                          <div className="p-2.5 border-t border-[rgba(212,163,89,0.15)] grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 animate-in fade-in duration-150">
-                            <p className="sm:col-span-2 text-[11px] text-[#B8A692]">
+                          <div className="p-2.5 border-t border-line-soft grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 animate-in fade-in duration-150">
+                            <p className="sm:col-span-2 text-xs text-fg-muted">
                               {isAr
                                 ? "تُضاف رسوم النزلاء الإضافيين بعد اكتمال النزلاء المشمولين أعلاه."
                                 : "Extra guests are charged once the included guests above are full."}
                             </p>
                             {/* Extra Adults */}
-                            <div className="p-2 sm:p-2.5 rounded-xl bg-[rgba(22,16,11,0.7)] border border-[rgba(212,163,89,0.2)] flex items-center justify-between gap-2">
+                            <div className="p-2 sm:p-2.5 rounded-xl bg-surface/70 border border-line-soft flex items-center justify-between gap-2">
                               <div className="flex flex-col">
-                                <span className="text-xs font-medium text-[#FAF4EB]">
+                                <span className="text-xs font-medium text-fg">
                                   {isAr ? "بالغون إضافيون" : "Extra Adults"}
-                                  <span className="text-[10px] text-[#B8A692] font-normal">
+                                  <span className="text-xs text-fg-muted font-normal">
                                     {isAr ? ` · حد أقصى ${maxExtraAdultsForUnits}` : ` · Max ${maxExtraAdultsForUnits}`}
                                   </span>
                                 </span>
-                                <span className="text-[10px] text-[#E5C178] font-mono">
+                                <span className="text-xs text-gold font-mono">
                                   {isAr ? `₹${flat.extraAdultFee} / ليلة لكل بالغ` : `₹${flat.extraAdultFee} / night per adult`}
                                 </span>
                               </div>
@@ -627,19 +627,19 @@ export function FlatOccupancyModal({
                                   type="button"
                                   onClick={() => updateExtraAdults(flat.id, -1)}
                                   disabled={state.extraAdults <= 0}
-                                  className="w-7 h-7 rounded-md border border-[rgba(212,163,89,0.2)] text-[#FAF4EB] flex items-center justify-center hover:border-[#E5C178] cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                                  className="w-7 h-7 rounded-md border border-line-soft text-fg flex items-center justify-center hover:border-gold cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                                   aria-label="Decrease extra adults"
                                 >
                                   <Minus className="w-3 h-3" />
                                 </button>
-                                <span className="w-5 text-center font-mono text-sm font-bold text-[#FAF4EB]">
+                                <span className="w-5 text-center font-mono text-sm font-bold text-fg">
                                   {state.extraAdults}
                                 </span>
                                 <button
                                   type="button"
                                   onClick={() => updateExtraAdults(flat.id, 1)}
                                   disabled={state.extraAdults >= maxExtraAdultsForUnits || state.baseAdults < maxBaseAdultsForUnits}
-                                  className="w-7 h-7 rounded-md border border-[rgba(212,163,89,0.2)] text-[#FAF4EB] flex items-center justify-center hover:border-[#E5C178] cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                                  className="w-7 h-7 rounded-md border border-line-soft text-fg flex items-center justify-center hover:border-gold cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                                   aria-label="Increase extra adults"
                                 >
                                   <Plus className="w-3 h-3" />
@@ -648,15 +648,15 @@ export function FlatOccupancyModal({
                             </div>
 
                             {/* Extra Children */}
-                            <div className="p-2 sm:p-2.5 rounded-xl bg-[rgba(22,16,11,0.7)] border border-[rgba(212,163,89,0.2)] flex items-center justify-between gap-2">
+                            <div className="p-2 sm:p-2.5 rounded-xl bg-surface/70 border border-line-soft flex items-center justify-between gap-2">
                               <div className="flex flex-col">
-                                <span className="text-xs font-medium text-[#FAF4EB]">
+                                <span className="text-xs font-medium text-fg">
                                   {isAr ? "أطفال إضافيون" : "Extra Children"}
-                                  <span className="text-[10px] text-[#B8A692] font-normal">
+                                  <span className="text-xs text-fg-muted font-normal">
                                     {isAr ? ` · حد أقصى ${maxExtraKidsForUnits}` : ` · Max ${maxExtraKidsForUnits}`}
                                   </span>
                                 </span>
-                                <span className="text-[10px] text-[#E5C178] font-mono">
+                                <span className="text-xs text-gold font-mono">
                                   {isAr ? `₹${flat.extraKidFee} / ليلة لكل طفل` : `₹${flat.extraKidFee} / night per child`}
                                 </span>
                               </div>
@@ -665,19 +665,19 @@ export function FlatOccupancyModal({
                                   type="button"
                                   onClick={() => updateExtraKids(flat.id, -1)}
                                   disabled={state.extraKids <= 0}
-                                  className="w-7 h-7 rounded-md border border-[rgba(212,163,89,0.2)] text-[#FAF4EB] flex items-center justify-center hover:border-[#E5C178] cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                                  className="w-7 h-7 rounded-md border border-line-soft text-fg flex items-center justify-center hover:border-gold cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                                   aria-label="Decrease extra children"
                                 >
                                   <Minus className="w-3 h-3" />
                                 </button>
-                                <span className="w-5 text-center font-mono text-sm font-bold text-[#FAF4EB]">
+                                <span className="w-5 text-center font-mono text-sm font-bold text-fg">
                                   {state.extraKids}
                                 </span>
                                 <button
                                   type="button"
                                   onClick={() => updateExtraKids(flat.id, 1)}
                                   disabled={state.extraKids >= maxExtraKidsForUnits || state.baseKids < maxBaseKidsForUnits}
-                                  className="w-7 h-7 rounded-md border border-[rgba(212,163,89,0.2)] text-[#FAF4EB] flex items-center justify-center hover:border-[#E5C178] cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                                  className="w-7 h-7 rounded-md border border-line-soft text-fg flex items-center justify-center hover:border-gold cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                                   aria-label="Increase extra children"
                                 >
                                   <Plus className="w-3 h-3" />
@@ -696,20 +696,20 @@ export function FlatOccupancyModal({
         </div>
 
         {/* Modal Footer / Floating Action Bar (Exact Client WhatsApp Aesthetic) */}
-        <div className="p-4 sm:p-5 border-t border-[rgba(212,163,89,0.2)] bg-[rgba(20,14,10,0.98)] backdrop-blur-md shrink-0">
+        <div className="p-4 sm:p-5 border-t border-line-soft bg-[rgba(20,14,10,0.98)] backdrop-blur-md shrink-0">
           {aggregate.tooManyFlats && (
-            <p role="alert" className="mb-3 text-xs text-[#F2B8A0]">
+            <p role="alert" className="mb-3 text-xs text-danger-soft">
               {isAr ? `يمكنك حجز ${MAX_CART_FLATS} شقق كحد أقصى في حجز واحد.` : `You can book up to ${MAX_CART_FLATS} flats in one booking.`}
             </p>
           )}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
             {/* Left / Center Summary Badge */}
             <div className="flex items-center justify-between w-full sm:w-auto gap-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[rgba(229,193,120,0.12)] border border-[#E5C178]/40 text-[#FAF4EB]">
-                <Sparkles className="w-3.5 h-3.5 text-[#E5C178]" />
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gold/12 border border-gold/40 text-fg">
+                <Sparkles className="w-3.5 h-3.5 text-gold" />
                 <span className="text-xs sm:text-sm font-medium tracking-wide">
                   {isAr ? "المحدد: " : "Confirmed: "}
-                  <strong className="text-[#E5C178] font-bold">
+                  <strong className="text-gold font-bold">
                     {aggregate.totalUnits > 0
                       ? aggregate.confirmedBadgeLabel
                       : (isAr ? "اختر شقة" : "Select Flat")}
@@ -719,10 +719,10 @@ export function FlatOccupancyModal({
 
               {aggregate.totalUnits > 0 && (
                 <div className="text-right sm:hidden">
-                  <span className="text-[10px] text-[#B8A692] block leading-none">
+                  <span className="text-xs text-fg-muted block leading-none">
                     {isAr ? "السعر التقديري" : "Est. Rate"}
                   </span>
-                  <span className="font-mono text-sm font-bold text-[#E5C178]">
+                  <span className="font-mono text-sm font-bold text-gold">
                     ₹{aggregate.estimatedPricePerNight.toLocaleString("en-IN")}{isAr ? "/ليلة" : "/N"}
                   </span>
                 </div>
@@ -733,12 +733,12 @@ export function FlatOccupancyModal({
             <div className="flex items-center gap-3 w-full sm:w-auto">
               {aggregate.totalUnits > 0 && (
                 <div className="hidden sm:flex flex-col text-right">
-                  <span className="text-[10px] uppercase tracking-wider text-[#B8A692]">
+                  <span className="text-xs uppercase tracking-wider text-fg-muted">
                     {isAr ? "السعر الإجمالي" : "Total Rate"}
                   </span>
-                  <span className="font-mono text-base font-bold text-[#E5C178]">
+                  <span className="font-mono text-base font-bold text-gold">
                     ₹{aggregate.estimatedPricePerNight.toLocaleString("en-IN")}{" "}
-                    <span className="text-xs text-[#FAF4EB] font-sans font-normal">
+                    <span className="text-xs text-fg font-sans font-normal">
                       {isAr ? "/ ليلة" : "/ night"}
                     </span>
                   </span>
@@ -751,7 +751,7 @@ export function FlatOccupancyModal({
                 disabled={aggregate.totalUnits === 0 || aggregate.tooManyFlats}
                 className={cn(
                   "flex-1 sm:flex-initial min-h-[46px] sm:min-h-[48px] px-6 sm:px-7 rounded-xl font-sans font-bold text-sm tracking-wide transition-all cursor-pointer",
-                  "bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] shadow-md shadow-[#E5C178]/25 hover:brightness-105 active:scale-95",
+                  "bg-gradient-to-r from-gold to-gold-deep text-ink shadow-md shadow-gold/25 hover:brightness-105 active:scale-95",
                   "flex items-center justify-center gap-2",
                   (aggregate.totalUnits === 0 || aggregate.tooManyFlats) && "opacity-40 cursor-not-allowed hover:brightness-100 active:scale-100"
                 )}

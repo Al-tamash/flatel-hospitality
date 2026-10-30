@@ -70,22 +70,22 @@ export function FlatTypeSelector({
   return (
     <div
       className={cn(
-        "w-full rounded-2xl bg-[rgba(34,24,16,0.95)] backdrop-blur-xl border border-[rgba(212,163,89,0.28)] text-[#FAF4EB] shadow-[0_20px_50px_rgba(0,0,0,0.85)] select-none",
+        "w-full rounded-2xl bg-raised/95 backdrop-blur-xl border border-line text-fg shadow-[0_20px_50px_rgba(0,0,0,0.85)] select-none",
         isMobileModal ? "p-4 max-w-full" : "p-3 sm:p-4 max-w-[340px] sm:max-w-[370px]",
         className
       )}
     >
       {/* Header */}
-      <div className="flex items-center justify-between pb-3 mb-3 border-b border-[rgba(212,163,89,0.18)]">
+      <div className="flex items-center justify-between pb-3 mb-3 border-b border-line-soft">
         <div>
-          <span className="text-[10px] font-sans font-semibold tracking-wider uppercase text-[#E5C178]">
+          <span className="text-xs font-sans font-semibold tracking-wider uppercase text-gold">
             Flat Size
           </span>
-          <h3 className="text-sm font-sans font-semibold tracking-wide text-[#FAF4EB]">
+          <h3 className="text-sm font-sans font-semibold tracking-wide text-fg">
             Select Flat Type
           </h3>
         </div>
-        <span className="text-[11px] font-mono font-medium text-[#E5C178] px-2 py-0.5 rounded-full bg-[#E5C178]/10 border border-[#E5C178]/25">
+        <span className="text-xs font-mono font-medium text-gold px-2 py-0.5 rounded-full bg-gold/10 border border-gold/25">
           1–5 BHK
         </span>
       </div>
@@ -107,8 +107,8 @@ export function FlatTypeSelector({
               className={cn(
                 "w-full p-2.5 sm:p-3 rounded-xl text-left flex items-start justify-between gap-3 transition-all duration-150 cursor-pointer",
                 isSelected
-                  ? "bg-[rgba(22,16,11,0.9)] border border-[#E5C178] shadow-xs"
-                  : "bg-[rgba(34,24,16,0.5)] hover:bg-[rgba(45,32,22,0.7)] border border-[rgba(212,163,89,0.15)] text-[#B8A692]"
+                  ? "bg-surface/90 border border-gold shadow-xs"
+                  : "bg-raised/50 hover:bg-raised-hover/70 border border-line-soft text-fg-muted"
               )}
             >
               <div className="flex items-start gap-2.5">
@@ -116,8 +116,8 @@ export function FlatTypeSelector({
                   className={cn(
                     "mt-0.5 p-1.5 rounded-lg border shrink-0 transition-colors",
                     isSelected
-                      ? "border-[#E5C178]/50 bg-[#E5C178]/15 text-[#E5C178]"
-                      : "border-[rgba(212,163,89,0.15)] bg-[rgba(22,16,11,0.6)] text-[#B8A692]"
+                      ? "border-gold/50 bg-gold/15 text-gold"
+                      : "border-line-soft bg-surface/60 text-fg-muted"
                   )}
                 >
                   <Home className="w-3.5 h-3.5" />
@@ -127,23 +127,23 @@ export function FlatTypeSelector({
                     <span
                       className={cn(
                         "font-sans text-sm font-medium tracking-wide",
-                        isSelected ? "text-[#FAF4EB]" : "text-[#FAF4EB]/90"
+                        isSelected ? "text-fg" : "text-fg/90"
                       )}
                     >
                       {item.title}
                     </span>
-                    <span className="font-mono text-[11px] text-[#E5C178] font-semibold">
+                    <span className="font-mono text-xs text-gold font-semibold">
                       {item.priceNote}
                     </span>
                   </div>
-                  <div className="text-[10px] font-sans text-[#B8A692] mt-0.5">
+                  <div className="text-xs font-sans text-fg-muted mt-0.5">
                     {item.capacityNote}
                   </div>
                 </div>
               </div>
 
               {isSelected && (
-                <div className="h-5 w-5 rounded-full bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] flex items-center justify-center shrink-0 mt-0.5">
+                <div className="h-5 w-5 rounded-full bg-gradient-to-r from-gold to-gold-deep text-ink flex items-center justify-center shrink-0 mt-0.5">
                   <Check className="w-3 h-3 stroke-[3]" />
                 </div>
               )}
@@ -154,14 +154,14 @@ export function FlatTypeSelector({
 
       {/* Optional Reset Action if selected */}
       {selectedType !== null && (
-        <div className="pt-2.5 mt-2.5 border-t border-[rgba(212,163,89,0.18)] flex justify-end">
+        <div className="pt-2.5 mt-2.5 border-t border-line-soft flex justify-end">
           <button
             type="button"
             onClick={() => {
               onSelectType(null);
               if (onClose) onClose();
             }}
-            className="inline-flex items-center gap-1.5 text-xs text-[#B8A692] hover:text-[#E5C178] transition-colors py-1 px-2 cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-xs text-fg-muted hover:text-gold transition-colors py-1 px-2 cursor-pointer"
           >
             <RotateCcw className="w-3 h-3" />
             <span>Reset flat type</span>

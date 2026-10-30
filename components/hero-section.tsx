@@ -10,6 +10,7 @@ import { HeroFeaturedCards } from "@/components/hero-featured-cards";
 import { getLocaleFromPath, getDictionary } from "@/lib/i18n";
 import { Starlight } from "@/components/effects/starlight";
 import { cn } from "@/lib/utils";
+import { EASE_OUT, MOTION_OK, gsap, useGSAP } from "@/lib/motion";
 
 interface HeroSectionProps {
   /** Optional custom hero background image URL (e.g. from Cloudflare R2) */
@@ -23,10 +24,31 @@ export function HeroSection({ customImageUrl }: HeroSectionProps) {
   const isAr = currentLocale === "ar";
   const localePrefix = isAr ? "/ar" : "";
   const heroImageSrc = customImageUrl || "/images/hero-apartment.jpg";
+  const sectionRef = React.useRef<HTMLElement>(null);
+
+  // Entrance: photo settles from a slow zoom, then the headline block and the
+  // booking bar rise in sequence. Vertical-only so LTR and RTL behave the same.
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add(MOTION_OK, () => {
+        const tl = gsap.timeline({ defaults: { ease: EASE_OUT } });
+        tl.from("[data-hero-bg]", { scale: 1.14, duration: 2.4, ease: "power2.out" }, 0)
+          .from("[data-hero-accent]", { scaleX: 0, transformOrigin: isAr ? "right center" : "left center", duration: 0.6 }, 0.15)
+          .from("[data-hero-item]", { autoAlpha: 0, y: 28, duration: 0.8, stagger: 0.12, clearProps: "transform,opacity,visibility" }, 0.2)
+          .from("[data-hero-search]", { autoAlpha: 0, y: 36, duration: 0.9, clearProps: "transform,opacity,visibility" }, 0.7)
+          .from("[data-hero-cards]", { autoAlpha: 0, y: 32, duration: 0.9, clearProps: "transform,opacity,visibility" }, 0.9);
+      });
+      return () => mm.revert();
+    },
+    { scope: sectionRef, dependencies: [isAr] }
+  );
 
   return (
     <section
-      className="relative z-20 w-full bg-[#0E0A07] overflow-visible select-none"
+      ref={sectionRef}
+      data-motion
+      className="relative z-20 w-full bg-canvas overflow-visible select-none"
       aria-label="FLATEL Hospitality — Find Your Place to Stay"
     >
       {/* ======================================================== */}
@@ -40,13 +62,14 @@ export function HeroSection({ customImageUrl }: HeroSectionProps) {
             alt="FLATEL Hospitality Serviced Apartments in Hyderabad"
             fill
             priority
+            data-hero-bg
             className="object-cover object-[center_32%] sm:object-center scale-[1.01] transition-transform duration-1000"
             sizes="100vw"
           />
 
           {/* Top Vignette: Seamless gradient merge with sticky header */}
           <div
-            className="absolute inset-x-0 top-0 h-28 sm:h-40 bg-gradient-to-b from-[#0E0A07] via-[#0E0A07]/80 to-transparent pointer-events-none"
+            className="absolute inset-x-0 top-0 h-28 sm:h-40 bg-gradient-to-b from-canvas via-canvas/80 to-transparent pointer-events-none"
             aria-hidden="true"
           />
 
@@ -55,8 +78,8 @@ export function HeroSection({ customImageUrl }: HeroSectionProps) {
             className={cn(
               "absolute inset-y-0 w-full lg:w-[70%] pointer-events-none",
               isAr
-                ? "right-0 bg-gradient-to-l from-[#0E0A07]/98 via-[#0E0A07]/88 sm:via-[#0E0A07]/80 to-[#0E0A07]/40 sm:to-transparent"
-                : "left-0 bg-gradient-to-r from-[#0E0A07]/98 via-[#0E0A07]/88 sm:via-[#0E0A07]/80 to-[#0E0A07]/40 sm:to-transparent"
+                ? "right-0 bg-gradient-to-l from-canvas/98 via-canvas/88 sm:via-canvas/80 to-canvas/40 sm:to-transparent"
+                : "left-0 bg-gradient-to-r from-canvas/98 via-canvas/88 sm:via-canvas/80 to-canvas/40 sm:to-transparent"
             )}
             aria-hidden="true"
           />
@@ -66,15 +89,15 @@ export function HeroSection({ customImageUrl }: HeroSectionProps) {
             className={cn(
               "absolute inset-0 pointer-events-none",
               isAr
-                ? "bg-[radial-gradient(circle_at_80%_35%,rgba(212,163,89,0.15)_0%,transparent_65%)]"
-                : "bg-[radial-gradient(circle_at_20%_35%,rgba(212,163,89,0.15)_0%,transparent_65%)]"
+                ? "bg-[radial-gradient(circle_at_80%_35%,color-mix(in_srgb,var(--gold)_15%,transparent)_0%,transparent_65%)]"
+                : "bg-[radial-gradient(circle_at_20%_35%,color-mix(in_srgb,var(--gold)_15%,transparent)_0%,transparent_65%)]"
             )}
             aria-hidden="true"
           />
 
           {/* Overall Soft Ambient Overlay */}
           <div
-            className="absolute inset-0 bg-[#0E0A07]/45 pointer-events-none"
+            className="absolute inset-0 bg-canvas/45 pointer-events-none"
             aria-hidden="true"
           />
 
@@ -92,41 +115,42 @@ export function HeroSection({ customImageUrl }: HeroSectionProps) {
         {/* ======================================================== */}
         {/* 2. HERO EDITORIAL (Purpose-Built for Mobile & RTL)       */}
         {/* ======================================================== */}
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 pt-6 sm:pt-14 lg:pt-20 pb-3 sm:pb-8">
-          <div className={cn("max-w-2xl animate-in fade-in slide-in-from-bottom-2 duration-700 ease-out", isAr ? "text-right" : "text-left")}>
+        <div className="relative z-10 w-full container-page pt-6 sm:pt-14 lg:pt-20 pb-3 sm:pb-8">
+          <div className={cn("max-w-2xl", isAr ? "text-right" : "text-left")}>
             {/* Luxury Eyebrow Text & Golden Horizontal Accent */}
-            <div className={cn("flex items-center gap-2.5 mb-2.5 sm:mb-4", isAr && "flex-row-reverse justify-end")}>
+            <div data-hero-item className={cn("flex items-center gap-2.5 mb-2.5 sm:mb-4", isAr && "flex-row-reverse justify-end")}>
               <div
-                className="w-8 sm:w-12 h-1 bg-[#E5C178] rounded-full shadow-xs shrink-0"
+                data-hero-accent
+                className="w-8 sm:w-12 h-1 bg-gold rounded-full shadow-xs shrink-0"
                 aria-hidden="true"
               />
-              <span className="text-xs sm:text-sm font-sans font-semibold tracking-[0.14em] text-[#E5C178] uppercase">
+              <span className="text-xs sm:text-sm font-sans font-semibold tracking-[0.14em] text-gold uppercase">
                 {dict.home.heroBadge}
               </span>
             </div>
 
             {/* Headline with Luxury Proportions */}
-            <h1 className="font-heading text-3xl sm:text-5xl md:text-6xl lg:text-[66px] font-semibold tracking-normal text-[#FAF4EB] leading-[1.12]">
+            <h1 data-hero-item className="font-heading text-fg heading-hero">
               {dict.home.heroTitleLine1}{" "}
-              <span className="text-[#E5C178] block sm:inline">{dict.home.heroTitleHighlight}</span>
+              <span className="text-gold block sm:inline">{dict.home.heroTitleHighlight}</span>
             </h1>
 
             {/* Subtitle with Generous Line Height */}
-            <p className="mt-3.5 sm:mt-5 text-sm sm:text-base md:text-lg text-[#D4C4B3] font-sans font-normal leading-relaxed max-w-xl text-balance">
+            <p data-hero-item className="mt-3.5 sm:mt-5 text-sm sm:text-base md:text-lg text-fg-soft font-sans font-normal leading-relaxed max-w-xl text-balance">
               {dict.home.heroSubtitle}
             </p>
 
             {/* Explore Flats CTA Button */}
-            <div className="mt-5 sm:mt-7 hidden sm:block">
+            <div data-hero-item className="mt-5 sm:mt-7 hidden sm:block">
               <Link
                 href={`${localePrefix}/properties`}
-                className="inline-flex items-center gap-2.5 px-6 sm:px-7 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] hover:brightness-105 text-[#140E08] font-sans font-semibold text-xs sm:text-sm tracking-wide transition-all duration-200 shadow-lg shadow-[#E5C178]/25 active:scale-[0.98] group"
+                className="inline-flex items-center gap-2.5 px-6 sm:px-7 py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-gold to-gold-deep hover:brightness-105 text-ink font-sans font-semibold text-xs sm:text-sm tracking-wide transition-all duration-200 shadow-lg shadow-gold/25 active:scale-[0.98] group"
               >
                 <span>{dict.home.exploreResidences}</span>
                 {isAr ? (
-                  <ArrowLeft className="w-4 h-4 text-[#140E08] transition-transform group-hover:-translate-x-1" />
+                  <ArrowLeft className="w-4 h-4 text-ink transition-transform group-hover:-translate-x-1" />
                 ) : (
-                  <ArrowRight className="w-4 h-4 text-[#140E08] transition-transform group-hover:translate-x-1" />
+                  <ArrowRight className="w-4 h-4 text-ink transition-transform group-hover:translate-x-1" />
                 )}
               </Link>
             </div>
@@ -134,7 +158,7 @@ export function HeroSection({ customImageUrl }: HeroSectionProps) {
         </div>
 
         {/* Floating Integrated Booking Search Bar */}
-        <div className="relative z-30 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 mt-auto pt-2 sm:pt-6">
+        <div data-hero-search className="relative z-30 w-full container-page mt-auto pt-2 sm:pt-6">
           <BookingSearch />
         </div>
       </div>
@@ -142,7 +166,7 @@ export function HeroSection({ customImageUrl }: HeroSectionProps) {
       {/* ======================================================== */}
       {/* 3. UNDER THE HERO: 4 PURPOSE CARDS                      */}
       {/* ======================================================== */}
-      <div className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 pt-6 sm:pt-8 pb-8">
+      <div data-hero-cards className="relative z-20 w-full container-page pt-6 sm:pt-8 pb-8">
         <HeroFeaturedCards />
       </div>
     </section>

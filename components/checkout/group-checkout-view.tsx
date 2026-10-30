@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, CreditCard, Layers, ShieldCheck } from "lucide-react";
@@ -17,6 +18,7 @@ import {
   type RazorpaySuccessResponse,
 } from "@/lib/razorpay/load-script";
 import { MemberIdField, activeMemberFor, type AppliedMember } from "@/components/checkout/member-id-field";
+import { BRAND_HEX } from "@/lib/design-tokens";
 
 const formatMoney = (amount: number) => `₹${amount.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
 
@@ -175,7 +177,7 @@ export function GroupCheckoutView({ locale = "en" }: { locale?: Locale }) {
         description: `20% advance for ${cart.length} flats`,
         order_id: data.orderId,
         prefill: { name: fullName, email, contact: phone },
-        theme: { color: "#E5C178" },
+        theme: { color: BRAND_HEX.gold },
         modal: {
           ondismiss: () => {
             releaseHold("Payment was cancelled before completion.");
@@ -216,14 +218,14 @@ export function GroupCheckoutView({ locale = "en" }: { locale?: Locale }) {
 
   const fieldClass = (field: string) =>
     cn(
-      "mt-2 min-h-12 w-full rounded-lg border bg-secondary px-4 text-base text-foreground placeholder:text-[#B8A692] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+      "mt-2 min-h-12 w-full rounded-lg border bg-secondary px-4 text-base text-foreground placeholder:text-fg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
       errors[field] ? "border-rose-400" : "border-border"
     );
 
   if (!cartValid) {
     return (
       <div className={cn("mx-auto max-w-2xl px-5 py-20 text-center text-foreground", isAr && "font-arabic")} dir={isAr ? "rtl" : "ltr"}>
-        <h1 className="font-heading text-3xl">{isAr ? "اختيار الشقق غير صالح" : "We couldn't read your flat selection"}</h1>
+        <h1 className="font-heading heading-page">{isAr ? "اختيار الشقق غير صالح" : "We couldn't read your flat selection"}</h1>
         <p className="mt-3 text-sm text-muted-foreground">
           {isAr ? "اختر من 2 إلى 4 شقق ثم أعد المحاولة." : `Choose between 2 and ${MAX_CART_FLATS} flats and try again.`}
         </p>
@@ -240,6 +242,10 @@ export function GroupCheckoutView({ locale = "en" }: { locale?: Locale }) {
     <div className={cn("min-h-screen bg-background text-foreground", isAr && "font-arabic")} dir={isAr ? "rtl" : "ltr"}>
       <header className="border-b border-border/70 bg-background">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-4 sm:px-8">
+          <Link href={basePath || "/"} aria-label="Flatel Hospitality home" className="flex min-h-11 items-center gap-3 rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring">
+            <Image src="/images/flatel-monogram-clean.png" alt="" width={36} height={36} className="h-9 w-9 shrink-0 object-contain" />
+            <Image src="/images/flatel-logo-clean.png" alt="FLATEL Hospitality" width={140} height={42} className="h-7 w-auto shrink-0 object-contain" />
+          </Link>
           <Link href={`${basePath}/#flats`} className="inline-flex min-h-10 items-center gap-2 text-sm font-medium text-primary hover:text-foreground">
             <ArrowLeft className={cn("h-4 w-4", isAr && "rotate-180")} />
             {isAr ? "تعديل الاختيار" : "Change selection"}
@@ -253,7 +259,7 @@ export function GroupCheckoutView({ locale = "en" }: { locale?: Locale }) {
 
       <div className="mx-auto grid max-w-6xl gap-8 px-5 py-8 sm:px-8 lg:grid-cols-[minmax(0,1fr)_380px]">
         <section aria-labelledby="group-checkout-title">
-          <h1 id="group-checkout-title" className="font-heading text-3xl text-foreground">
+          <h1 id="group-checkout-title" className="font-heading text-foreground heading-page">
             {isAr ? `حجز ${cart.length} شقق معاً` : `Booking ${cart.length} flats together`}
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
@@ -286,7 +292,7 @@ export function GroupCheckoutView({ locale = "en" }: { locale?: Locale }) {
               <textarea id="specialRequests" name="specialRequests" rows={3} maxLength={300} value={specialRequests} onChange={(e) => setSpecialRequests(e.target.value)} className={cn(fieldClass("specialRequests"), "resize-y py-3 leading-6")} />
             </div>
 
-            <div className="border-t border-[rgba(212,163,89,0.2)] pt-5">
+            <div className="border-t border-line-soft pt-5">
               <label className="flex items-start gap-3 text-sm leading-6 text-muted-foreground">
                 <input type="checkbox" checked={agreeTerms} onChange={(e) => setAgreeTerms(e.target.checked)} className="mt-1 h-5 w-5 shrink-0 accent-primary" />
                 <span>
@@ -323,7 +329,7 @@ export function GroupCheckoutView({ locale = "en" }: { locale?: Locale }) {
             <button
               type="submit"
               disabled={isBusy || !canPay}
-              className="flex min-h-14 w-full items-center justify-center gap-2 rounded-lg bg-primary px-5 text-base font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:bg-[#77664A] disabled:text-[#E8DFD1]"
+              className="flex min-h-14 w-full items-center justify-center gap-2 rounded-lg bg-primary px-5 text-base font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:bg-fg-faint disabled:text-fg"
             >
               <CreditCard className="h-5 w-5" />
               {isBusy
@@ -332,7 +338,7 @@ export function GroupCheckoutView({ locale = "en" }: { locale?: Locale }) {
                 ? isAr ? `سداد عربون ${formatMoney(totals.advance)} وتأكيد الحجز` : `Pay ${formatMoney(totals.advance)} advance & confirm ${cart.length} flats`
                 : isAr ? "أكمل التفاصيل للمتابعة" : "Complete the details to continue"}
             </button>
-            <p className="text-center text-xs text-[#B8A692]">
+            <p className="text-center text-xs text-fg-muted">
               {isAr ? "لا يتم تأكيد الحجز إلا بعد نجاح التحقق من سداد العربون." : "No reservation is confirmed until payment is verified."}
             </p>
           </form>
@@ -340,7 +346,7 @@ export function GroupCheckoutView({ locale = "en" }: { locale?: Locale }) {
 
         <aside aria-label="Booking summary" className="lg:sticky lg:top-6 lg:self-start">
           <div className="rounded-xl border border-border bg-card p-5 sm:p-6">
-            <h2 className="flex items-center gap-2 font-heading text-2xl text-foreground">
+            <h2 className="flex items-center gap-2 font-heading text-foreground heading-sub">
               <Layers className="h-5 w-5 text-primary" />
               {isAr ? "ملخص الحجز" : "Booking summary"}
             </h2>
@@ -354,7 +360,7 @@ export function GroupCheckoutView({ locale = "en" }: { locale?: Locale }) {
               </p>
             ) : (
               <>
-                <ul className="mt-4 divide-y divide-[rgba(212,163,89,0.2)] border-y border-[rgba(212,163,89,0.2)]">
+                <ul className="mt-4 divide-y divide-line-soft border-y border-line-soft">
                   {lines.map((line, index) => (
                     <li key={`${line.room.slug}-${index}`} className="py-3 text-sm">
                       <div className="flex justify-between gap-3">

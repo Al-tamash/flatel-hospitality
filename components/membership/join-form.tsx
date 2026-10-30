@@ -1,11 +1,20 @@
 "use client";
 
+import { BRAND_HEX } from "@/lib/design-tokens";
+
 import * as React from "react";
 import Link from "next/link";
 import { Check, Copy, Loader2, MessageSquare, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { MembershipCard } from "@/components/membership/membership-card";
-import type { MembershipContent } from "@/lib/membership/membership-content";
+import {
+  MEMBERSHIP_NAME,
+  MEMBERSHIP_TIER_IDS,
+  getCardContent,
+  isMembershipTier,
+  type MembershipContent,
+  type MembershipTierId,
+} from "@/lib/membership/membership-content";
 import {
   loadRazorpayScript,
   type RazorpayCheckoutOptions,
@@ -20,20 +29,25 @@ interface JoinFormProps {
   locale: "en" | "ar";
   whatsappUrl: string;
   propertiesHref: string;
+  tier: MembershipTierId;
+  onTierChange: (tier: MembershipTierId) => void;
 }
 
 interface JoinedMember {
   memberCode: string;
   fullName: string;
+  tier: MembershipTierId;
   validUntil: string;
 }
 
 const fieldClass =
-  "w-full min-h-[48px] rounded-xl border border-[rgba(212,163,89,0.3)] bg-[#140E08] px-4 text-[#FAF4EB] placeholder:text-[#B8A692]/60 focus:border-[#E5C178] focus:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178]";
+  "w-full min-h-[48px] rounded-xl border border-line bg-ink px-4 text-fg placeholder:text-fg-muted/60 focus:border-gold focus:outline-none focus-visible:ring-1 focus-visible:ring-gold";
 
-/** Buy the membership: details, Razorpay payment, then the member's own card with their ID. */
-export function JoinForm({ content, locale, whatsappUrl, propertiesHref }: JoinFormProps) {
+/** Buy the membership: pick a card, details, Razorpay payment, then the member's own card with their ID. */
+export function JoinForm({ content, locale, whatsappUrl, propertiesHref, tier, onTierChange }: JoinFormProps) {
   const copy = content.join;
+  const tierContent = content.tiers[tier];
+  const price = tierContent.price;
   const [fullName, setFullName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [phone, setPhone] = React.useState("");
@@ -66,7 +80,7 @@ export function JoinForm({ content, locale, whatsappUrl, propertiesHref }: JoinF
       const response = await fetch("/api/membership/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fullName, email, phone }),
+        body: JSON.stringify({ fullName, email, phone, tier }),
       });
       const data = await response.json().catch(() => null);
       if (!response.ok || !data?.success) {
@@ -93,10 +107,10 @@ export function JoinForm({ content, locale, whatsappUrl, propertiesHref }: JoinF
         amount: data.amount * 100,
         currency: "INR",
         name: "Flatel Hospitality",
-        description: "Flatel Membership — 12 months",
+        description: `${MEMBERSHIP_NAME} — ${content.tiers[tier].name}`,
         order_id: data.orderId,
         prefill: { name: fullName, email, contact: phone },
-        theme: { color: "#E5C178" },
+        theme: { color: BRAND_HEX.gold },
         modal: {
           ondismiss: () => {
             setError(copy.cancelled);
@@ -117,7 +131,12 @@ export function JoinForm({ content, locale, whatsappUrl, propertiesHref }: JoinF
             });
             const result = await verify.json().catch(() => null);
             if (!verify.ok || !result?.success) throw new Error(result?.error || copy.generic);
-            finish({ memberCode: result.memberCode, fullName: result.fullName, validUntil: result.validUntil });
+            finish({
+              memberCode: result.memberCode,
+              fullName: result.fullName,
+              tier: isMembershipTier(result.tier) ? result.tier : tier,
+              validUntil: result.validUntil,
+            });
           } catch (verifyError: unknown) {
             setError(verifyError instanceof Error ? verifyError.message : copy.generic);
             setShowWhatsApp(true);
@@ -160,36 +179,39 @@ export function JoinForm({ content, locale, whatsappUrl, propertiesHref }: JoinF
     return (
       <div className="grid gap-8 md:grid-cols-2 md:items-center" role="status">
         <MembershipCard
-          content={{ ...content, cardHolder: member.fullName.toUpperCase().slice(0, 22), cardId: member.memberCode }}
+          content={getCardContent(content, member.tier, {
+            holder: member.fullName.toUpperCase().slice(0, 22),
+            id: member.memberCode,
+          })}
         />
         <div className="space-y-4 text-center md:text-start">
-          <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#E5C178]/15 border border-[#E5C178]/50 text-[#E5C178]">
+          <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-gold/15 border border-gold/50 text-gold">
             <Check className="h-5 w-5" />
           </span>
-          <h3 className="font-heading text-2xl sm:text-3xl text-[#FAF4EB]">{copy.successTitle}</h3>
-          <p className="text-sm text-[#D4C4B3] leading-relaxed">{copy.successBody}</p>
-          <div className="rounded-xl border border-[rgba(212,163,89,0.3)] bg-[#140E08] p-4">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#B8A692]">{copy.memberIdLabel}</p>
+          <h3 className="font-heading text-2xl sm:text-3xl text-fg">{copy.successTitle}</h3>
+          <p className="text-sm text-fg-soft leading-relaxed">{copy.successBody}</p>
+          <div className="rounded-xl border border-line bg-ink p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-fg-muted">{copy.memberIdLabel}</p>
             <div className="mt-1 flex items-center justify-center md:justify-between gap-3">
-              <span dir="ltr" className="font-mono text-2xl font-bold tracking-[0.12em] text-[#E5C178] select-all">
+              <span dir="ltr" className="font-mono text-2xl font-bold tracking-[0.14em] text-gold select-all">
                 {member.memberCode}
               </span>
               <button
                 type="button"
                 onClick={handleCopy}
-                className="inline-flex items-center gap-1.5 min-h-[40px] px-3 rounded-lg border border-[rgba(212,163,89,0.35)] text-xs font-semibold text-[#E5C178] hover:border-[#E5C178] cursor-pointer"
+                className="inline-flex items-center gap-1.5 min-h-[40px] px-3 rounded-lg border border-line text-xs font-semibold text-gold hover:border-gold cursor-pointer"
               >
                 {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
                 {copied ? copy.copied : copy.copy}
               </button>
             </div>
-            <p className="mt-2 text-xs text-[#B8A692]">
+            <p className="mt-2 text-xs text-fg-muted">
               {copy.validUntil}: {validUntil}
             </p>
           </div>
           <Link
             href={propertiesHref}
-            className="inline-flex items-center min-h-[48px] px-6 rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] font-bold text-sm"
+            className="inline-flex items-center min-h-[48px] px-6 rounded-xl bg-gradient-to-r from-gold to-gold-deep text-ink font-bold text-sm"
           >
             {copy.browse}
           </Link>
@@ -200,30 +222,53 @@ export function JoinForm({ content, locale, whatsappUrl, propertiesHref }: JoinF
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+      <fieldset>
+        <legend className="mb-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-fg-muted">{copy.tierLabel}</legend>
+        <div className="grid grid-cols-2 gap-3">
+          {MEMBERSHIP_TIER_IDS.map((id) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => onTierChange(id)}
+              aria-pressed={id === tier}
+              disabled={isBusy}
+              className={cn(
+                "min-h-[56px] rounded-xl border px-3 py-2 text-start transition-colors cursor-pointer disabled:cursor-not-allowed",
+                id === tier
+                  ? "border-gold bg-gold/15"
+                  : "border-line hover:border-gold/60"
+              )}
+            >
+              <span className="block text-sm font-semibold text-fg">{content.tiers[id].name}</span>
+              <span className="block font-mono text-xs text-gold">{content.tiers[id].price}</span>
+            </button>
+          ))}
+        </div>
+      </fieldset>
       <div>
-        <label htmlFor="member-name" className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.18em] text-[#B8A692]">
+        <label htmlFor="member-name" className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.18em] text-fg-muted">
           {copy.nameLabel}
         </label>
         <input id="member-name" name="name" autoComplete="name" required value={fullName} onChange={(e) => setFullName(e.target.value)} className={fieldClass} />
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label htmlFor="member-email" className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.18em] text-[#B8A692]">
+          <label htmlFor="member-email" className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.18em] text-fg-muted">
             {copy.emailLabel}
           </label>
           <input id="member-email" name="email" type="email" inputMode="email" autoComplete="email" required dir="ltr" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className={fieldClass} />
         </div>
         <div>
-          <label htmlFor="member-phone" className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.18em] text-[#B8A692]">
+          <label htmlFor="member-phone" className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.18em] text-fg-muted">
             {copy.phoneLabel}
           </label>
           <input id="member-phone" name="phone" type="tel" inputMode="tel" autoComplete="tel" required dir="ltr" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 98765 43210" className={fieldClass} />
         </div>
       </div>
 
-      <label className="flex items-start gap-3 rounded-xl border border-[rgba(212,163,89,0.2)] p-3 text-sm text-[#D4C4B3]">
-        <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="mt-0.5 h-5 w-5 shrink-0 accent-[#E5C178]" />
-        <span>{copy.consent}</span>
+      <label className="flex items-start gap-3 rounded-xl border border-line-soft p-3 text-sm text-fg-soft">
+        <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="mt-0.5 h-5 w-5 shrink-0 accent-gold" />
+        <span>{copy.consent.replace("{price}", price)}</span>
       </label>
 
       {error && (
@@ -236,15 +281,15 @@ export function JoinForm({ content, locale, whatsappUrl, propertiesHref }: JoinF
         type="submit"
         disabled={!canSubmit || isBusy}
         className={cn(
-          "inline-flex w-full items-center justify-center gap-2 min-h-[52px] rounded-xl bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] font-bold text-sm shadow-md shadow-[#E5C178]/25 transition",
+          "inline-flex w-full items-center justify-center gap-2 min-h-[52px] rounded-xl bg-gradient-to-r from-gold to-gold-deep text-ink font-bold text-sm shadow-md shadow-gold/25 transition",
           "hover:brightness-105 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         )}
       >
         {isBusy && <Loader2 className="h-4 w-4 animate-spin" />}
-        {isBusy ? copy.paying : copy.pay}
+        {isBusy ? copy.paying : copy.pay.replace("{price}", price)}
       </button>
 
-      <p className="flex items-center justify-center gap-1.5 text-xs text-[#B8A692]">
+      <p className="flex items-center justify-center gap-1.5 text-xs text-fg-muted">
         <ShieldCheck className="h-3.5 w-3.5" />
         {copy.secure}
       </p>
@@ -254,7 +299,7 @@ export function JoinForm({ content, locale, whatsappUrl, propertiesHref }: JoinF
           href={whatsappUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 min-h-[44px] rounded-xl border border-[rgba(212,163,89,0.4)] text-sm font-semibold text-[#E5C178] hover:border-[#E5C178]"
+          className="flex items-center justify-center gap-2 min-h-[44px] rounded-xl border border-line-strong text-sm font-semibold text-gold hover:border-gold"
         >
           <MessageSquare className="h-4 w-4" />
           {copy.whatsappFallback}

@@ -62,23 +62,23 @@ export function StayPurposeSelector({
   return (
     <div
       className={cn(
-        "w-full rounded-2xl bg-[rgba(34,24,16,0.95)] backdrop-blur-xl border border-[rgba(212,163,89,0.28)] text-[#FAF4EB] shadow-[0_20px_50px_rgba(0,0,0,0.85)] select-none",
+        "w-full rounded-2xl bg-raised/95 backdrop-blur-xl border border-line text-fg shadow-[0_20px_50px_rgba(0,0,0,0.85)] select-none",
         isMobileModal
           ? "p-5 max-w-full"
           : "p-4 sm:p-5 max-w-[340px] sm:max-w-[380px]",
         className
       )}
     >
-      <div className="flex items-center justify-between pb-3 mb-3 border-b border-[rgba(212,163,89,0.18)]">
+      <div className="flex items-center justify-between pb-3 mb-3 border-b border-line-soft">
         <div>
-          <span className="text-[10px] font-sans font-semibold tracking-wider uppercase text-[#E5C178]">
+          <span className="text-xs font-sans font-semibold tracking-wider uppercase text-gold">
             Purpose of Stay
           </span>
-          <h3 className="text-sm font-sans font-semibold tracking-wide text-[#FAF4EB]">
+          <h3 className="text-sm font-sans font-semibold tracking-wide text-fg">
             Tailor Your Flatel Experience
           </h3>
         </div>
-        <span className="text-[11px] font-sans text-[#E5C178] font-medium">
+        <span className="text-xs font-sans text-gold font-medium">
           Complimentary Extras
         </span>
       </div>
@@ -97,18 +97,18 @@ export function StayPurposeSelector({
                 if (onClose) onClose();
               }}
               className={cn(
-                "w-full p-2.5 rounded-xl border text-left transition-all duration-150 flex items-start gap-2.5 group focus:outline-none focus-visible:ring-1 focus-visible:ring-[#E5C178] cursor-pointer",
+                "w-full p-2.5 rounded-xl border text-left transition-all duration-150 flex items-start gap-2.5 group focus:outline-none focus-visible:ring-1 focus-visible:ring-gold cursor-pointer",
                 isSelected
-                  ? "bg-[rgba(22,16,11,0.9)] border-[#E5C178] text-[#FAF4EB] shadow-xs"
-                  : "bg-[rgba(34,24,16,0.5)] border-[rgba(212,163,89,0.15)] hover:border-[#E5C178]/50 hover:bg-[rgba(45,32,22,0.7)] text-[#B8A692]"
+                  ? "bg-surface/90 border-gold text-fg shadow-xs"
+                  : "bg-raised/50 border-line-soft hover:border-gold/50 hover:bg-raised-hover/70 text-fg-muted"
               )}
             >
               <div
                 className={cn(
                   "p-1.5 rounded-lg mt-0.5 shrink-0 transition-colors",
                   isSelected
-                    ? "bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08]"
-                    : "bg-[rgba(22,16,11,0.6)] text-[#E5C178] group-hover:bg-[#E5C178]/20"
+                    ? "bg-gradient-to-r from-gold to-gold-deep text-ink"
+                    : "bg-surface/60 text-gold group-hover:bg-gold/20"
                 )}
               >
                 <Icon className="w-4 h-4" />
@@ -118,26 +118,26 @@ export function StayPurposeSelector({
                 <div className="flex items-center justify-between gap-1.5">
                   <span
                     className={cn(
-                      "font-sans text-xs sm:text-[13px] font-medium tracking-wide",
+                      "font-sans text-xs sm:text-sm font-medium tracking-wide",
                       isSelected
-                        ? "text-[#FAF4EB]"
-                        : "text-[#FAF4EB] group-hover:text-[#E5C178]"
+                        ? "text-fg"
+                        : "text-fg group-hover:text-gold"
                     )}
                   >
                     {item.title}
                   </span>
                   {isSelected && (
-                    <span className="h-4 w-4 rounded-full bg-gradient-to-r from-[#E5C178] to-[#C69344] text-[#140E08] flex items-center justify-center shrink-0">
+                    <span className="h-4 w-4 rounded-full bg-gradient-to-r from-gold to-gold-deep text-ink flex items-center justify-center shrink-0">
                       <Check className="w-3 h-3 stroke-[2.5]" />
                     </span>
                   )}
                 </div>
 
-                <p className="font-sans text-[11px] text-[#B8A692] mt-0.5 leading-snug line-clamp-1">
+                <p className="font-sans text-xs text-fg-muted mt-0.5 leading-snug line-clamp-1">
                   {item.description}
                 </p>
 
-                <span className="inline-block mt-0.5 text-[9.5px] font-mono tracking-wide text-[#E5C178]">
+                <span className="inline-block mt-0.5 text-xs font-mono tracking-wide text-gold">
                   {item.contextTag}
                 </span>
               </div>
