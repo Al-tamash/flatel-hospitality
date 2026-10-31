@@ -33,6 +33,8 @@ export async function POST(req: NextRequest) {
       checkInDate: body.checkInDate,
       checkOutDate: body.checkOutDate,
       stayPurpose: body.stayPurpose ?? "accommodation_only",
+      // Only the ids are read; names and prices come from the server's own catalog
+      selectedAddons: Array.isArray(body.selectedAddons) ? body.selectedAddons : [],
       memberCode: body.memberCode,
       guest: body.guest,
     });

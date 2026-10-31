@@ -176,7 +176,7 @@ async function runAllTests() {
     "Quote on Request / unpriced add-ons contribute ₹0 and cannot silently enter payable total"
   );
 
-  // TEST 12: 20% advance plus remaining balance equals gross total
+  // TEST 12: 20% of the stay plus add-ons in full is paid online; the rest of the stay is due on arrival
   const fareSplit = calculateFlatelPrice({
     nights: 5,
     basePricePerNight: 2500,
@@ -186,8 +186,10 @@ async function runAllTests() {
   });
   assert(
     fareSplit.advancePayable + fareSplit.balanceDueOnArrival === fareSplit.grossTotal &&
-      fareSplit.advancePayable === Math.round(fareSplit.grossTotal * 0.2),
-    "20% advance plus 80% remaining balance mathematically equals the gross total"
+      fareSplit.flatAdvance === Math.round((fareSplit.grossTotal - fareSplit.addonsTotal) * 0.2) &&
+      fareSplit.servicesPrepaid === fareSplit.addonsTotal &&
+      fareSplit.advancePayable === fareSplit.flatAdvance + fareSplit.addonsTotal,
+    "20% of the stay plus add-ons in full, plus the remaining balance, equals the gross total"
   );
 
   // TEST 13: Invalid dates and excessive occupancy are rejected

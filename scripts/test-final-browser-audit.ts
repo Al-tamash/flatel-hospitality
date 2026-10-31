@@ -180,8 +180,8 @@ async function runFinalAudit() {
     });
 
     const expectedGross = 7500 + 1200 + 1500; // 10200
-    const expectedAdvance = Math.round(10200 * 0.2); // 2040
-    const expectedBalance = 10200 - 2040; // 8160
+    const expectedAdvance = Math.round(7500 * 0.2) + 2700; // 20% of the stay + add-ons in full = 4200
+    const expectedBalance = 10200 - 4200; // 6000
 
     return (
       withoutAddons.grossTotal === 7500 &&
@@ -212,12 +212,12 @@ async function runFinalAudit() {
     });
 
     // Expected gross: 18900 (rent) + 3500 (extra adult) + 3500 (addon) = 25900
-    // Advance 20%: 5180. Balance: 20720
+    // Online now: 20% of the stay (22400) = 4480, plus the add-on in full = 3500 -> 7980. Balance: 17920
     const booking = intent.booking;
     const isPricingExact =
       booking.pricing.grossTotal === 25900 &&
-      booking.pricing.advancePayable === 5180 &&
-      booking.pricing.balanceDueOnArrival === 20720;
+      booking.pricing.advancePayable === 7980 &&
+      booking.pricing.balanceDueOnArrival === 17920;
 
     const confirmed = await BookingService.confirmPayment({
       bookingId: booking.id,

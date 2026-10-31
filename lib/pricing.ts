@@ -43,8 +43,12 @@ export interface FareCalculationResult {
   extraKidsTotal?: number;
   addonsTotal: number;
   grossTotal: number;
-  advancePayable: number; // 20%
-  balanceDueOnArrival: number; // 80%
+  /** 20% of the stay itself (rent plus extra guests); add-ons are not part of this. */
+  flatAdvance: number;
+  /** Paid add-ons, collected in full online at booking time. */
+  servicesPrepaid: number;
+  advancePayable: number; // flatAdvance + servicesPrepaid
+  balanceDueOnArrival: number; // the remaining 80% of the stay
 }
 
 /**
@@ -53,7 +57,8 @@ export interface FareCalculationResult {
  * 2. Extra guest fees: ₹500/night per adult above base occupancy, and ₹300/night per child
  *    above the children included with the flat
  * 3. Paid add-on services (flat or per-night)
- * 4. 20% online advance deposit and 80% remaining balance payable on arrival
+ * 4. Online payment at booking = 20% of the stay (rent + extra guests) + 100% of paid add-ons;
+ *    the remaining 80% of the stay is payable on arrival
  */
 export function calculateFlatelPrice(input: CalculateFareInput): FareCalculationResult {
   const {
@@ -129,9 +134,12 @@ export function calculateFlatelPrice(input: CalculateFareInput): FareCalculation
     return sum + addon.price;
   }, 0);
 
-  // 4. Gross Total & 20% Deposit Split
-  const grossTotal = Math.round(discountedBaseRent + extraGuestsTotal + addonsTotal);
-  const advancePayable = Math.round(grossTotal * 0.20);
+  // 4. Gross Total & payment split: 20% of the stay, plus add-ons in full, are paid online
+  const stayTotal = discountedBaseRent + extraGuestsTotal;
+  const grossTotal = Math.round(stayTotal + addonsTotal);
+  const flatAdvance = Math.round(stayTotal * 0.20);
+  const servicesPrepaid = Math.round(addonsTotal);
+  const advancePayable = flatAdvance + servicesPrepaid;
   const balanceDueOnArrival = grossTotal - advancePayable;
 
   return {
@@ -147,6 +155,8 @@ export function calculateFlatelPrice(input: CalculateFareInput): FareCalculation
     extraKidsTotal,
     addonsTotal,
     grossTotal,
+    flatAdvance,
+    servicesPrepaid,
     advancePayable,
     balanceDueOnArrival,
   };

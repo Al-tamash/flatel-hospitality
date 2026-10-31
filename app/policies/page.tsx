@@ -34,9 +34,10 @@ const GUEST_POLICIES: PolicyCard[] = [
     title: "20% Advance Online Policy",
     badge: "Official Payment Term",
     summary:
-      "Lock your flat dates with just a flat 20% online advance deposit. The remaining 80% balance is settled upon check-in.",
+      "Lock your flat dates with just a 20% online advance on the stay. The remaining 80% of the stay is settled upon check-in. Any additional services you select are paid in full at booking.",
     details: [
-      "Pay 20% deposit online via UPI, Credit/Debit cards, or Net Banking",
+      "Pay 20% of the stay online via UPI, Credit/Debit cards, or Net Banking",
+      "Additional services (pickup, decoration and similar) are paid in full online at the time of booking",
       "Instant automated digital booking voucher & confirmation receipt generated",
       "Remaining 80% balance settled directly at check-in via Cash or UPI QR Code",
       "Zero hidden reservation fees or platform surcharges",
@@ -53,6 +54,7 @@ const GUEST_POLICIES: PolicyCard[] = [
       "Cancel at least 48 hours before check-in (11:00 AM) for a 100% full refund",
       "Refund processed directly to original payment method within 3–5 banking days",
       "Cancellations within 48 hours forfeit the 20% deposit as reservation hold fee",
+      "Additional services are paid in full at booking and are non-refundable",
       "Date modifications allowed based on calendar availability with no penalty",
     ],
   },

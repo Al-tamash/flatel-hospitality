@@ -68,7 +68,7 @@ function commonFaq(locale: Locale): Array<{ q: string; a: string }> {
     },
     {
       q: "Can I cancel?",
-      a: `Cancellation is free up to ${BOOKING_POLICY.FREE_CANCELLATION_HOURS} hours before check-in. Within ${BOOKING_POLICY.FREE_CANCELLATION_HOURS} hours the advance is non-refundable.`,
+      a: `Cancellation is free up to ${BOOKING_POLICY.FREE_CANCELLATION_HOURS} hours before check-in. Within ${BOOKING_POLICY.FREE_CANCELLATION_HOURS} hours the advance is non-refundable. Additional services are non-refundable.`,
     },
   ];
 }

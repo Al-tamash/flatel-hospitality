@@ -20,18 +20,18 @@ const FAQS: FAQItem[] = [
     question: "How does the 20% advance deposit and payment split work?",
     questionAr: "كيف يتم سداد عربون الـ ٢٠٪ وتقسيم الدفع؟",
     answer:
-      "A 20% advance payment through Razorpay confirms your reservation. The remaining balance is paid at the property desk on arrival. After payment is confirmed, you can view your booking confirmation and voucher.",
+      "A 20% advance on the stay, paid through Razorpay, confirms your reservation. Any additional services you select are paid in full at the time of booking. The remaining 80% of the stay is paid at the property desk on arrival. After payment is confirmed, you can view your booking confirmation and voucher.",
     answerAr:
-      "يتم سداد عربون ٢٠٪ مبدئي عبر وسائل الدفع الإلكتروني لتأكيد وحجز تواريخ إقامتك رسمياً. ويُسدد المبلغ المتبقي ٨٠٪ عند وصولك واستلام الشقة في مكتب الاستقبال. بعد تأكيد الدفع، يمكنك فوراً استعراض سند الحجز المعتمد وقسيمة الإقامة.",
+      "يتم سداد عربون ٢٠٪ من قيمة الإقامة عبر وسائل الدفع الإلكتروني لتأكيد وحجز تواريخ إقامتك رسمياً، وتُسدد الخدمات الإضافية المختارة كاملة وقت الحجز. ويُسدد المتبقي ٨٠٪ من الإقامة عند وصولك واستلام الشقة في مكتب الاستقبال. بعد تأكيد الدفع، يمكنك فوراً استعراض سند الحجز المعتمد وقسيمة الإقامة.",
   },
   {
     id: "cancellation-policy",
     question: "What is your cancellation and refund policy?",
     questionAr: "ما هي سياسة الإلغاء واسترداد الأموال المتبعة؟",
     answer:
-      "We offer 100% Free Cancellation with a full refund of your 20% advance deposit if cancelled 48 hours or more prior to your scheduled check-in time. Cancellations made within 48 hours of check-in forfeit the 20% deposit, which acts as a reservation hold fee.",
+      "We offer 100% Free Cancellation with a full refund of your 20% advance deposit if cancelled 48 hours or more prior to your scheduled check-in time. Cancellations made within 48 hours of check-in forfeit the 20% deposit, which acts as a reservation hold fee. Additional services are paid in full at booking and are non-refundable.",
     answerAr:
-      "نوفر ميزة الإلغاء المجاني ١٠٠٪ مع استرداد كامل لمبلغ العربون المدفوع (٢٠٪) في حال الإلغاء قبل ٤٨ ساعة أو أكثر من موعد تسجيل الدخول المحدد. أما الإلغاء خلال أقل من ٤٨ ساعة فيتم فيه احتساب العربون كرسوم حجز لضمان عدم حجز الشقة لغيركم.",
+      "نوفر ميزة الإلغاء المجاني ١٠٠٪ مع استرداد كامل لمبلغ العربون المدفوع (٢٠٪) في حال الإلغاء قبل ٤٨ ساعة أو أكثر من موعد تسجيل الدخول المحدد. أما الإلغاء خلال أقل من ٤٨ ساعة فيتم فيه احتساب العربون كرسوم حجز لضمان عدم حجز الشقة لغيركم. وتُدفع الخدمات الإضافية كاملة وقت الحجز وهي غير قابلة للاسترداد.",
   },
   {
     id: "kitchen-utilities",

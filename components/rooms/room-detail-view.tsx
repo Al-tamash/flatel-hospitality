@@ -651,11 +651,11 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
                   <p className="text-xs leading-relaxed text-fg-muted">
                     {isAr ? (
                       <>
-                        استرداد <span className="font-medium text-fg">١٠٠٪</span> حتى <span className="font-medium text-fg">٤٨ ساعة</span> قبل الوصول. غير مسترد خلال <span className="font-medium text-fg">٤٨ ساعة</span>.
+                        استرداد <span className="font-medium text-fg">١٠٠٪</span> حتى <span className="font-medium text-fg">٤٨ ساعة</span> قبل الوصول. غير مسترد خلال <span className="font-medium text-fg">٤٨ ساعة</span>. الخدمات الإضافية غير قابلة للاسترداد دائماً.
                       </>
                     ) : (
                       <>
-                        <span className="font-medium text-fg">100%</span> refund up to <span className="font-medium text-fg">48 hrs</span> before check-in. Non-refundable within <span className="font-medium text-fg">48 hrs</span>.
+                        <span className="font-medium text-fg">100%</span> refund up to <span className="font-medium text-fg">48 hrs</span> before check-in. Non-refundable within <span className="font-medium text-fg">48 hrs</span>. Additional services are always non-refundable.
                       </>
                     )}
                   </p>
@@ -997,12 +997,16 @@ export function RoomDetailView({ room: rawRoom, requestedId }: RoomDetailViewPro
                       • إلغاء مجاني (استرداد <span className="font-serif tabular-nums text-fg">١٠٠٪</span> من العربون): عند الإلغاء قبل <span className="font-serif tabular-nums text-fg">٤٨ ساعة</span> أو أكثر من موعد تسجيل الوصول (<span className="font-serif tabular-nums text-fg">١١:٠٠ صباحاً</span>).
                       <br />
                       • غير مسترد: عند الإلغاء خلال <span className="font-serif tabular-nums text-fg">٤٨ ساعة</span> من موعد الوصول يعتبر العربون (<span className="font-serif tabular-nums text-fg">٢٠٪</span>) غير مسترد كرسوم حجز وتثبيت للوحدة.
+                      <br />
+                      • الخدمات الإضافية تُدفع كاملة وقت الحجز وهي غير قابلة للاسترداد دائماً.
                     </>
                   ) : (
                     <>
                       • Free Cancellation (<span className="font-serif tabular-nums text-fg">100%</span> Refund of 20% advance deposit): If cancelled <span className="font-serif tabular-nums text-fg">48 hours</span> or more prior to check-in (<span className="font-serif tabular-nums text-fg">11:00 AM</span>).
                       <br />
                       • Non-Refundable: Cancellations made within <span className="font-serif tabular-nums text-fg">48 hours</span> of check-in forfeit the <span className="font-serif tabular-nums text-fg">20%</span> advance deposit (date reservation hold fee).
+                      <br />
+                      • Additional services are paid in full at booking and are always non-refundable.
                     </>
                   )}
                 </p>

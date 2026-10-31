@@ -720,11 +720,29 @@ export function BookingSidebar({
           {/* PAYMENT SPLIT: 20% ADVANCE NOW vs 80% REMAINING BALANCE  */}
           {/* ======================================================== */}
           <div className="rounded-2xl border border-line bg-gold/6 p-3.5 space-y-2.5 mt-3">
+            {fareResult.servicesPrepaid > 0 && (
+              <>
+                <div className="flex items-center justify-between text-xs text-fg-muted">
+                  <span>{currentLocale === "ar" ? "عربون الإقامة (٢٠٪)" : "Stay advance (20%)"}</span>
+                  <span className="font-serif text-sm font-medium text-fg/90 tabular-nums">
+                    ₹{fareResult.flatAdvance.toLocaleString("en-IN")}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-xs text-fg-muted">
+                  <span>{currentLocale === "ar" ? "الخدمات (تُدفع بالكامل الآن)" : "Services (paid in full now)"}</span>
+                  <span className="font-serif text-sm font-medium text-fg/90 tabular-nums">
+                    ₹{fareResult.servicesPrepaid.toLocaleString("en-IN")}
+                  </span>
+                </div>
+              </>
+            )}
             <div className="flex items-center justify-between text-xs">
               <div className="flex items-center gap-1.5">
                 <CreditCard className="h-3.5 w-3.5 text-gold" />
                 <span className="font-medium text-fg">
-                  {currentLocale === "ar" ? "عربون حجز أونلاين (٢٠٪)" : "20% Online Advance Deposit"}
+                  {fareResult.servicesPrepaid > 0
+                    ? (currentLocale === "ar" ? "المستحق أونلاين الآن" : "Due Online Now")
+                    : (currentLocale === "ar" ? "عربون حجز أونلاين (٢٠٪)" : "20% Online Advance Deposit")}
                 </span>
               </div>
               <span className="font-heading text-lg font-normal text-fg tabular-nums">
@@ -736,7 +754,7 @@ export function BookingSidebar({
               <div className="flex items-center gap-1.5">
                 <Building className="h-3.5 w-3.5 text-fg-muted" />
                 <span>
-                  {currentLocale === "ar" ? "المتبقي ٨٠٪ عند الوصول (نقداً / UPI)" : "80% Balance Due on Arrival (Cash / UPI)"}
+                  {currentLocale === "ar" ? "المتبقي ٨٠٪ من الإقامة عند الوصول (نقداً / UPI)" : "80% Stay Balance Due on Arrival (Cash / UPI)"}
                 </span>
               </div>
               <span className="font-serif text-sm font-medium text-fg/90 tabular-nums">
@@ -776,8 +794,8 @@ export function BookingSidebar({
           <ShieldCheck className="w-3.5 h-3.5 text-gold shrink-0" />
           <span>
             {currentLocale === "ar"
-              ? "ادفع ٢٠٪ الآن · والباقي ٨٠٪ عند تسجيل الوصول · إلغاء مجاني حتى ٤٨ ساعة"
-              : "Pay 20% now · Remaining 80% at check-in · Free cancellation up to 48 hrs"}
+              ? "ادفع ٢٠٪ من الإقامة + الخدمات الآن · والباقي ٨٠٪ عند تسجيل الوصول · إلغاء مجاني حتى ٤٨ ساعة"
+              : "Pay 20% of the stay + services now · Remaining 80% at check-in · Free cancellation up to 48 hrs"}
           </span>
         </div>
 
@@ -1027,7 +1045,11 @@ export function BookingSidebar({
                 <AnimatedNumber prefix="₹" value={fareResult.grossTotal} className="font-heading text-base font-normal text-gold tabular-nums" />
               </div>
               <div className="flex justify-between text-xs text-gold pt-1">
-                <span>{currentLocale === "ar" ? "٢٠٪ عربون الحجز المستحق أونلاين:" : "20% Online Advance Due:"}</span>
+                <span>
+                  {fareResult.servicesPrepaid > 0
+                    ? (currentLocale === "ar" ? "المستحق أونلاين الآن (٢٠٪ + الخدمات):" : "Due Online Now (20% + services):")
+                    : (currentLocale === "ar" ? "٢٠٪ عربون الحجز المستحق أونلاين:" : "20% Online Advance Due:")}
+                </span>
                 <span className="font-serif font-bold tabular-nums">₹{fareResult.advancePayable.toLocaleString("en-IN")}</span>
               </div>
             </div>

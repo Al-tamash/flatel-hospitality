@@ -48,6 +48,8 @@ const EMPTY_FARE: FareCalculationResult = {
   extraGuestsTotal: 0,
   addonsTotal: 0,
   grossTotal: 0,
+  flatAdvance: 0,
+  servicesPrepaid: 0,
   advancePayable: 0,
   balanceDueOnArrival: 0,
 };
@@ -417,7 +419,9 @@ function SingleCheckoutView({ locale = "en" }: CheckoutViewProps) {
         amount: data.advancePayable * 100,
         currency: "INR",
         name: BRAND_NAME,
-        description: `20% Advance Booking Deposit for ${room.title}`,
+        description: fareResult.servicesPrepaid > 0
+          ? `20% stay advance + services for ${room.title}`
+          : `20% Advance Booking Deposit for ${room.title}`,
         order_id: data.orderId,
         prefill: { name: fullName, email, contact: phone },
         theme: { color: BRAND_HEX.gold },
@@ -573,10 +577,27 @@ function SingleCheckoutView({ locale = "en" }: CheckoutViewProps) {
               <span>{dict.checkout.totalStay}</span>
               <span className="tabular-nums">{formatMoney(fareResult.grossTotal)}</span>
             </div>
-            <div className="flex justify-between gap-3 text-foreground">
-              <span>{dict.checkout.advanceDueNow}</span>
-              <span className="font-semibold tabular-nums text-primary">{formatMoney(fareResult.advancePayable)}</span>
-            </div>
+            {fareResult.servicesPrepaid > 0 ? (
+              <>
+                <div className="flex justify-between gap-3 text-foreground">
+                  <span>{locale === "ar" ? "عربون الإقامة (20%)" : "Stay advance (20%)"}</span>
+                  <span className="tabular-nums">{formatMoney(fareResult.flatAdvance)}</span>
+                </div>
+                <div className="flex justify-between gap-3 text-foreground">
+                  <span>{locale === "ar" ? "الخدمات (تُدفع بالكامل الآن)" : "Services (paid in full now)"}</span>
+                  <span className="tabular-nums">{formatMoney(fareResult.servicesPrepaid)}</span>
+                </div>
+                <div className="flex justify-between gap-3 text-foreground">
+                  <span>{locale === "ar" ? "المستحق الآن" : "Due now"}</span>
+                  <span className="font-semibold tabular-nums text-primary">{formatMoney(fareResult.advancePayable)}</span>
+                </div>
+              </>
+            ) : (
+              <div className="flex justify-between gap-3 text-foreground">
+                <span>{dict.checkout.advanceDueNow}</span>
+                <span className="font-semibold tabular-nums text-primary">{formatMoney(fareResult.advancePayable)}</span>
+              </div>
+            )}
             <div className="flex justify-between gap-3 text-muted-foreground">
               <span>{dict.checkout.balanceDueArrival}</span>
               <span className="tabular-nums">{formatMoney(fareResult.balanceDueOnArrival)}</span>
@@ -668,7 +689,7 @@ function SingleCheckoutView({ locale = "en" }: CheckoutViewProps) {
               <ChevronDown className="h-4 w-4 text-primary" />
             </span>
             <span className="text-right">
-              <span className="block text-xs text-muted-foreground">{locale === "ar" ? "العربون الآن" : "Advance due now"}</span>
+              <span className="block text-xs text-muted-foreground">{fareResult.servicesPrepaid > 0 ? (locale === "ar" ? "المستحق الآن" : "Due now") : (locale === "ar" ? "العربون الآن" : "Advance due now")}</span>
               <span className="tabular-nums text-lg font-semibold text-primary">{areDatesValid ? formatMoney(fareResult.advancePayable) : "—"}</span>
             </span>
           </summary>
@@ -870,7 +891,9 @@ function SingleCheckoutView({ locale = "en" }: CheckoutViewProps) {
                       : paymentOpen
                       ? (locale === "ar" ? "الدفع قيد المعالجة..." : "Payment in progress…")
                       : areDatesValid
-                      ? (locale === "ar" ? `سداد عربون ${formatMoney(fareResult.advancePayable)} وتأكيد الحجز` : `Pay ${formatMoney(fareResult.advancePayable)} advance & confirm booking`)
+                      ? (fareResult.servicesPrepaid > 0
+                        ? (locale === "ar" ? `سداد ${formatMoney(fareResult.advancePayable)} وتأكيد الحجز` : `Pay ${formatMoney(fareResult.advancePayable)} & confirm booking`)
+                        : (locale === "ar" ? `سداد عربون ${formatMoney(fareResult.advancePayable)} وتأكيد الحجز` : `Pay ${formatMoney(fareResult.advancePayable)} advance & confirm booking`))
                       : (locale === "ar" ? "حدد التواريخ للمتابعة" : "Select dates to continue")}
                   </button>
                   <p className="mt-3 flex items-center justify-center gap-2 text-center text-sm text-muted-foreground">

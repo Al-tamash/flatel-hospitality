@@ -78,6 +78,8 @@ export function BookingConfirmationView({ bookingId, locale = "en" }: BookingCon
         extraGuestsTotal: sum((b) => b.pricing.extraGuestsTotal),
         addonsTotal: sum((b) => b.pricing.addonsTotal),
         grossTotal: sum((b) => b.pricing.grossTotal),
+        flatAdvance: sum((b) => b.pricing.flatAdvance),
+        servicesPrepaid: sum((b) => b.pricing.servicesPrepaid),
         advancePayable: sum((b) => b.pricing.advancePayable),
         balanceDueOnArrival: sum((b) => b.pricing.balanceDueOnArrival),
       },
@@ -475,8 +477,8 @@ export function BookingConfirmationView({ bookingId, locale = "en" }: BookingCon
                 <li>
                   <strong className="text-fg">{locale === "ar" ? "سياسة الإلغاء:" : "Cancellation Policy:"}</strong>{" "}
                   {locale === "ar"
-                    ? "العربون المالي (٢٠٪) مسترد بالكامل في حال الإلغاء قبل ٤٨ ساعة على الأقل من موعد تسجيل الوصول. بعد ذلك يعتبر غير مسترد."
-                    : "The 20% advance booking deposit is fully refundable if cancellation occurs at least 48 hours prior to check-in. Non-refundable within 48 hours."}
+                    ? "العربون المالي (٢٠٪) مسترد بالكامل في حال الإلغاء قبل ٤٨ ساعة على الأقل من موعد تسجيل الوصول. بعد ذلك يعتبر غير مسترد. الخدمات الإضافية غير قابلة للاسترداد."
+                    : "The 20% advance booking deposit is fully refundable if cancellation occurs at least 48 hours prior to check-in. Non-refundable within 48 hours. Additional services are non-refundable."}
                 </li>
               </ul>
             </div>
@@ -553,6 +555,15 @@ export function BookingConfirmationView({ bookingId, locale = "en" }: BookingCon
                     ₹{booking.pricing.advancePayable.toLocaleString("en-IN")}
                   </span>
                 </div>
+                {booking.pricing.servicesPrepaid > 0 && (
+                  <div className="text-xs text-emerald-300/80 flex items-center justify-between gap-3 pt-1 border-t border-emerald-500/20">
+                    <span>
+                      {locale === "ar"
+                        ? `عربون الإقامة ₹${booking.pricing.flatAdvance.toLocaleString("en-IN")} + الخدمات ₹${booking.pricing.servicesPrepaid.toLocaleString("en-IN")} (مدفوعة بالكامل)`
+                        : `Stay advance ₹${booking.pricing.flatAdvance.toLocaleString("en-IN")} + services ₹${booking.pricing.servicesPrepaid.toLocaleString("en-IN")} (paid in full)`}
+                    </span>
+                  </div>
+                )}
                 <div className="text-xs text-emerald-300/80 flex items-center justify-between gap-3 pt-1 border-t border-emerald-500/20">
                   <span>{locale === "ar" ? "مرجع إيصال الدفع:" : "Receipt Ref:"}</span>
                   <span className="font-mono text-emerald-300">{booking.gatewayPaymentId || "DIRECT-GATEWAY-TXN"}</span>

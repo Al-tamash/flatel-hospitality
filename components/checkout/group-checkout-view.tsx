@@ -18,6 +18,9 @@ import {
   type RazorpaySuccessResponse,
 } from "@/lib/razorpay/load-script";
 import { MemberIdField, activeMemberFor, type AppliedMember } from "@/components/checkout/member-id-field";
+import { PurposeServices } from "@/components/rooms/purpose-services";
+import { ALL_MASTER_ADDONS } from "@/lib/mock-rooms";
+import { isPurposeId, pruneAddonsForPurpose, type PurposeId } from "@/lib/purpose/purpose-services";
 import { BRAND_HEX } from "@/lib/design-tokens";
 
 const formatMoney = (amount: number) => `₹${amount.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
@@ -29,7 +32,6 @@ function getNights(checkIn: string, checkOut: string) {
   return Math.round((end - start) / 86_400_000);
 }
 
-const PURPOSES = ["medical", "wedding", "tourism", "corporate", "family"] as const;
 
 /** Checkout for several flats booked together: one payment, one voucher. */
 export function GroupCheckoutView({ locale = "en" }: { locale?: Locale }) {
@@ -42,8 +44,10 @@ export function GroupCheckoutView({ locale = "en" }: { locale?: Locale }) {
   const checkIn = searchParams.get("checkIn") || "";
   const checkOut = searchParams.get("checkOut") || "";
   const rawPurpose = searchParams.get("purpose");
-  const purpose = PURPOSES.find((value) => value === rawPurpose) ?? "accommodation_only";
   const nights = getNights(checkIn, checkOut);
+
+  const [purpose, setPurpose] = React.useState<PurposeId | "accommodation_only">(isPurposeId(rawPurpose) ? rawPurpose : "accommodation_only");
+  const [addonIds, setAddonIds] = React.useState<string[]>([]);
 
   const [rooms, setRooms] = React.useState<Record<string, RoomDetail> | null>(null);
   const [loadError, setLoadError] = React.useState(false);
@@ -77,11 +81,30 @@ export function GroupCheckoutView({ locale = "en" }: { locale?: Locale }) {
 
   const activeMember = activeMemberFor(appliedMember, email, phone);
 
+  const handleSelectPurpose = (next: PurposeId | "accommodation_only") => {
+    setPurpose(next);
+    setAddonIds((current) => pruneAddonsForPurpose(current, next));
+  };
+  const handleToggleAddon = (id: string) =>
+    setAddonIds((current) => (current.includes(id) ? current.filter((value) => value !== id) : [...current, id]));
+
+  /** Services are chosen once for the whole group; only priced ones are charged, as on the server. */
+  const selectedAddons = React.useMemo(
+    () =>
+      addonIds.flatMap((id) => {
+        const addon = ALL_MASTER_ADDONS.find((item) => item.id === id);
+        return addon && typeof addon.price === "number" && addon.price > 0
+          ? [{ id: addon.id, name: addon.name, price: addon.price, pricingType: addon.pricingType === "per_night" ? ("per_night" as const) : ("per_booking" as const) }]
+          : [];
+      }),
+    [addonIds]
+  );
+
   /** Same pricing rules as the server, flat by flat. Null until every flat is known. */
   const lines = React.useMemo(() => {
     if (!rooms || nights < 1) return null;
     const result: Array<{ room: RoomDetail; adults: number; kids: number; fare: FareCalculationResult }> = [];
-    for (const item of cart) {
+    for (const [index, item] of cart.entries()) {
       const room = rooms[item.slug];
       if (!room) return null;
       try {
@@ -92,6 +115,8 @@ export function GroupCheckoutView({ locale = "en" }: { locale?: Locale }) {
           selectedAdults: item.adults,
           selectedKids: item.kids,
           extraPersonFee: room.extraPersonFeePerNight,
+          // Charged once, on the first flat, exactly as the server does
+          selectedPaidAddons: index === 0 ? selectedAddons : [],
           memberDiscountRate: activeMember ? activeMember.percent / 100 : undefined,
         });
         result.push({ room, adults: item.adults, kids: item.kids, fare });
@@ -100,7 +125,7 @@ export function GroupCheckoutView({ locale = "en" }: { locale?: Locale }) {
       }
     }
     return result;
-  }, [rooms, cart, nights, activeMember]);
+  }, [rooms, cart, nights, activeMember, selectedAddons]);
 
   const totals = React.useMemo(
     () =>
@@ -109,8 +134,10 @@ export function GroupCheckoutView({ locale = "en" }: { locale?: Locale }) {
           gross: sum.gross + line.fare.grossTotal,
           advance: sum.advance + line.fare.advancePayable,
           balance: sum.balance + line.fare.balanceDueOnArrival,
+          flatAdvance: sum.flatAdvance + line.fare.flatAdvance,
+          services: sum.services + line.fare.servicesPrepaid,
         }),
-        { gross: 0, advance: 0, balance: 0 }
+        { gross: 0, advance: 0, balance: 0, flatAdvance: 0, services: 0 }
       ),
     [lines]
   );
@@ -153,6 +180,7 @@ export function GroupCheckoutView({ locale = "en" }: { locale?: Locale }) {
           checkInDate: checkIn,
           checkOutDate: checkOut,
           stayPurpose: purpose,
+          selectedAddons: addonIds.map((id) => ({ id })),
           memberCode: activeMember?.code,
           guest: { fullName, email, phone, specialRequests },
         }),
@@ -174,7 +202,7 @@ export function GroupCheckoutView({ locale = "en" }: { locale?: Locale }) {
         amount: data.advancePayable * 100,
         currency: "INR",
         name: BRAND_NAME,
-        description: `20% advance for ${cart.length} flats`,
+        description: totals.services > 0 ? `20% stay advance + services for ${cart.length} flats` : `20% advance for ${cart.length} flats`,
         order_id: data.orderId,
         prefill: { name: fullName, email, contact: phone },
         theme: { color: BRAND_HEX.gold },
@@ -287,6 +315,20 @@ export function GroupCheckoutView({ locale = "en" }: { locale?: Locale }) {
 
             <MemberIdField locale={isAr ? "ar" : "en"} email={email} phone={phone} stayStart={checkIn} applied={appliedMember} onApply={setAppliedMember} disabled={isBusy} />
 
+            <div className="border-t border-line-soft pt-5">
+              <PurposeServices
+                selectedPurposeId={purpose}
+                selectedAddonIds={addonIds}
+                onSelectPurpose={handleSelectPurpose}
+                onToggleAddon={handleToggleAddon}
+              />
+              <p className="mt-3 text-xs text-muted-foreground">
+                {isAr
+                  ? "تُحتسب الخدمات مرة واحدة لكامل الحجز وتُدفع كاملة الآن، وهي غير قابلة للاسترداد."
+                  : "Services are charged once for the whole booking, paid in full now, and are non-refundable."}
+              </p>
+            </div>
+
             <div>
               <label htmlFor="specialRequests" className="text-sm font-medium text-foreground">{isAr ? "طلبات خاصة" : "Special requests"}</label>
               <textarea id="specialRequests" name="specialRequests" rows={3} maxLength={300} value={specialRequests} onChange={(e) => setSpecialRequests(e.target.value)} className={cn(fieldClass("specialRequests"), "resize-y py-3 leading-6")} />
@@ -297,8 +339,8 @@ export function GroupCheckoutView({ locale = "en" }: { locale?: Locale }) {
                 <input type="checkbox" checked={agreeTerms} onChange={(e) => setAgreeTerms(e.target.checked)} className="mt-1 h-5 w-5 shrink-0 accent-primary" />
                 <span>
                   {isAr
-                    ? "أوافق على دفع عربون ٢٠٪ الآن عن جميع الشقق والمتبقي ٨٠٪ عند الوصول، وأدرك سياسة الإلغاء (استرداد كامل حتى ٤٨ ساعة قبل الوصول)."
-                    : "I understand the 20% advance covers all my flats and is refundable when cancelled at least 48 hours before check-in. The remaining 80% is due at the property on arrival."}
+                    ? "أوافق على دفع عربون ٢٠٪ من الإقامة عن جميع الشقق الآن مع قيمة الخدمات المختارة كاملة، والمتبقي ٨٠٪ من الإقامة عند الوصول، وأدرك سياسة الإلغاء (استرداد كامل للعربون حتى ٤٨ ساعة قبل الوصول) وأن الخدمات الإضافية غير قابلة للاسترداد."
+                    : "I understand the 20% advance covers the stay of all my flats and is refundable when cancelled at least 48 hours before check-in. Any selected services are paid in full now and are non-refundable. The remaining 80% of the stay is due at the property on arrival."}
                 </span>
               </label>
               {errors.terms && <p className="mt-2 text-sm text-rose-300">{errors.terms}</p>}
@@ -335,7 +377,7 @@ export function GroupCheckoutView({ locale = "en" }: { locale?: Locale }) {
               {isBusy
                 ? isAr ? "جاري فتح بوابة الدفع الآمنة..." : "Opening secure payment…"
                 : canPay
-                ? isAr ? `سداد عربون ${formatMoney(totals.advance)} وتأكيد الحجز` : `Pay ${formatMoney(totals.advance)} advance & confirm ${cart.length} flats`
+                ? isAr ? `سداد ${totals.services > 0 ? "" : "عربون "}${formatMoney(totals.advance)} وتأكيد الحجز` : `Pay ${formatMoney(totals.advance)}${totals.services > 0 ? "" : " advance"} & confirm ${cart.length} flats`
                 : isAr ? "أكمل التفاصيل للمتابعة" : "Complete the details to continue"}
             </button>
             <p className="text-center text-xs text-fg-muted">
@@ -382,10 +424,27 @@ export function GroupCheckoutView({ locale = "en" }: { locale?: Locale }) {
                     <span className="text-muted-foreground">{isAr ? "إجمالي الإقامة" : "Total stay"}</span>
                     <span className="tabular-nums text-foreground">{formatMoney(totals.gross)}</span>
                   </div>
-                  <div className="flex justify-between gap-3">
-                    <span className="font-semibold text-foreground">{isAr ? "العربون الآن (٢٠٪)" : "Advance now (20%)"}</span>
-                    <span className="font-semibold tabular-nums text-primary">{formatMoney(totals.advance)}</span>
-                  </div>
+                  {totals.services > 0 ? (
+                    <>
+                      <div className="flex justify-between gap-3">
+                        <span className="text-muted-foreground">{isAr ? "عربون الإقامة (٢٠٪)" : "Stay advance (20%)"}</span>
+                        <span className="tabular-nums text-foreground">{formatMoney(totals.flatAdvance)}</span>
+                      </div>
+                      <div className="flex justify-between gap-3">
+                        <span className="text-muted-foreground">{isAr ? "الخدمات (تُدفع بالكامل الآن)" : "Services (paid in full now)"}</span>
+                        <span className="tabular-nums text-foreground">{formatMoney(totals.services)}</span>
+                      </div>
+                      <div className="flex justify-between gap-3">
+                        <span className="font-semibold text-foreground">{isAr ? "المستحق الآن" : "Due now"}</span>
+                        <span className="font-semibold tabular-nums text-primary">{formatMoney(totals.advance)}</span>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex justify-between gap-3">
+                      <span className="font-semibold text-foreground">{isAr ? "العربون الآن (٢٠٪)" : "Advance now (20%)"}</span>
+                      <span className="font-semibold tabular-nums text-primary">{formatMoney(totals.advance)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between gap-3 text-muted-foreground">
                     <span>{isAr ? "المتبقي عند الوصول" : "Balance on arrival"}</span>
                     <span className="tabular-nums">{formatMoney(totals.balance)}</span>

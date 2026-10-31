@@ -39,6 +39,8 @@ export interface CreateGroupBookingData {
   checkInDate: string;
   checkOutDate: string;
   stayPurpose: StayPurposeType;
+  /** Services for the whole group: charged once, on the first flat's booking. */
+  selectedAddons?: SelectedPaidAddon[];
   memberCode?: string;
   guest: CreateBookingData["guest"];
 }
@@ -101,6 +103,8 @@ function mapDbRowToBookingRecord(row: Record<string, unknown>): BookingRecord {
       extraGuestsTotal: Number(row.extra_guests_total || 0),
       addonsTotal: Number(row.addons_total || 0),
       grossTotal: Number(row.gross_total || 0),
+      flatAdvance: Math.max(0, Number(row.advance_paid_amount || 0) - Number(row.addons_total || 0)),
+      servicesPrepaid: Number(row.addons_total || 0),
       advancePayable: Number(row.advance_paid_amount || 0),
       balanceDueOnArrival: Number(row.balance_due_amount || 0),
     },
@@ -620,7 +624,7 @@ export class BookingService {
     };
 
     try {
-      for (const item of items) {
+      for (const [index, item] of items.entries()) {
         const { booking } = await this.createBookingIntent({
           unitId: item.slug,
           checkInDate: data.checkInDate,
@@ -628,6 +632,7 @@ export class BookingService {
           adultsCount: item.adults,
           kidsCount: item.kids,
           stayPurpose: data.stayPurpose,
+          selectedAddons: index === 0 ? data.selectedAddons : [],
           memberCode: data.memberCode,
           guest: data.guest,
         });

@@ -540,7 +540,7 @@ function renderVoucherPage(doc: jsPDF, booking: BookingRecord, isArabic: boolean
       "1. Mandatory ID: Domestic guests must present an original government-issued photo ID for each adult (Aadhaar/Driving License/Voter ID). International guests must present an original physical passport and valid visa.",
       "2. Check-in Window: Standard check-in is 11:00 AM – 1:00 PM. Check-out is 11:00 AM.",
       "3. Housekeeping: Complimentary housekeeping is provided on alternate days.",
-      "4. Cancellation Terms: The 20% advance booking deposit is fully refundable if cancelled at least 48 hours prior to check-in. Cancellations within 48 hours are non-refundable.",
+      "4. Cancellation Terms: The 20% advance booking deposit is fully refundable if cancelled at least 48 hours prior to check-in. Cancellations within 48 hours are non-refundable. Additional services are paid in full at booking and are non-refundable.",
       "5. Children Policy: Each flat includes children up to its base allowance; additional children are INR 300 per child per night. All guests count toward safety occupancy limits.",
     ];
 
